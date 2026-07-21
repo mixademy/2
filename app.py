@@ -12,7 +12,9 @@ app = Flask(__name__)
 app.secret_key = '916b11deedefa90794d7c76364ee1b8f82b88d9762b4dc42b9dbdb385ab4fa7b'
 
 # Groq kliens inicializálása
-client = Groq(api_key="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")
+client = Groq(
+    api_key=os.environ.get("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")
+)
 DATABASE = 'chats.db'
 USERS_FILE = 'users.json'
 
