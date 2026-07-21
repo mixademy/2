@@ -861,3 +861,69 @@ def change_password(username):
     return redirect(
         url_for("admin_panel")
     )
+
+# -------------------------
+# FELHASZNÁLÓ TÖRLÉS
+# -------------------------
+
+@app.route(
+    "/admin/delete/<username>",
+    methods=["POST"]
+)
+@login_required
+def delete_user(username):
+
+    if session.get("username") != "admin":
+        return redirect(
+            url_for("index")
+        )
+
+
+    if username == "admin":
+        return redirect(
+            url_for("admin_panel")
+        )
+
+
+    user = User.query.filter_by(
+        username=username
+    ).first()
+
+
+    if user:
+
+        # chat-ek keresése
+        chats = Chat.query.filter_by(
+            user_id=user.id
+        ).all()
+
+
+        # üzenetek törlése
+        for chat in chats:
+
+            Message.query.filter_by(
+                chat_id=chat.id
+            ).delete()
+
+
+            db.session.delete(chat)
+
+
+
+        # felhasználó törlése
+        db.session.delete(user)
+
+
+        db.session.commit()
+
+
+
+    return redirect(
+        url_for("admin_panel")
+    )
+if __name__ == "__main__":
+    app.run(
+        host="0.0.0.0",
+        port=5000,
+        debug=True
+    )
