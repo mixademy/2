@@ -696,3 +696,66 @@ Avoid unnecessary greetings.
         "new_title":new_title
 
     })
+
+# -------------------------
+# ADMIN PANEL
+# -------------------------
+
+@app.route('/admin')
+@login_required
+def admin_panel():
+
+    if session.get("username") != "admin":
+        return redirect(url_for("index"))
+
+
+    users = User.query.all()
+
+    total_users = len(users)
+
+    total_chats = Chat.query.count()
+
+    total_msgs = Message.query.count()
+
+
+    user_stats = []
+
+
+    for user in users:
+
+        chats = Chat.query.filter_by(
+            user_id=user.id
+        ).count()
+
+
+        user_stats.append({
+
+            "username": user.username,
+
+            "chats": chats
+
+        })
+
+
+    return render_template(
+        "admin.html",
+        users=user_stats,
+        total_users=total_users,
+        total_chats=total_chats,
+        total_msgs=total_msgs,
+        username=session.get("username"),
+        maintenance=MAINTENANCE_MODE
+    )
+
+
+
+# -------------------------
+# BROADCAST
+# -------------------------
+
+@app.route('/api/broadcast')
+def get_broadcast():
+
+    return jsonify(
+        BROADCAST_MESSAGE
+    )
