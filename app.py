@@ -782,3 +782,36 @@ def toggle_maintenance():
     return redirect(
         url_for("admin_panel")
     )
+
+# -------------------------
+# BROADCAST ÜZENET KÜLDÉS
+# -------------------------
+
+@app.route(
+    "/admin/broadcast",
+    methods=["POST"]
+)
+@login_required
+def send_broadcast():
+
+    global BROADCAST_MESSAGE
+
+
+    if session.get("username") == "admin":
+
+        msg_text = request.form.get(
+            "broadcast_msg"
+        )
+
+
+        if msg_text:
+
+            BROADCAST_MESSAGE = {
+                "id": str(uuid.uuid4()),
+                "text": msg_text
+            }
+
+
+    return redirect(
+        url_for("admin_panel")
+    )
