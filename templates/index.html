@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Orion AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body data-user="{{ username }}">
+    <div class="liquid-bg">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+    </div>
+
+    <div class="glass-panel app-container">
+        <div class="mobile-overlay" id="mobile-overlay"></div>
+
+        <aside class="sidebar">
+            <button id="close-menu-btn" class="close-menu-btn"><i class="fas fa-times"></i></button>
+
+            <div class="orion-brand">
+                <svg class="orion-logo" width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30" stroke-linecap="round" class="spinning-ring"/>
+                    <circle cx="32" cy="68" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)"/>
+                    <circle cx="50" cy="50" r="6" fill="#a370f7" filter="drop-shadow(0 0 8px #a370f7)"/>
+                    <circle cx="68" cy="32" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)"/>
+                    <line x1="35" y1="65" x2="46" y2="54" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                    <line x1="54" y1="46" x2="65" y2="35" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                    <defs>
+                        <linearGradient id="gradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#a370f7"/>
+                            <stop offset="1" stop-color="#4f46e5"/>
+                        </linearGradient>
+                    </defs>
+                </svg>
+                <h1 class="orion-title">Orion <span>AI</span></h1>
+            </div>
+
+            <button id="new-chat-btn" class="glass-btn compact-btn">
+                <i class="fas fa-plus"></i> Új beszélgetés
+            </button>
+            
+            <div class="chat-list" id="chat-list"></div>
+
+            <div class="user-info-bottom">
+                {% if username == 'admin' %}
+                <a href="{{ url_for('admin_panel') }}" class="glass-btn compact-btn" style="text-decoration: none; text-align: center; margin-bottom: 15px; background: rgba(255, 255, 255, 0.1);">
+                    <i class="fas fa-shield-alt"></i> Admin Panel
+                </a>
+                {% endif %}
+                <div class="user-info-content">
+                    {% if username == 'Vendég' %}
+                        <span><i class="fas fa-user-secret" style="color: var(--text-muted);"></i> <b>{{ username }}</b></span>
+                        <a href="{{ url_for('login') }}" class="logout-link" style="color: var(--accent-color); font-weight: 600;"><i class="fas fa-sign-in-alt"></i> Belépés</a>
+                    {% else %}
+                        <span><i class="fas fa-user-astronaut"></i> <b>{{ username }}</b></span>
+                        <a href="{{ url_for('logout') }}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Kilépés</a>
+                    {% endif %}
+                </div>
+            </div>
+        </aside>
+
+        <main class="chat-window">
+            <div class="chat-header" style="display: flex; align-items: center; gap: 15px;">
+                <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
+            </div>
+            
+            <div class="messages-container" id="messages-container"></div>
+
+            <div class="input-area">
+                <div class="input-wrapper">
+                    <textarea id="message-input" placeholder="Kérdezz az Oriontól..." rows="1"></textarea>
+                    <button id="send-btn" class="circle-send-btn"><i class="fas fa-paper-plane"></i></button>
+                </div>
+                <div class="disclaimer">
+                    Az Orion AI egy mesterséges intelligencia ami hibázhat! Az adatbázisa 2023-ig tartalmaz információkat. Kérjük, ellenőrizd a fontos adatokat.
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="broadcast-modal" class="broadcast-modal">
+        <div class="glass-panel broadcast-content">
+            <div style="font-size: 40px; color: var(--accent-color); filter: drop-shadow(0 0 10px var(--accent-glow));"><i class="fas fa-bullhorn"></i></div>
+            <h3 style="color: white; font-size: 18px; font-weight: 600;">Rendszerüzenet az Admintól</h3>
+            <p id="broadcast-text-content" style="color: var(--text-main); font-size: 14px; line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); text-align: left;"></p>
+            <button id="close-broadcast-btn" class="glass-btn" style="padding: 10px; font-size: 14px; border-radius: 10px;">Bezárás</button>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>

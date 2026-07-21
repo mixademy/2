@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regisztráció - Orion AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="liquid-bg">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+    </div>
+    <div class="glass-panel auth-container">
+        <h2>Fiók létrehozása</h2>
+        <p>Regisztrálj a saját beszélgetéseidhez</p>
+        {% if error %}<div class="error-msg">{{ error }}</div>{% endif %}
+        <form method="POST">
+            <div class="input-group">
+                <label>Felhasználónév</label>
+                <input type="text" name="username" required autocomplete="off">
+            </div>
+            <div class="input-group">
+                <label>Jelszó</label>
+                <input type="password" name="password" required>
+            </div>
+            <button type="submit" class="glass-btn">Regisztráció</button>
+        </form>
+        <div class="auth-switch">
+            Már van fiókod? <a href="{{ url_for('login') }}">Jelentkezz be</a>
+        </div>
+    </div>
+</body>
+</html>

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Karbantartás - Orion AI</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="liquid-bg">
+        <div class="blob one"></div>
+        <div class="blob two"></div>
+        <div class="blob three"></div>
+    </div>
+
+    <div class="glass-panel auth-container" style="width: 450px; padding: 45px;">
+        <div style="font-size: 60px; color: var(--accent-color); margin-bottom: 25px; filter: drop-shadow(0 0 15px var(--accent-glow));">
+            <i class="fas fa-tools animate-pulse"></i>
+        </div>
+        <h2 style="font-size: 24px; font-weight: 600; margin-bottom: 15px; color: white;">Rendszerkarbantartás</h2>
+        <p style="color: var(--text-muted); font-size: 15px; line-height: 1.6; margin-bottom: 35px;">
+            Az Orion AI jelenleg tervezett frissítés vagy karbantartás alatt áll a stabilabb működésért.<br>
+            Kérlek, nézz vissza egy picit később!
+        </p>
+        
+        <a href="{{ url_for('logout') }}" class="glass-btn" style="text-decoration: none; background: rgba(255,255,255,0.08); border: 1px solid var(--glass-border); color: white;">
+            <i class="fas fa-sign-out-alt"></i> Kijelentkezés
+        </a>
+    </div>
+</body>
+</html>

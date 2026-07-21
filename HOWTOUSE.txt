@@ -1,0 +1,2 @@
+1. - run the telepites.bat file
+2. - run the Orion_AI.bat file
