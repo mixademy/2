@@ -531,3 +531,45 @@ body {
         max-width: 90%;
     }
 }
+
+/* --- KÉPGENERÁLÁS TÖLTŐKÉPERNYŐ --- */
+.img-wrapper {
+    position: relative;
+    margin: 15px 0;
+    border-radius: 12px;
+    background: rgba(0, 0, 0, 0.2);
+    border: 1px dashed var(--glass-border);
+    min-height: 150px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+}
+
+.img-loading {
+    color: var(--accent-color);
+    font-size: 14px;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    animation: pulse 1.5s infinite;
+}
+
+.img-loading i {
+    animation: spin 1s linear infinite;
+}
+
+.chat-img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 12px;
+    display: none; /* Rejtve marad, amíg le nem generálódik */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+}
+
+@keyframes pulse {
+    0% { opacity: 0.6; }
+    50% { opacity: 1; }
+    100% { opacity: 0.6; }
+}
