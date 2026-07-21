@@ -160,9 +160,15 @@ document.addEventListener('DOMContentLoaded', () => {
         
         let safeHtml = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         
+        // ÚJ: Képgeneráló animáció és cserélő logika
         safeHtml = safeHtml.replace(
             /!\[([^\]]*)\]\s*\(?([^)\s<]+)\)?/g, 
-            '<img src="$2" alt="$1" style="max-width: 100%; border-radius: 12px; margin-top: 10px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: block;">'
+            `<div class="img-wrapper">
+                <div class="img-loading">
+                    <i class="fas fa-circle-notch fa-spin"></i> Generálás folyamatban...
+                </div>
+                <img src="$2" alt="$1" class="chat-img" onload="this.style.display='block'; this.previousElementSibling.style.display='none'; this.parentElement.style.border='none'; this.parentElement.style.background='transparent';">
+            </div>`
         );
         
         messagesContainer.innerHTML += `<div class="message ${role}" style="white-space:pre-wrap">${safeHtml}</div>`; 
