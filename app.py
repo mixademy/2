@@ -759,3 +759,26 @@ def get_broadcast():
     return jsonify(
         BROADCAST_MESSAGE
     )
+
+# -------------------------
+# MAINTENANCE MODE
+# -------------------------
+
+@app.route(
+    "/admin/toggle_maintenance",
+    methods=["POST"]
+)
+@login_required
+def toggle_maintenance():
+
+    global MAINTENANCE_MODE
+
+
+    if session.get("username") == "admin":
+
+        MAINTENANCE_MODE = not MAINTENANCE_MODE
+
+
+    return redirect(
+        url_for("admin_panel")
+    )
