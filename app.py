@@ -815,3 +815,48 @@ def send_broadcast():
     return redirect(
         url_for("admin_panel")
     )
+
+# -------------------------
+# JELSZÓ MÓDOSÍTÁS
+# -------------------------
+
+@app.route(
+    "/admin/change_password/<username>",
+    methods=["POST"]
+)
+@login_required
+def change_password(username):
+
+    if session.get("username") != "admin":
+        return redirect(url_for("index"))
+
+
+    new_password = request.form.get(
+        "new_password"
+    )
+
+
+    if not new_password:
+        return redirect(
+            url_for("admin_panel")
+        )
+
+
+    user = User.query.filter_by(
+        username=username
+    ).first()
+
+
+    if user:
+
+        user.password = generate_password_hash(
+            new_password,
+            method="pbkdf2:sha256"
+        )
+
+        db.session.commit()
+
+
+    return redirect(
+        url_for("admin_panel")
+    )
