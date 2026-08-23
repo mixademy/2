@@ -1,0 +1,9 @@
+# Python felesleges fájlok
+__pycache__/
+*.pyc
+
+# A Firebase titkos kulcsod (hogy ne kerüljön fel a netre!)
+orionai-2e08e-firebase-adminsdk-fbsvc-cdf47df7d3.json
+
+# Egyéb helyi szemét
+.DS_Store
