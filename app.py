@@ -28,12 +28,20 @@ from firebase_admin import db
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "alapertelmezett_titkos_kulcs")
 
-# FIREBASE INICIALIZÁLÁS
-cred = credentials.Certificate("orionai-2e08e-firebase-adminsdk-fbsvc-cdf47df7d3.json")
-firebase_admin.initialize_app(cred, {
-    'databaseURL': 'https://orionai-2e08e-default-rtdb.europe-west1.firebasedatabase.app/'
-})
+import json
 
+# FIREBASE INICIALIZÁLÁS KÖRNYEZETI VÁLTOZÓBÓL
+firebase_key_json = os.environ.get("FIREBASE_KEY_JSON")
+if firebase_key_json:
+    key_dict = json.loads(firebase_key_json)
+    cred = credentials.Certificate(key_dict)
+else:
+    # Lokális teszteléshez megmarad a fájl, ha van
+    cred = credentials.Certificate("orionai-2e08e-firebase-adminsdk-fbsvc-cdf47df7d3.json")
+
+firebase_admin.initialize_app(cred, {
+    'databaseURL': 'https://orionai-2e08e-default-rtdb.europe-west1.firebasedatabase.app'
+})
 client = Groq(
     api_key=os.environ.get("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")
 )
