@@ -14,8 +14,8 @@
            MODERN GÖRGETŐSÁV (SCROLLBAR)
            ========================================= */
         ::-webkit-scrollbar {
-            width: 8px;
-            height: 8px;
+            width: 6px;
+            height: 6px;
         }
         ::-webkit-scrollbar-track {
             background: transparent;
@@ -36,7 +36,7 @@
         }
 
         /* =========================================
-           VILÁGOS MÓD (Tiszta fehér alap + áttetsző foltok)
+           VILÁGOS MÓD & KOMPAKT CHAT LISTA
            ========================================= */
         body.light-mode {
             background: #f4f5f8;
@@ -135,14 +135,38 @@
             box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3) !important;
         }
         
+        /* HAMBURGER MENÜ IKON FEKETE VILÁGOS MÓDBAN */
+        body.light-mode .mobile-menu-btn {
+            color: #0f172a !important;
+        }
+
+        /* KOMPAKT CHAT ELŐZMÉNYEK (Igazítva a képre) */
+        .chat-list {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            overflow-y: auto;
+            max-height: calc(100vh - 250px);
+            padding-right: 2px;
+        }
+        .chat-list-item {
+            padding: 8px 12px !important;
+            font-size: 13px !important;
+            border-radius: 8px !important;
+            margin-bottom: 2px !important;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: transparent;
+            transition: background 0.2s;
+        }
         body.light-mode .chat-list-item {
             color: #1e293b;
-            font-weight: 500;
-            border-bottom: 1px solid rgba(0,0,0,0.04);
+            border-bottom: none !important;
         }
         body.light-mode .chat-list-item:hover {
-            background: rgba(255, 255, 255, 0.9);
-            border-left: 4px solid #9333ea;
+            background: rgba(0, 0, 0, 0.05);
+            border-left: none !important;
         }
 
         body.light-mode select {
@@ -156,7 +180,7 @@
         }
 
         /* =========================================
-           KÓD BLOKK ÉS TÖKÉLETESEN HELYREHOZOTT GOMB
+           MOBILKOMPATIBILIS KÓDBLOKK ÉS GOMB
            ========================================= */
         .code-window {
             background: #1e1e2e;
@@ -166,6 +190,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
             text-align: left;
+            max-width: 100%;
         }
         body.light-mode .code-window {
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
@@ -176,11 +201,13 @@
             justify-content: space-between;
             align-items: center;
             background: rgba(0,0,0,0.3);
-            padding: 10px 15px;
+            padding: 8px 12px;
             font-family: sans-serif;
             font-size: 12px;
             color: #a0aec0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
+            flex-wrap: wrap;
+            gap: 8px;
         }
         .code-header .lang-label {
             text-transform: uppercase;
@@ -188,20 +215,18 @@
             letter-spacing: 0.5px;
         }
         
-        /* Újraírt, fixálva egységes gomb */
         .code-header .copy-btn {
             background: rgba(255, 255, 255, 0.1) !important;
             border: 1px solid rgba(255, 255, 255, 0.2) !important;
             color: #e2e8f0 !important;
             cursor: pointer;
             display: inline-flex !important;
-            flex-direction: row !important;
             align-items: center !important;
             justify-content: center !important;
             gap: 6px !important;
-            font-size: 12px !important;
+            font-size: 11px !important;
             font-family: sans-serif !important;
-            padding: 6px 12px !important;
+            padding: 4px 10px !important;
             border-radius: 6px !important;
             outline: none !important;
             box-shadow: none !important;
@@ -213,15 +238,17 @@
         }
         .code-window pre {
             margin: 0;
-            padding: 15px;
+            padding: 12px;
             background: transparent !important;
             border: none !important;
             overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
         }
         .code-window code {
             color: #e0e0e0;
             font-family: 'Courier New', Courier, monospace;
-            font-size: 14px;
+            font-size: 13px;
+            white-space: pre;
         }
     </style>
 </head>
