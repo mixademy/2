@@ -14,16 +14,14 @@
            VILÁGOS MÓD (Tiszta fehér alap + áttetsző foltok)
            ========================================= */
         body.light-mode {
-            background: #f4f5f8; /* Tiszta világos alap */
+            background: #f4f5f8;
             color: #0f172a;
         }
         
-        /* A háttérpacák szépen látszanak, de nem túlzóak */
         body.light-mode .liquid-bg { 
             opacity: 0.5 !important; 
         }
 
-        /* Fehér, de áttetsző üvegpanelek, amiken átütnek a színes foltok */
         body.light-mode .glass-panel,
         body.light-mode .sidebar {
             background: rgba(255, 255, 255, 0.75);
@@ -133,7 +131,7 @@
         }
 
         /* =========================================
-           KÓD BLOKK KINÉZET
+           KÓD BLOKK ÉS MÁSOLÁS GOMB HELYREÁLLÍTÁSA
            ========================================= */
         .code-window {
             background: #1e1e2e;
@@ -164,19 +162,24 @@
             font-weight: bold;
             letter-spacing: 0.5px;
         }
+        /* Itt javítottuk ki a gomb elrendezését és távolságát */
         .code-header .copy-btn {
-            background: transparent;
-            border: none;
-            color: #a0aec0;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #e2e8f0;
             cursor: pointer;
-            display: flex;
+            display: inline-flex;
             align-items: center;
-            gap: 5px;
+            gap: 6px;
             font-size: 12px;
-            transition: color 0.2s;
-            padding: 0;
+            padding: 4px 10px;
+            border-radius: 6px;
+            transition: all 0.2s;
         }
-        .code-header .copy-btn:hover { color: #ffffff; }
+        .code-header .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #ffffff;
+        }
         .code-window pre {
             margin: 0;
             padding: 15px;
@@ -327,7 +330,6 @@
     const themeSelect = document.getElementById('theme-select');
     const languageSelect = document.getElementById('language-select');
 
-    // Alapértékek betöltése induláskor
     if (localStorage.getItem('orion_theme') === 'light') {
         document.body.classList.add('light-mode');
         themeSelect.value = 'light';
@@ -339,13 +341,10 @@
         languageSelect.value = localStorage.getItem('orion_language');
     }
 
-    // Ablak megnyitása / bezárása
     settingsBtn.onclick = () => { settingsModal.style.display = 'flex'; };
     closeSettingsBtn.onclick = () => { settingsModal.style.display = 'none'; };
 
-    // Mentés gomb kattintás
     saveSettingsBtn.onclick = () => {
-        // Téma mentése és alkalmazása
         const selectedTheme = themeSelect.value;
         localStorage.setItem('orion_theme', selectedTheme);
         if (selectedTheme === 'light') {
@@ -354,18 +353,16 @@
             document.body.classList.remove('light-mode');
         }
 
-        // Nyelv mentése
         localStorage.setItem('orion_language', languageSelect.value);
 
-        // Vizuális visszajelzés
         const originalText = saveSettingsBtn.innerHTML;
         saveSettingsBtn.innerHTML = '<i class="fas fa-check"></i> Elmentve!';
-        saveSettingsBtn.style.background = '#4ade80'; // Zöld
+        saveSettingsBtn.style.background = '#4ade80';
         
         setTimeout(() => {
             saveSettingsBtn.innerHTML = originalText;
-            saveSettingsBtn.style.background = ''; // Vissza az eredetire
-            settingsModal.style.display = 'none'; // Ablak bezárása
+            saveSettingsBtn.style.background = '';
+            settingsModal.style.display = 'none';
         }, 1000);
     };
 
