@@ -11,6 +11,32 @@
     
     <style>
         /* =========================================
+           MODERN GÖRGETŐSÁV (SCROLLBAR) GLOBÁLISAN
+           ========================================= */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(163, 112, 247, 0.3);
+            border-radius: 10px;
+            transition: background 0.2s;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(163, 112, 247, 0.6);
+        }
+
+        body.light-mode ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+        }
+        body.light-mode ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        /* =========================================
            VILÁGOS MÓD (Tiszta fehér alap + áttetsző foltok)
            ========================================= */
         body.light-mode {
@@ -131,7 +157,7 @@
         }
 
         /* =========================================
-           KÓD BLOKK ÉS TÖKÉLETESRE IGAZÍTOTT GOMB
+           KÓD BLOKK ÉS HELYREÁLLÍTOTT GOMB
            ========================================= */
         .code-window {
             background: #1e1e2e;
@@ -163,28 +189,28 @@
             letter-spacing: 0.5px;
         }
         
-        /* Itt a javítás: flexbox, ami összetartja az ikont és a szöveget egy egységes gombba */
+        /* Teljesen átszabott, stabil, kompakt másolás gomb */
         .code-header .copy-btn {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border: 1px solid rgba(255, 255, 255, 0.15) !important;
-            color: #e2e8f0 !important;
+            all: unset;
+            box-sizing: border-box;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #e2e8f0;
             cursor: pointer;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 8px !important;
-            font-size: 12px !important;
-            font-family: sans-serif !important;
-            padding: 6px 12px !important;
-            border-radius: 6px !important;
-            transition: all 0.2s ease;
-            line-height: 1 !important;
-            box-shadow: none !important;
-            text-transform: none !important;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 12px;
+            font-family: sans-serif;
+            padding: 5px 12px;
+            border-radius: 6px;
+            transition: background 0.2s, border-color 0.2s;
         }
         .code-header .copy-btn:hover {
-            background: rgba(255, 255, 255, 0.2) !important;
-            color: #ffffff !important;
+            background: rgba(255, 255, 255, 0.2);
+            border-color: rgba(255, 255, 255, 0.3);
+            color: #ffffff;
         }
         .code-window pre {
             margin: 0;
