@@ -11,6 +11,43 @@
     
     <style>
         /* =========================================
+           KÖZÉPRE IGAZÍTOTT CHAT FELÜLET (GEMINI STÍLUS)
+           ========================================= */
+        .messages-container {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important; /* Középre húzza az üzeneteket */
+            width: 100% !important;
+        }
+        
+        .message, .chat-message {
+            width: 100% !important;
+            max-width: 850px !important; /* Maximális szélesség limitálása */
+            box-sizing: border-box !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+        }
+
+        .input-area {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important; /* Középre húzza a beviteli mezőt */
+            padding-left: 20px !important;
+            padding-right: 20px !important;
+        }
+
+        .input-wrapper {
+            width: 100% !important;
+            max-width: 810px !important; /* Igazodik a chat üzenetekhez */
+        }
+
+        .disclaimer {
+            width: 100% !important;
+            max-width: 810px !important;
+            text-align: center !important;
+        }
+
+        /* =========================================
            MODERN GÖRGETŐSÁV (SCROLLBAR)
            ========================================= */
         ::-webkit-scrollbar {
@@ -140,7 +177,7 @@
             color: #0f172a !important;
         }
 
-        /* KOMPAKT CHAT ELŐZMÉNYEK (Igazítva a képre) */
+        /* KOMPAKT CHAT ELŐZMÉNYEK */
         .chat-list {
             display: flex;
             flex-direction: column;
