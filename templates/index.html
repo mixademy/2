@@ -11,57 +11,83 @@
     
     <style>
         /* =========================================
-           KÖZÉPRE IGAZÍTOTT CHAT (GEMINI STÍLUS)
-           A legtisztább módszer: a konténert szorítjuk be, nem a buborékokat rontjuk el!
+           KÖZÉPRE IGAZÍTOTT CHAT ÉS BEVITELI MEZŐ (TÖKÉLETES SZINKRON)
            ========================================= */
         .messages-container {
-            /* Dinamikusan kiszámolja a helyet, hogy középen pont max 850px maradjon */
-            padding-left: max(24px, calc(50% - 425px)) !important;
-            padding-right: max(24px, calc(50% - 425px)) !important;
+            display: flex !important;
+            flex-direction: column !important;
+            /* Dinamikus padding: egy fix, max 850px széles csövet hoz létre középen */
+            padding-left: max(20px, calc(50% - 425px)) !important;
+            padding-right: max(20px, calc(50% - 425px)) !important;
+            align-items: stretch !important; /* Kitölteti a teret a buborékokkal */
+            overflow-x: hidden; 
         }
 
-        .input-wrapper, .disclaimer {
-            max-width: 850px !important;
+        .input-area {
+            display: flex !important;
+            flex-direction: column !important;
+            /* Hajszálpontosan ugyanaz a padding logika, mint a chatnél */
+            padding-left: max(20px, calc(50% - 425px)) !important;
+            padding-right: max(20px, calc(50% - 425px)) !important;
+            align-items: stretch !important;
+        }
+
+        .input-wrapper {
             width: 100% !important;
+            max-width: 100% !important; /* A padding miatt ez automatikusan pont 850px lesz */
         }
 
-        /* --- BUBORÉKOK JAVÍTÁSA (Tiszteletben tartva a style.css-edet) --- */
-        .message {
-            width: fit-content !important; /* Engedi, hogy rázsugorodjon a szövegre */
-            display: block !important; /* Garantálja, hogy a szöveg és a kódblokk EGYMÁS ALÁ kerüljön */
+        .disclaimer {
+            width: 100% !important;
+            max-width: 100% !important;
+            text-align: center !important;
+        }
+
+        /* --- BUBORÉKOK IGAZÍTÁSA EBBEN A 850PX-ES SÁVBAN --- */
+        .message.user {
+            align-self: flex-end !important; /* Jobb szélre tapad */
+            width: fit-content !important;
+            max-width: 100% !important;
+            display: block !important;
+            word-wrap: break-word !important;
+        }
+
+        .message.assistant, .message.system {
+            align-self: flex-start !important; /* Bal szélre tapad */
+            width: 100% !important;
+            max-width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
             word-wrap: break-word !important;
         }
         
-        .message.assistant, .message.system {
-            max-width: 100% !important; /* Az AI buborék kitöltheti a 850px-et, ha széles a kód */
-        }
-
-        .message.user {
-            max-width: 85% !important; /* Felhasználó picit rövidebb marad */
+        .message.assistant .code-window {
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
 
         /* =========================================
-           PC SIDEBAR ÖSSZECSUKHATÓSÁG
+           PC SIDEBAR ÖSSZECSUKHATÓSÁG ÉS HIBÁTLAN GOMB
            ========================================= */
         @media (min-width: 769px) {
             .mobile-menu-btn {
                 display: flex !important; 
                 align-items: center;
                 justify-content: center;
+                margin-right: 10px !important; /* Kap egy kis levegőt a gomb */
             }
             .sidebar {
-                transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s, padding 0.3s, margin 0.3s !important;
+                transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease, border-color 0.3s ease !important;
                 white-space: nowrap; 
             }
             .sidebar.collapsed {
                 width: 0 !important;
-                min-width: 0 !important;
                 padding-left: 0 !important;
                 padding-right: 0 !important;
-                margin-left: -20px !important; 
-                opacity: 0 !important;
-                border: none !important;
+                /* Átlátszóvá teszi a felesleges csíkot ahelyett, hogy balra tolná: */
+                border-right-color: transparent !important; 
                 overflow: hidden !important;
+                opacity: 0 !important;
             }
         }
 
@@ -151,7 +177,6 @@
             border-top-right-radius: 20px;
         }
 
-        /* Világos mód buborék színek */
         body.light-mode .message.assistant,
         body.light-mode .message.system {
             background: rgba(255, 255, 255, 0.95) !important;
@@ -363,8 +388,8 @@
 
         <main class="chat-window">
             <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px;">
-                <div style="display: flex; align-items: center; gap: 15px;">
-                    <button id="mobile-menu-btn" class="mobile-menu-btn" style="background: transparent; border: none; font-size: 20px; cursor: pointer;"><i class="fas fa-bars"></i></button>
+                <div style="display: flex; align-items: center;">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn" style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: inherit;"><i class="fas fa-bars"></i></button>
                     <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500; margin: 0;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
                 </div>
                 <button id="open-settings-btn" style="background: transparent; border: none; color: inherit; font-size: 22px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Beállítások">
