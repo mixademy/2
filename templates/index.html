@@ -11,11 +11,21 @@
     
     <style>
         /* =========================================
-           FORGÓ ANIMÁCIÓK ÉS LOGÓ STABILIZÁLÁS
+           LOGÓ ÉS FORGÁS TÖKÉLETES FIXÁLÁSA
            ========================================= */
+        .orion-brand {
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
+        }
+
         .orion-logo {
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            min-height: 40px !important;
             flex-shrink: 0 !important;
-            transform: none !important;
+            overflow: visible !important;
         }
 
         .spinning-ring {
