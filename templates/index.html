@@ -11,18 +11,15 @@
     
     <style>
         /* =========================================
-           VILÁGOS MÓD (LIGHT MODE) - PRÉMIUM ÜVEGHATÁS
+           VILÁGOS MÓD (LIGHT MODE)
            ========================================= */
         body.light-mode {
-            background: #e9eaf0; /* Elegáns, nagyon világos hidegszürke háttér */
-            color: #2d3748; /* Sötétszürke szöveg (sokkal szebb, mint a koromfekete) */
+            background: #e9eaf0;
+            color: #2d3748;
         }
         
-        body.light-mode .liquid-bg {
-            opacity: 0.15; /* A lila animált foltok finoman átsejlenek a világos háttéren is */
-        }
+        body.light-mode .liquid-bg { opacity: 0.15; }
 
-        /* Fő üvegpanelek (Sidebar és a fő app konténer) */
         body.light-mode .glass-panel,
         body.light-mode .sidebar {
             background: rgba(255, 255, 255, 0.65);
@@ -32,20 +29,13 @@
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
         }
         
-        body.light-mode .orion-title {
-            color: #1a202c;
-        }
+        body.light-mode .orion-title { color: #1a202c; }
 
-        /* LÁTHATATLAN SZÖVEGEK JAVÍTÁSA (Középső üdvözlő szöveg) */
-        body.light-mode h1, 
-        body.light-mode h2, 
-        body.light-mode h3, 
-        body.light-mode p,
-        body.light-mode .disclaimer {
+        body.light-mode h1, body.light-mode h2, body.light-mode h3, 
+        body.light-mode p, body.light-mode .disclaimer {
             color: #2d3748 !important; 
         }
 
-        /* Input terület (Az eddigi csúnya szürke doboz helyett szép üveges/fehér) */
         body.light-mode .input-area {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(15px);
@@ -59,15 +49,13 @@
             border-radius: 20px;
         }
 
-        body.light-mode input,
-        body.light-mode textarea {
+        body.light-mode input, body.light-mode textarea {
             color: #2d3748;
             background: transparent !important;
             border: none !important;
         }
 
-        body.light-mode input::placeholder,
-        body.light-mode textarea::placeholder {
+        body.light-mode input::placeholder, body.light-mode textarea::placeholder {
             color: #a0aec0;
         }
         
@@ -76,7 +64,6 @@
             border-bottom: 1px solid rgba(255, 255, 255, 1);
         }
 
-        /* Chat üzenetek buborékjai */
         body.light-mode .message.assistant .message-content,
         body.light-mode .message.system .message-content {
             background: #ffffff;
@@ -92,19 +79,7 @@
             box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
         }
 
-        /* Kód blokkok háttere (sötét maradjon, hogy a kód jól olvasható legyen) */
-        body.light-mode pre {
-            background: #1e1e2e;
-            border: 1px solid rgba(0,0,0,0.1);
-            box-shadow: inset 0 2px 10px rgba(0,0,0,0.2);
-        }
-        body.light-mode code {
-            color: #e0e0e0;
-        }
-
-        /* OLDALSÁV GOMBOK (Világos mód, Admin Panel) - Üveghatás visszahozása */
-        body.light-mode .glass-btn,
-        body.light-mode #theme-toggle-btn {
+        body.light-mode .glass-btn, body.light-mode #theme-toggle-btn {
             background: rgba(255, 255, 255, 0.6) !important;
             border: 1px solid rgba(0, 0, 0, 0.05) !important;
             color: #4a5568 !important;
@@ -112,26 +87,19 @@
             transition: all 0.3s ease;
         }
 
-        body.light-mode .glass-btn:hover,
-        body.light-mode #theme-toggle-btn:hover {
+        body.light-mode .glass-btn:hover, body.light-mode #theme-toggle-btn:hover {
             background: #ffffff !important;
             border-color: rgba(168, 85, 247, 0.4) !important;
             color: #a855f7 !important;
-            transform: translateY(-1px);
         }
 
-        /* Az Új beszélgetés gomb vibráló lila maradjon */
         body.light-mode #new-chat-btn {
             background: linear-gradient(135deg, #a855f7, #8b5cf6) !important;
             color: white !important;
             border: none !important;
             box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3) !important;
         }
-        body.light-mode #new-chat-btn:hover {
-            opacity: 0.9;
-        }
         
-        /* Chat lista (bal oldali menü elemei) */
         body.light-mode .chat-list-item {
             color: #4a5568;
             border-bottom: 1px solid rgba(0,0,0,0.03);
@@ -139,6 +107,73 @@
         body.light-mode .chat-list-item:hover {
             background: rgba(255, 255, 255, 0.9);
             border-left: 3px solid #a855f7;
+        }
+
+        /* =========================================
+           KÓD BLOKK KINÉZET (Ablak design)
+           ========================================= */
+        .code-window {
+            background: #1e1e2e;
+            border-radius: 12px;
+            overflow: hidden;
+            margin: 15px 0;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            border: 1px solid rgba(255,255,255,0.1);
+            text-align: left;
+        }
+
+        body.light-mode .code-window {
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border: 1px solid rgba(0,0,0,0.1);
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: rgba(0,0,0,0.3);
+            padding: 8px 15px;
+            font-family: sans-serif;
+            font-size: 12px;
+            color: #a0aec0;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        .code-header .lang-label {
+            text-transform: uppercase;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .code-header .copy-btn {
+            background: transparent;
+            border: none;
+            color: #a0aec0;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            transition: color 0.2s;
+            padding: 0;
+        }
+
+        .code-header .copy-btn:hover {
+            color: #ffffff;
+        }
+
+        .code-window pre {
+            margin: 0;
+            padding: 15px;
+            background: transparent !important;
+            border: none !important;
+            overflow-x: auto;
+        }
+
+        .code-window code {
+            color: #e0e0e0;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -179,7 +214,6 @@
             
             <div class="chat-list" id="chat-list"></div>
 
-            <!-- VILÁGOS MÓD VÁLTÓ GOMB -->
             <button id="theme-toggle-btn" class="glass-btn" style="width: 90%; margin: 10px auto; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
                 <span id="theme-icon">☀️</span> <span id="theme-text">Világos mód</span>
             </button>
@@ -262,32 +296,58 @@
 
     // --- KÓD MÁSOLÁS ÉS KÉP LETÖLTÉS GOMBOK ---
     function injectButtons() {
-        // 1. Kód másolás
+        // 1. KÓD BLOKK (Ablak design és Másolás)
         const codeBlocks = document.querySelectorAll('pre');
         codeBlocks.forEach(pre => {
-            if (pre.querySelector('.copy-btn')) return; 
+            // Ha már be van csomagolva az ablakba, átugorjuk
+            if (pre.parentElement && pre.parentElement.classList.contains('code-window')) return; 
             
-            pre.style.position = 'relative';
+            // Kiderítjük a nyelvet (pl. python, html)
+            let lang = "KÓD";
+            const codeEl = pre.querySelector('code');
+            if (codeEl && codeEl.className) {
+                const match = codeEl.className.match(/language-(\w+)/);
+                if (match) lang = match[1];
+            }
+
+            // Konténer és fejléc létrehozása
+            const wrapper = document.createElement('div');
+            wrapper.className = 'code-window';
+            
+            const header = document.createElement('div');
+            header.className = 'code-header';
+            
+            const langLabel = document.createElement('span');
+            langLabel.className = 'lang-label';
+            langLabel.innerText = lang;
             
             const copyBtn = document.createElement('button');
             copyBtn.className = 'copy-btn';
-            copyBtn.innerText = '📋 Másolás';
-            copyBtn.style.cssText = 'position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; z-index: 5; transition: all 0.2s;';
-            
-            copyBtn.onmouseover = () => { copyBtn.style.background = 'rgba(255,255,255,0.2)'; };
-            copyBtn.onmouseout = () => { copyBtn.style.background = 'rgba(255,255,255,0.1)'; };
+            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Másolás';
 
+            // Másolás funkció, ami most már TÉNYLEG CSAK a kódot másolja
             copyBtn.onclick = () => {
-                const code = pre.querySelector('code') ? pre.querySelector('code').innerText : pre.innerText;
-                navigator.clipboard.writeText(code).then(() => {
-                    copyBtn.innerText = '✅ Másolva!';
-                    setTimeout(() => copyBtn.innerText = '📋 Másolás', 2000);
+                const textToCopy = codeEl ? codeEl.textContent : pre.textContent;
+                navigator.clipboard.writeText(textToCopy).then(() => {
+                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Másolva!';
+                    copyBtn.style.color = '#4ade80'; // Siker esetén zöld lesz a szöveg
+                    setTimeout(() => {
+                        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Másolás';
+                        copyBtn.style.color = '';
+                    }, 2000);
                 });
             };
-            pre.appendChild(copyBtn);
+            
+            // Összeszerelés a DOM-ban
+            header.appendChild(langLabel);
+            header.appendChild(copyBtn);
+            
+            pre.parentNode.insertBefore(wrapper, pre);
+            wrapper.appendChild(header);
+            wrapper.appendChild(pre);
         });
 
-        // 2. Kép letöltés
+        // 2. KÉP LETÖLTÉS (Maradt a hibátlan, jól bevált kód)
         const images = document.querySelectorAll('.message-content img, .chat-message img, img');
         images.forEach(img => {
             if (!img.src.includes('pollinations')) return; 
@@ -301,7 +361,7 @@
             
             const dlBtn = document.createElement('button');
             dlBtn.className = 'download-btn';
-            dlBtn.innerText = '⬇️ Letöltés';
+            dlBtn.innerHTML = '<i class="fas fa-download"></i> Letöltés';
             dlBtn.style.cssText = 'position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; z-index: 5; transition: all 0.2s;';
             
             dlBtn.onmouseover = () => { dlBtn.style.background = 'rgba(0,0,0,0.8)'; };
@@ -309,7 +369,7 @@
 
             dlBtn.onclick = async () => {
                 try {
-                    dlBtn.innerText = '⏳ Letöltés...';
+                    dlBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Letöltés...';
                     const response = await fetch(img.src);
                     const blob = await response.blob();
                     const blobUrl = window.URL.createObjectURL(blob);
@@ -322,11 +382,11 @@
                     document.body.removeChild(a);
                     window.URL.revokeObjectURL(blobUrl);
                     
-                    dlBtn.innerText = '✅ Kész!';
-                    setTimeout(() => dlBtn.innerText = '⬇️ Letöltés', 2000);
+                    dlBtn.innerHTML = '<i class="fas fa-check"></i> Kész!';
+                    setTimeout(() => dlBtn.innerHTML = '<i class="fas fa-download"></i> Letöltés', 2000);
                 } catch (err) {
                     console.error(err);
-                    dlBtn.innerText = '❌ Hiba';
+                    dlBtn.innerHTML = '❌ Hiba';
                 }
             };
             wrapper.appendChild(dlBtn);
