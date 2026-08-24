@@ -1,6 +1,7 @@
 import os
 import uuid
 import time
+import json
 from functools import wraps
 
 from flask import (
@@ -20,15 +21,13 @@ from werkzeug.security import (
 
 from groq import Groq
 
-# FIREBASE IMPORTOK (A models.py IMPORTJAI HELYETT)
+# FIREBASE IMPORTOK
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "alapertelmezett_titkos_kulcs")
-
-import json
 
 # FIREBASE INICIALIZÁLÁS KÖRNYEZETI VÁLTOZÓBÓL
 firebase_key_json = os.environ.get("FIREBASE_KEY_JSON")
@@ -42,8 +41,10 @@ else:
 firebase_admin.initialize_app(cred, {
     'databaseURL': 'https://orionai-2e08e-default-rtdb.europe-west1.firebasedatabase.app'
 })
+
+# GROQ KLIENS (Helyesen a változó nevét kérjük el)
 client = Groq(
-    api_key=os.environ.get("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")
+    api_key=os.environ.get("GROQ_API_KEY")
 )
 
 MAINTENANCE_MODE = False
@@ -179,10 +180,7 @@ def api_chats():
 def delete_chat(c_id):
     current_user = session.get("user_id") or session.get("guest_id")
     
-    # Chat eltávolítása a felhasználó listájából
     db.reference(f'user_chats/{current_user}/{c_id}').delete()
-    
-    # A chathez tartozó összes üzenet törlése
     db.reference(f'messages/{c_id}').delete()
 
     return jsonify({"success": True})
@@ -219,14 +217,13 @@ def send_msg(c_id):
         now = int(time.time())
         limit_time = now - (3 * 3600)
 
-        # Vendég limitek ellenőrzése
         usage_ref = db.reference(f'guest_usage/{guest_id}')
         usages = usage_ref.get() or {}
         
         valid_count = 0
         for u_id, timestamp in list(usages.items()):
             if timestamp < limit_time:
-                usage_ref.child(u_id).delete() # Régi limitek törlése
+                usage_ref.child(u_id).delete()
             else:
                 valid_count += 1
 
@@ -237,10 +234,8 @@ def send_msg(c_id):
                 "new_title": ""
             })
 
-        # Új használat rögzítése
         usage_ref.push(now)
 
-    # Felhasználói üzenet mentése
     messages_ref = db.reference(f'messages/{c_id}')
     messages_ref.push({
         "role": "user",
@@ -248,7 +243,6 @@ def send_msg(c_id):
         "timestamp": int(time.time())
     })
 
-    # Cím frissítése (ha ez az első üzenet)
     current_user = session.get("user_id") or session.get("guest_id")
     msg_count = len(messages_ref.get() or {})
     
@@ -260,160 +254,30 @@ def send_msg(c_id):
         db.reference(f'user_chats/{current_user}/{c_id}').update({"title": new_title})
         title_updated = True
 
-    # Chat előzmény betöltése
     history_data = messages_ref.order_by_child('timestamp').get() or {}
     
-    api_messages = [{
+api_messages = [{
         "role": "system",
         "content": """
 You are Orion AI, a highly intelligent and professional assistant.
 CRITICAL RULE: YOU MUST REPLY IN THE EXACT SAME LANGUAGE AS THE USER'S PROMPT.
 If the user writes in English, you MUST reply in English. Ha a felhasználó magyarul ír, válaszolj magyarul.
 Használj tökéletes, nyelvtanilag helyes magyar ragozást és mondatszerkezeteket. Kerüld az anglicizmusokat és a tükörfordításokat!
-Kerüld a felesleges ismétlődő üdvözléseket és a mesterségesen jópofizó stílust. Légy lényegretörő és precíz.
 
-KÉPGENERÁLÁS / IMAGE GENERATION: Ha a felhasználó képet kér / If the user asks for an image,
-generate the best English prompt and reply with this Markdown format:
-![image](https://image.pollinations.ai/prompt/INSERT_PROMPT_HERE?width=800&height=800&nologo=true&seed=RANDOM_NUM)
-CRITICAL: Replace 'INSERT_PROMPT_HERE' with your generated English prompt (spaces are allowed).
-Replace 'RANDOM_NUM' with a random 5-digit number to avoid caching! A kép mellé írj egy rövid, kedves mondatot az adott nyelven.
+KÓDOLÁS ÉS PROGRAMOZÁS / CODING:
+Amikor kódot, szkriptet, vagy HTML/CSS/JS fájlt generálsz, azt KIVÉTEL NÉLKÜL egy megfelelő Markdown kódblokkba kell tenned, jelezve a nyelvet is. Például:
+```python
+print("Hello World")
+```
+Ha a kódhoz magyarázatot fűzöl, a szöveg maradjon a kódblokkon kívül.
+
+KÉPGENERÁLÁS / IMAGE GENERATION:
+Ha a felhasználó képet kér, kötelezően egy Markdown képlinket kell visszadnod a következő formátumban:
+![Kép](https://image.pollinations.ai/prompt/{angol_nyelvu_reszletes_leiras}?width=1024&height=1024&model=flux&nologo=true)
+
+SZABÁLYOK A KÉPGENERÁLÁSHOZ:
+1. Az {angol_nyelvu_reszletes_leiras} helyére a felhasználó kérésének PROFI, RÉSZLETES, ANGOL nyelvű fordítását és kibővítését kell beírnod. A szavakat %20-szal válaszd el (pl. cyberpunk%20city,%20neon%20lights).
+2. Használj professzionális kulcsszavakat a leírásban (pl. "photorealistic, 8k resolution, cinematic lighting, highly detailed").
+3. Soha ne adj meg más linket, csak a megadott URL-t a "model=flux" és "nologo=true" paraméterekkel. A kép mellé írj egy rövid, kedves mondatot.
 """
     }]
-
-    for msg_id, msg in history_data.items():
-        api_messages.append({"role": msg["role"], "content": msg["content"]})
-
-    # Groq hívás
-    try:
-        response = client.chat.completions.create(
-            model=model_name,
-            messages=api_messages
-        )
-        reply = response.choices[0].message.content
-    except Exception as e:
-        print("GROQ ERROR:", e)
-        reply = "Hiba történt az AI válasz generálása közben."
-
-    # AI válasz mentése
-    messages_ref.push({
-        "role": "assistant",
-        "content": reply,
-        "timestamp": int(time.time())
-    })
-
-    return jsonify({
-        "reply": reply,
-        "title_updated": title_updated,
-        "new_title": new_title
-    })
-
-# -------------------------
-# ADMIN PANEL
-# -------------------------
-@app.route('/admin')
-@login_required
-def admin_panel():
-    if session.get("username") != "admin":
-        return redirect(url_for("index"))
-
-    users_data = db.reference('users').get() or {}
-    user_chats_data = db.reference('user_chats').get() or {}
-    messages_data = db.reference('messages').get() or {}
-
-    total_users = len(users_data)
-    total_chats = sum(len(chats) for chats in user_chats_data.values())
-    total_msgs = sum(len(msgs) for msgs in messages_data.values())
-
-    user_stats = []
-    for uname, udata in users_data.items():
-        uid = udata.get('id')
-        chat_count = len(user_chats_data.get(uid, {}))
-        user_stats.append({
-            "username": uname,
-            "chats": chat_count
-        })
-
-    return render_template(
-        "admin.html",
-        users=user_stats,
-        total_users=total_users,
-        total_chats=total_chats,
-        total_msgs=total_msgs,
-        username=session.get("username"),
-        maintenance=MAINTENANCE_MODE
-    )
-
-# -------------------------
-# BROADCAST & MAINTENANCE
-# -------------------------
-@app.route('/api/broadcast')
-def get_broadcast():
-    return jsonify(BROADCAST_MESSAGE)
-
-@app.route("/admin/toggle_maintenance", methods=["POST"])
-@login_required
-def toggle_maintenance():
-    global MAINTENANCE_MODE
-    if session.get("username") == "admin":
-        MAINTENANCE_MODE = not MAINTENANCE_MODE
-    return redirect(url_for("admin_panel"))
-
-@app.route("/admin/broadcast", methods=["POST"])
-@login_required
-def send_broadcast():
-    global BROADCAST_MESSAGE
-    if session.get("username") == "admin":
-        msg_text = request.form.get("broadcast_msg")
-        if msg_text:
-            BROADCAST_MESSAGE = {
-                "id": str(uuid.uuid4()),
-                "text": msg_text
-            }
-    return redirect(url_for("admin_panel"))
-
-@app.route("/admin/change_password/<username>", methods=["POST"])
-@login_required
-def change_password(username):
-    if session.get("username") != "admin":
-        return redirect(url_for("index"))
-
-    new_password = request.form.get("new_password")
-    if not new_password:
-        return redirect(url_for("admin_panel"))
-
-    user_ref = db.reference(f'users/{username}')
-    if user_ref.get():
-        user_ref.update({
-            'password': generate_password_hash(new_password, method="pbkdf2:sha256")
-        })
-
-    return redirect(url_for("admin_panel"))
-
-@app.route("/admin/delete/<username>", methods=["POST"])
-@login_required
-def delete_user(username):
-    if session.get("username") != "admin" or username == "admin":
-        return redirect(url_for("admin_panel"))
-
-    user_ref = db.reference(f'users/{username}')
-    user_data = user_ref.get()
-
-    if user_data:
-        uid = user_data.get('id')
-        
-        # A felhasználó chatjeinek kikeresése és az üzenetek törlése
-        chats = db.reference(f'user_chats/{uid}').get() or {}
-        for c_id in chats.keys():
-            db.reference(f'messages/{c_id}').delete()
-            
-        # Chat lista törlése
-        db.reference(f'user_chats/{uid}').delete()
-        
-        # Felhasználó törlése
-        user_ref.delete()
-
-    return redirect(url_for("admin_panel"))
-
-
-if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5000, debug=True)
