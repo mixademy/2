@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="hu">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -10,7 +9,6 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
     <link rel="manifest" href="/static/manifest.json">
 </head>
-
 <body data-user="{{ username }}">
     <div class="liquid-bg">
         <div class="blob one"></div>
@@ -25,19 +23,17 @@
             <button id="close-menu-btn" class="close-menu-btn"><i class="fas fa-times"></i></button>
 
             <div class="orion-brand">
-                <svg class="orion-logo" width="40" height="40" viewBox="0 0 100 100" fill="none"
-                    xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30"
-                        stroke-linecap="round" class="spinning-ring" />
-                    <circle cx="32" cy="68" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)" />
-                    <circle cx="50" cy="50" r="6" fill="#a370f7" filter="drop-shadow(0 0 8px #a370f7)" />
-                    <circle cx="68" cy="32" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)" />
-                    <line x1="35" y1="65" x2="46" y2="54" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
-                    <line x1="54" y1="46" x2="65" y2="35" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
+                <svg class="orion-logo" width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30" stroke-linecap="round" class="spinning-ring"/>
+                    <circle cx="32" cy="68" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)"/>
+                    <circle cx="50" cy="50" r="6" fill="#a370f7" filter="drop-shadow(0 0 8px #a370f7)"/>
+                    <circle cx="68" cy="32" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)"/>
+                    <line x1="35" y1="65" x2="46" y2="54" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
+                    <line x1="54" y1="46" x2="65" y2="35" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
                     <defs>
                         <linearGradient id="gradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#a370f7" />
-                            <stop offset="1" stop-color="#4f46e5" />
+                            <stop stop-color="#a370f7"/>
+                            <stop offset="1" stop-color="#4f46e5"/>
                         </linearGradient>
                     </defs>
                 </svg>
@@ -47,27 +43,22 @@
             <button id="new-chat-btn" class="glass-btn compact-btn">
                 <i class="fas fa-plus"></i> Új beszélgetés
             </button>
-
+            
             <div class="chat-list" id="chat-list"></div>
 
             <div class="user-info-bottom">
                 {% if username == 'admin' %}
-                <a href="{{ url_for('admin_panel') }}" class="glass-btn compact-btn"
-                    style="text-decoration: none; text-align: center; margin-bottom: 15px; background: rgba(255, 255, 255, 0.1);">
+                <a href="{{ url_for('admin_panel') }}" class="glass-btn compact-btn" style="text-decoration: none; text-align: center; margin-bottom: 15px; background: rgba(255, 255, 255, 0.1);">
                     <i class="fas fa-shield-alt"></i> Admin Panel
                 </a>
                 {% endif %}
                 <div class="user-info-content">
                     {% if username == 'Vendég' %}
-                    <span><i class="fas fa-user-secret" style="color: var(--text-muted);"></i> <b>{{ username
-                            }}</b></span>
-                    <a href="{{ url_for('login') }}" class="logout-link"
-                        style="color: var(--accent-color); font-weight: 600;"><i class="fas fa-sign-in-alt"></i>
-                        Belépés</a>
+                        <span><i class="fas fa-user-secret" style="color: var(--text-muted);"></i> <b>{{ username }}</b></span>
+                        <a href="{{ url_for('login') }}" class="logout-link" style="color: var(--accent-color); font-weight: 600;"><i class="fas fa-sign-in-alt"></i> Belépés</a>
                     {% else %}
-                    <span><i class="fas fa-user-astronaut"></i> <b>{{ username }}</b></span>
-                    <a href="{{ url_for('logout') }}" class="logout-link"><i class="fas fa-sign-out-alt"></i>
-                        Kilépés</a>
+                        <span><i class="fas fa-user-astronaut"></i> <b>{{ username }}</b></span>
+                        <a href="{{ url_for('logout') }}" class="logout-link"><i class="fas fa-sign-out-alt"></i> Kilépés</a>
                     {% endif %}
                 </div>
             </div>
@@ -76,10 +67,9 @@
         <main class="chat-window">
             <div class="chat-header" style="display: flex; align-items: center; gap: 15px;">
                 <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500;"><i class="fas fa-sparkles"></i>
-                    Orion AI készenlétben</h2>
+                <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
             </div>
-
+            
             <div class="messages-container" id="messages-container"></div>
 
             <div class="input-area">
@@ -88,8 +78,7 @@
                     <button id="send-btn" class="circle-send-btn"><i class="fas fa-paper-plane"></i></button>
                 </div>
                 <div class="disclaimer">
-                    Az Orion AI egy mesterséges intelligencia ami hibázhat! Az adatbázisa 2023-ig tartalmaz
-                    információkat. Kérjük, ellenőrizd a fontos adatokat.
+                    Az Orion AI egy mesterséges intelligencia ami hibázhat! Az adatbázisa 2023-ig tartalmaz információkat. Kérjük, ellenőrizd a fontos adatokat.
                 </div>
             </div>
         </main>
@@ -97,149 +86,84 @@
 
     <div id="broadcast-modal" class="broadcast-modal">
         <div class="glass-panel broadcast-content">
-            <div style="font-size: 40px; color: var(--accent-color); filter: drop-shadow(0 0 10px var(--accent-glow));">
-                <i class="fas fa-bullhorn"></i></div>
+            <div style="font-size: 40px; color: var(--accent-color); filter: drop-shadow(0 0 10px var(--accent-glow));"><i class="fas fa-bullhorn"></i></div>
             <h3 style="color: white; font-size: 18px; font-weight: 600;">Rendszerüzenet az Admintól</h3>
-            <p id="broadcast-text-content"
-                style="color: var(--text-main); font-size: 14px; line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); text-align: left;">
-            </p>
-            <button id="close-broadcast-btn" class="glass-btn"
-                style="padding: 10px; font-size: 14px; border-radius: 10px;">Bezárás</button>
+            <p id="broadcast-text-content" style="color: var(--text-main); font-size: 14px; line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); text-align: left;"></p>
+            <button id="close-broadcast-btn" class="glass-btn" style="padding: 10px; font-size: 14px; border-radius: 10px;">Bezárás</button>
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
-    <!-- KÓD MÁSOLÁS ÉS KÉP LETÖLTÉS GOMBOK -->
-    <style>
-        /* Gombok dizájnja (üveghatású, mint a többi) */
-        .copy-btn,
-        .download-btn {
-            position: absolute;
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            transition: all 0.2s ease;
-            z-index: 10;
-            font-family: inherit;
-        }
-
-        .copy-btn:hover,
-        .download-btn:hover {
-            background: rgba(255, 255, 255, 0.3);
-            transform: scale(1.05);
-        }
-
-        .copy-btn {
-            top: 8px;
-            right: 8px;
-        }
-
-        .img-wrapper {
-            position: relative;
-            display: inline-block;
-            max-width: 100%;
-            margin-top: 10px;
-        }
-
-        .download-btn {
-            bottom: 12px;
-            right: 12px;
-        }
-
-        /* Biztosítjuk, hogy a kódblokk relatív legyen a gombhoz */
-        pre {
-            position: relative !important;
-        }
-    </style>
-
     <script>
-        // Ez a függvény teszi rá a gombokat az új üzenetekre
-        function addActionButtons() {
-            // 1. KÓD MÁSOLÁS GOMBOK
-            document.querySelectorAll('pre').forEach((pre) => {
-                if (pre.querySelector('.copy-btn')) return; // Ha már van gomb, kihagyjuk
-
-                const btn = document.createElement('button');
-                btn.className = 'copy-btn';
-                btn.innerHTML = '📋 Másolás';
-                pre.appendChild(btn);
-
-                btn.addEventListener('click', () => {
-                    // Megkeressük a kódot a pre tag-en belül
-                    const codeElement = pre.querySelector('code');
-                    const textToCopy = codeElement ? codeElement.innerText : pre.innerText.replace('📋 Másolás', '');
-
-                    navigator.clipboard.writeText(textToCopy).then(() => {
-                        btn.innerHTML = '✅ Másolva!';
-                        setTimeout(() => btn.innerHTML = '📋 Másolás', 2000);
-                    }).catch(() => {
-                        btn.innerHTML = '❌ Hiba';
-                    });
+    // Automatikus gomb-beszúró, ami folyamatosan figyeli a chat dobozt
+    function injectButtons() {
+        // 1. Kód másolás gombok kezelése
+        const codeBlocks = document.querySelectorAll('pre');
+        codeBlocks.forEach(pre => {
+            if (pre.querySelector('.copy-btn')) return; // Ha már van gomb, nem duplázzuk
+            
+            // Relatív pozíció a kóddoboznak, hogy a gomb a sarkába tudjon ülni
+            pre.style.position = 'relative';
+            
+            const copyBtn = document.createElement('button');
+            copyBtn.innerText = '📋 Másolás';
+            copyBtn.style.cssText = 'position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; z-index: 5;';
+            
+            copyBtn.onclick = () => {
+                const code = pre.querySelector('code') ? pre.querySelector('code').innerText : pre.innerText;
+                navigator.clipboard.writeText(code).then(() => {
+                    copyBtn.innerText = '✅ Másolva!';
+                    setTimeout(() => copyBtn.innerText = '📋 Másolás', 2000);
                 });
-            });
-
-            // 2. KÉP LETÖLTÉS GOMBOK
-            document.querySelectorAll('img').forEach((img) => {
-                // Csak a Pollinations (AI generált) képekre tesszük rá
-                if (!img.src.includes('pollinations') || img.parentElement.classList.contains('img-wrapper')) return;
-
-                // Becsomagoljuk a képet, hogy a gombot rá tudjuk tenni
-                const wrapper = document.createElement('div');
-                wrapper.className = 'img-wrapper';
-                img.parentNode.insertBefore(wrapper, img);
-                wrapper.appendChild(img);
-
-                const btn = document.createElement('button');
-                btn.className = 'download-btn';
-                btn.innerHTML = '⬇️ Letöltés';
-                wrapper.appendChild(btn);
-
-                btn.addEventListener('click', async () => {
-                    try {
-                        btn.innerHTML = '⏳...';
-                        // Letöltjük a képet a háttérben
-                        const response = await fetch(img.src);
-                        const blob = await response.blob();
-                        const url = window.URL.createObjectURL(blob);
-
-                        // Létrehozunk egy rejtett linket a letöltéshez
-                        const a = document.createElement('a');
-                        a.style.display = 'none';
-                        a.href = url;
-                        a.download = `OrionAI_${Math.floor(Math.random() * 10000)}.jpg`;
-                        document.body.appendChild(a);
-                        a.click();
-
-                        // Takarítás
-                        window.URL.revokeObjectURL(url);
-                        document.body.removeChild(a);
-
-                        btn.innerHTML = '✅ Kész!';
-                        setTimeout(() => btn.innerHTML = '⬇️ Letöltés', 2000);
-                    } catch (e) {
-                        console.error(e);
-                        btn.innerHTML = '❌ Hiba';
-                    }
-                });
-            });
-        }
-
-        // A szkript automatikusan figyeli a változásokat (amikor az AI új üzenetet ír)
-        const chatObserver = new MutationObserver(() => {
-            addActionButtons();
+            };
+            pre.appendChild(copyBtn);
         });
 
-        // Figyeljük az egész dokumentumot az új elemekre
-        chatObserver.observe(document.body, { childList: true, subtree: true });
+        // 2. Kép letöltés gombok kezelése
+        const images = document.querySelectorAll('.message-content img, .chat-message img, img');
+        images.forEach(img => {
+            if (!img.src.includes('pollinations')) return; // Csak az AI képekre
+            if (img.parentElement.classList.contains('img-container')) return; // Ha már be van csomagolva
+            
+            // Létrehozunk egy burkolót a kép köré
+            const wrapper = document.createElement('div');
+            wrapper.className = 'img-container';
+            wrapper.style.cssText = 'position: relative; display: inline-block; max-width: 100%; margin-top: 8px;';
+            img.parentNode.insertBefore(wrapper, img);
+            wrapper.appendChild(img);
+            
+            const dlBtn = document.createElement('button');
+            dlBtn.innerText = '⬇️ Letöltés';
+            dlBtn.style.cssText = 'position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; z-index: 5;';
+            
+            dlBtn.onclick = async () => {
+                try {
+                    dlBtn.innerText = '⏳ Letöltés...';
+                    const response = await fetch(img.src);
+                    const blob = await response.blob();
+                    const blobUrl = window.URL.createObjectURL(blob);
+                    
+                    const a = document.createElement('a');
+                    a.href = blobUrl;
+                    a.download = `OrionAI_${Date.now()}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    window.URL.revokeObjectURL(blobUrl);
+                    
+                    dlBtn.innerText = '✅ Kész!';
+                    setTimeout(() => dlBtn.innerText = '⬇️ Letöltés', 2000);
+                } catch (err) {
+                    console.error(err);
+                    dlBtn.innerText = '❌ Hiba';
+                }
+            };
+            wrapper.appendChild(dlBtn);
+        });
+    }
 
-        // Futtatás betöltéskor is a biztonság kedvéért
-        setTimeout(addActionButtons, 1000);
-    </script>
+    // Futtatjuk folyamatosan, hogy az új üzeneteknél is azonnal megjelenjen
+    setInterval(injectButtons, 500);
+</script>
 </body>
-
 </html>
