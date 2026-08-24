@@ -11,31 +11,91 @@
     
     <style>
         /* =========================================
-           KÖZÉPRE IGAZÍTOTT CHAT FELÜLET (GEMINI STÍLUS)
+           KÖZÉPRE IGAZÍTOTT CHAT & BUBORÉKOK (GEMINI STÍLUS)
            ========================================= */
-        .message, .chat-message {
+        .messages-container {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
             width: 100% !important;
-            max-width: 850px !important; /* Maximális szélesség limitálása */
-            margin-left: auto !important; /* Középre igazítja a sort */
-            margin-right: auto !important; /* Középre igazítja a sort */
+            overflow-x: hidden; /* Ne lógjon ki semmi mobilon */
+        }
+        
+        .message, .chat-message {
+            display: flex !important;
+            width: 100% !important;
+            max-width: 850px !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
             box-sizing: border-box !important;
             padding-left: 15px !important;
             padding-right: 15px !important;
+            margin-bottom: 24px !important;
+        }
+
+        .message.user {
+            justify-content: flex-end !important; /* Felhasználó jobbra */
+        }
+
+        .message.assistant, .message.system {
+            justify-content: flex-start !important; /* AI balra */
+        }
+
+        /* A felhasználó üzenete csak akkora legyen, mint a szöveg */
+        .message.user .message-content {
+            width: fit-content !important;
+            max-width: 100% !important;
+        }
+
+        /* Az AI üzenete töltheti a rendelkezésre álló teret */
+        .message.assistant .message-content, 
+        .message.system .message-content {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        .input-area {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: center !important;
+            padding-left: 20px !important;
+            padding-right: 20px !important;
         }
 
         .input-wrapper {
             width: 100% !important;
-            max-width: 810px !important; /* Igazodik a chat üzenetekhez */
-            margin-left: auto !important;
-            margin-right: auto !important;
+            max-width: 810px !important;
         }
 
         .disclaimer {
             width: 100% !important;
             max-width: 810px !important;
             text-align: center !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
+        }
+
+        /* =========================================
+           PC SIDEBAR ÖSSZECSUKHATÓSÁG
+           ========================================= */
+        @media (min-width: 769px) {
+            .mobile-menu-btn {
+                display: flex !important; /* PC-n is látható a hamburger ikon */
+                align-items: center;
+                justify-content: center;
+            }
+            .sidebar {
+                transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s, padding 0.3s, margin 0.3s !important;
+                white-space: nowrap; /* Hogy összecsukás közben ne törjenek a sorok */
+            }
+            .sidebar.collapsed {
+                width: 0 !important;
+                min-width: 0 !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                margin-left: -20px !important; /* Teljesen eltűnjön */
+                opacity: 0 !important;
+                border: none !important;
+                overflow: hidden !important;
+            }
         }
 
         /* =========================================
@@ -338,7 +398,7 @@
         <main class="chat-window">
             <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px;">
                 <div style="display: flex; align-items: center; gap: 15px;">
-                    <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <button id="mobile-menu-btn" class="mobile-menu-btn" style="background: transparent; border: none; font-size: 20px; cursor: pointer;"><i class="fas fa-bars"></i></button>
                     <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500; margin: 0;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
                 </div>
                 <button id="open-settings-btn" style="background: transparent; border: none; color: inherit; font-size: 22px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Beállítások">
@@ -407,6 +467,39 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     
     <script>
+    // --- PC és Mobil Sidebar Logika (Hamburgermenü) ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.querySelector('.sidebar');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+    const closeMenuBtn = document.getElementById('close-menu-btn');
+
+    // Kattintás a hamburger ikonra
+    mobileMenuBtn.addEventListener('click', () => {
+        if (window.innerWidth > 768) {
+            // PC mód: összecsukja / kinyitja az oldalsávot
+            sidebar.classList.toggle('collapsed');
+        } else {
+            // Mobil mód: kicsúsztatja
+            sidebar.classList.add('active');
+            mobileOverlay.classList.add('active');
+        }
+    });
+
+    // Bezárás mobilon
+    if (mobileOverlay) {
+        mobileOverlay.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+        });
+    }
+
+    if (closeMenuBtn) {
+        closeMenuBtn.addEventListener('click', () => {
+            sidebar.classList.remove('active');
+            mobileOverlay.classList.remove('active');
+        });
+    }
+
     // --- BEÁLLÍTÁSOK ABLAK LOGIKA ---
     const settingsBtn = document.getElementById('open-settings-btn');
     const settingsModal = document.getElementById('settings-modal');
