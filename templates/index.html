@@ -54,7 +54,7 @@
             text-align: center !important;
         }
 
-        /* --- BUBORÉKOK IGAZÍTÁSA --- */
+        /* --- BUBORÉKOK IGAZÍTÁSA (Rázsugorodnak a tartalomra) --- */
         .message.user {
             align-self: flex-end !important; 
             width: fit-content !important;
@@ -65,7 +65,7 @@
 
         .message.assistant, .message.system {
             align-self: flex-start !important; 
-            width: 100% !important;
+            width: fit-content !important; /* <--- ITT A JAVÍTÁS: Csak akkora, amekkora a szöveg! */
             max-width: 100% !important;
             display: flex !important;
             flex-direction: column !important;
@@ -397,7 +397,6 @@
 
         <main class="chat-window">
             <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px;">
-                <!-- ITT A JAVÍTÁS: gap: 15px adja a tökéletes távolságot a gomb és a cím közé -->
                 <div style="display: flex; align-items: center; gap: 15px;">
                     <button id="mobile-menu-btn" class="mobile-menu-btn" style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: inherit;"><i class="fas fa-bars"></i></button>
                     <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500; margin: 0;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
