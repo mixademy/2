@@ -11,11 +11,11 @@
     
     <style>
         /* =========================================
-           VILÁGOS MÓD (LIGHT MODE) - KIVÁLÓ OLVASHATÓSÁG
+           VILÁGOS MÓD (LIGHT MODE)
            ========================================= */
         body.light-mode {
-            background: #e2e4ea; /* Egy fokkal kontrasztosabb szürke háttér */
-            color: #0f172a; /* Nagyon sötét palakék/fekete a tökéletes olvashatóságért */
+            background: #e2e4ea;
+            color: #0f172a;
         }
         
         body.light-mode .liquid-bg { opacity: 0.15; }
@@ -45,7 +45,7 @@
 
         body.light-mode .input-wrapper {
             background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.2); /* Jól látható keret */
+            border: 1px solid rgba(0, 0, 0, 0.2);
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             border-radius: 20px;
         }
@@ -58,7 +58,7 @@
         }
 
         body.light-mode input::placeholder, body.light-mode textarea::placeholder {
-            color: #475569; /* Sötétebb placeholder */
+            color: #475569;
         }
         
         body.light-mode .chat-header {
@@ -66,11 +66,10 @@
             border-bottom: 1px solid rgba(200, 200, 200, 0.5);
         }
 
-        /* Üzenetbuborékok olvashatósága */
         body.light-mode .message.assistant .message-content,
         body.light-mode .message.system .message-content {
             background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.15); /* Határozottabb körvonal */
+            border: 1px solid rgba(0, 0, 0, 0.15);
             color: #0f172a;
             font-weight: 500;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -117,7 +116,7 @@
         }
 
         /* =========================================
-           KÓD BLOKK KINÉZET (Ablak design)
+           KÓD BLOKK KINÉZET (Elkülönített ablak design)
            ========================================= */
         .code-window {
             background: #1e1e2e;
@@ -276,6 +275,7 @@
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
+    
     <script>
     // --- VILÁGOS MÓD VÁLTÁS LOGIKA ---
     const themeBtn = document.getElementById('theme-toggle-btn');
@@ -300,52 +300,57 @@
         });
     }
 
-    // --- KÓD MÁSOLÁS ÉS KÉP LETÖLTÉS GOMBOK ---
-    function injectButtons() {
-        // 1. KÓD BLOKK (Ablak design és Másolás)
-        const codeBlocks = document.querySelectorAll('pre');
-        codeBlocks.forEach(pre => {
-            if (pre.parentElement && pre.parentElement.classList.contains('code-window')) return; 
-            
-            let lang = "KÓD";
-            const codeEl = pre.querySelector('code');
-            if (codeEl && codeEl.className) {
-                const match = codeEl.className.match(/language-(\w+)/);
-                if (match) lang = match[1];
-            }
+    // --- GLOBÁLIS KÓD MÁSOLÓ FÜGGVÉNY ---
+    window.orionCopyCode = function(button) {
+        const pre = button.closest('.code-window').querySelector('pre');
+        // Vágólapra másoljuk a formázott kódot
+        const codeText = pre.innerText;
+        
+        navigator.clipboard.writeText(codeText).then(() => {
+            const originalHTML = button.innerHTML;
+            button.innerHTML = '<i class="fas fa-check"></i> Másolva!';
+            button.style.color = '#4ade80'; // Zöld visszajelzés
+            setTimeout(() => {
+                button.innerHTML = originalHTML;
+                button.style.color = '';
+            }, 2000);
+        }).catch(err => {
+            console.error("Másolási hiba:", err);
+            button.innerHTML = '❌ Hiba';
+        });
+    };
 
-            const wrapper = document.createElement('div');
-            wrapper.className = 'code-window';
-            
-            const header = document.createElement('div');
-            header.className = 'code-header';
-            
-            const langLabel = document.createElement('span');
-            langLabel.className = 'lang-label';
-            langLabel.innerText = lang;
-            
-            const copyBtn = document.createElement('button');
-            copyBtn.className = 'copy-btn';
-            copyBtn.innerHTML = '<i class="fas fa-copy"></i> Másolás';
-
-            copyBtn.onclick = () => {
-                const textToCopy = codeEl ? codeEl.textContent : pre.textContent;
-                navigator.clipboard.writeText(textToCopy).then(() => {
-                    copyBtn.innerHTML = '<i class="fas fa-check"></i> Másolva!';
-                    copyBtn.style.color = '#4ade80';
-                    setTimeout(() => {
-                        copyBtn.innerHTML = '<i class="fas fa-copy"></i> Másolás';
-                        copyBtn.style.color = '';
-                    }, 2000);
+    // --- OKOS FORMÁZÓ: Kódblokk Generáló és Kép Letöltő ---
+    function injectAndFormat() {
+        // 1. Nyers Markdown KÓDOK átalakítása elkülönített ablakká
+        const msgDivs = document.querySelectorAll('.message, .message-content, .chat-message');
+        msgDivs.forEach(div => {
+            // Ha még nincs formázva és látunk benne három visszavonás jelet
+            if (div.dataset.codeParsed !== 'true' && div.innerHTML.includes('```')) {
+                let html = div.innerHTML;
+                
+                // Megkeressük a ``` kódrészeket és kicseréljük a mi ablak-dizájnunkra
+                const codeRegex = /```([a-zA-Z0-9+#\-]*)[ \t]*(?:<br\s*\/?>|\r|\n)*([\s\S]*?)```/gi;
+                
+                html = html.replace(codeRegex, function(match, lang, codeContent) {
+                    // Tisztítjuk a script.js által esetleg betett <br> tageket újsorrá
+                    let cleanCode = codeContent.replace(/(<br\s*\/?>)/gi, '\n');
+                    
+                    return `
+                    <div class="code-window">
+                        <div class="code-header">
+                            <span class="lang-label">${lang || 'KÓD'}</span>
+                            <button class="copy-btn" onclick="orionCopyCode(this)">
+                                <i class="fas fa-copy"></i> Másolás
+                            </button>
+                        </div>
+                        <pre><code>${cleanCode}</code></pre>
+                    </div>`;
                 });
-            };
-            
-            header.appendChild(langLabel);
-            header.appendChild(copyBtn);
-            
-            pre.parentNode.insertBefore(wrapper, pre);
-            wrapper.appendChild(header);
-            wrapper.appendChild(pre);
+
+                div.innerHTML = html;
+                div.dataset.codeParsed = 'true';
+            }
         });
 
         // 2. KÉP LETÖLTÉS
@@ -394,7 +399,8 @@
         });
     }
 
-    setInterval(injectButtons, 500);
+    // Fél másodpercenként fut, hogy azonnal formázza a bejövő AI kódokat!
+    setInterval(injectAndFormat, 500);
     </script>
 </body>
 </html>
