@@ -11,22 +11,33 @@
     
     <style>
         /* =========================================
-           KÖZÉPRE IGAZÍTOTT CHAT ÉS BEVITELI MEZŐ (TÖKÉLETES SZINKRON)
+           FORGÓ ANIMÁCIÓK JAVÍTÁSA (Egyhelyben forgás)
+           ========================================= */
+        .spinning-ring {
+            transform-origin: 50px 50px !important; 
+            transform-box: fill-box !important;
+        }
+
+        .fa-spin, .fa-spinner, .fa-circle-notch, .img-loading i {
+            display: inline-block !important;
+            transform-origin: 50% 50% !important;
+        }
+
+        /* =========================================
+           KÖZÉPRE IGAZÍTOTT CHAT ÉS BEVITELI MEZŐ 
            ========================================= */
         .messages-container {
             display: flex !important;
             flex-direction: column !important;
-            /* Dinamikus padding: egy fix, max 850px széles csövet hoz létre középen */
             padding-left: max(20px, calc(50% - 425px)) !important;
             padding-right: max(20px, calc(50% - 425px)) !important;
-            align-items: stretch !important; /* Kitölteti a teret a buborékokkal */
+            align-items: stretch !important; 
             overflow-x: hidden; 
         }
 
         .input-area {
             display: flex !important;
             flex-direction: column !important;
-            /* Hajszálpontosan ugyanaz a padding logika, mint a chatnél */
             padding-left: max(20px, calc(50% - 425px)) !important;
             padding-right: max(20px, calc(50% - 425px)) !important;
             align-items: stretch !important;
@@ -34,7 +45,7 @@
 
         .input-wrapper {
             width: 100% !important;
-            max-width: 100% !important; /* A padding miatt ez automatikusan pont 850px lesz */
+            max-width: 100% !important; 
         }
 
         .disclaimer {
@@ -43,9 +54,9 @@
             text-align: center !important;
         }
 
-        /* --- BUBORÉKOK IGAZÍTÁSA EBBEN A 850PX-ES SÁVBAN --- */
+        /* --- BUBORÉKOK IGAZÍTÁSA --- */
         .message.user {
-            align-self: flex-end !important; /* Jobb szélre tapad */
+            align-self: flex-end !important; 
             width: fit-content !important;
             max-width: 100% !important;
             display: block !important;
@@ -53,7 +64,7 @@
         }
 
         .message.assistant, .message.system {
-            align-self: flex-start !important; /* Bal szélre tapad */
+            align-self: flex-start !important; 
             width: 100% !important;
             max-width: 100% !important;
             display: flex !important;
@@ -67,14 +78,13 @@
         }
 
         /* =========================================
-           PC SIDEBAR ÖSSZECSUKHATÓSÁG ÉS HIBÁTLAN GOMB
+           PC SIDEBAR ÖSSZECSUKHATÓSÁG
            ========================================= */
         @media (min-width: 769px) {
             .mobile-menu-btn {
                 display: flex !important; 
                 align-items: center;
                 justify-content: center;
-                margin-right: 10px !important; /* Kap egy kis levegőt a gomb */
             }
             .sidebar {
                 transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease, border-color 0.3s ease !important;
@@ -84,7 +94,6 @@
                 width: 0 !important;
                 padding-left: 0 !important;
                 padding-right: 0 !important;
-                /* Átlátszóvá teszi a felesleges csíkot ahelyett, hogy balra tolná: */
                 border-right-color: transparent !important; 
                 overflow: hidden !important;
                 opacity: 0 !important;
@@ -388,7 +397,8 @@
 
         <main class="chat-window">
             <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px;">
-                <div style="display: flex; align-items: center;">
+                <!-- ITT A JAVÍTÁS: gap: 15px adja a tökéletes távolságot a gomb és a cím közé -->
+                <div style="display: flex; align-items: center; gap: 15px;">
                     <button id="mobile-menu-btn" class="mobile-menu-btn" style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: inherit;"><i class="fas fa-bars"></i></button>
                     <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500; margin: 0;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
                 </div>
