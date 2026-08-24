@@ -8,6 +8,100 @@
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
     <link rel="manifest" href="/static/manifest.json">
+    
+    <style>
+        /* =========================================
+           VILÁGOS MÓD (LIGHT MODE) FELÜLÍRÁSOK
+           ========================================= */
+        body.light-mode {
+            background: #f0f2f5; 
+            color: #1a1a1a; 
+        }
+        
+        body.light-mode .liquid-bg {
+            opacity: 0.3; /* Háttér animáció halványítása világos módban */
+        }
+
+        body.light-mode .glass-panel,
+        body.light-mode .sidebar {
+            background: rgba(255, 255, 255, 0.85);
+            border-color: rgba(0, 0, 0, 0.1);
+            box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+        }
+        
+        body.light-mode .orion-title {
+            color: #1a1a1a;
+        }
+
+        /* Input és fejléc */
+        body.light-mode .input-area,
+        body.light-mode .chat-header {
+            background: rgba(255, 255, 255, 0.9);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode input,
+        body.light-mode textarea {
+            color: #1a1a1a;
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        body.light-mode input::placeholder,
+        body.light-mode textarea::placeholder {
+            color: #666;
+        }
+
+        /* Chat üzenetek */
+        body.light-mode .message.assistant .message-content,
+        body.light-mode .message.system .message-content {
+            background: #ffffff;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1a1a1a;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+        }
+
+        body.light-mode .message.user .message-content {
+            background: #a855f7; 
+            color: #ffffff;
+        }
+
+        /* Kód blokkok háttere (sötét maradjon, hogy olvasható legyen) */
+        body.light-mode pre {
+            background: #1e1e2e;
+            border: 1px solid #333;
+        }
+        body.light-mode code {
+            color: #e0e0e0;
+        }
+
+        /* Általános gombok */
+        body.light-mode .glass-btn {
+            background: rgba(0, 0, 0, 0.05);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1a1a1a;
+        }
+
+        body.light-mode .glass-btn:hover {
+            background: rgba(0, 0, 0, 0.1);
+        }
+
+        /* Az Új beszélgetés gomb lila maradjon */
+        body.light-mode #new-chat-btn {
+            background: #a855f7;
+            color: white;
+            border: none;
+        }
+        
+        /* Chat lista elemek szövege */
+        body.light-mode .chat-list-item {
+            color: #1a1a1a;
+        }
+        body.light-mode .chat-list-item:hover {
+            background: rgba(0, 0, 0, 0.05);
+        }
+    </style>
 </head>
 <body data-user="{{ username }}">
     <div class="liquid-bg">
@@ -45,6 +139,11 @@
             </button>
             
             <div class="chat-list" id="chat-list"></div>
+
+            <!-- VILÁGOS MÓD VÁLTÓ GOMB -->
+            <button id="theme-toggle-btn" class="glass-btn" style="width: 90%; margin: 10px auto; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
+                <span id="theme-icon">☀️</span> <span id="theme-text">Világos mód</span>
+            </button>
 
             <div class="user-info-bottom">
                 {% if username == 'admin' %}
@@ -95,20 +194,54 @@
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     <script>
-    // Automatikus gomb-beszúró, ami folyamatosan figyeli a chat dobozt
+    // --- VILÁGOS MÓD VÁLTÁS LOGIKA ---
+    const themeBtn = document.getElementById('theme-toggle-btn');
+    const themeIcon = document.getElementById('theme-icon');
+    const themeText = document.getElementById('theme-text');
+
+    if (themeBtn) {
+        // Ellenőrizzük, volt-e korábban beállítva világos mód
+        if (localStorage.getItem('orion_theme') === 'light') {
+            document.body.classList.add('light-mode');
+            themeIcon.innerText = '🌙';
+            themeText.innerText = 'Sötét mód';
+        }
+
+        // Gomb kattintás esemény
+        themeBtn.addEventListener('click', () => {
+            document.body.classList.toggle('light-mode');
+            
+            if (document.body.classList.contains('light-mode')) {
+                localStorage.setItem('orion_theme', 'light');
+                themeIcon.innerText = '🌙';
+                themeText.innerText = 'Sötét mód';
+            } else {
+                localStorage.setItem('orion_theme', 'dark');
+                themeIcon.innerText = '☀️';
+                themeText.innerText = 'Világos mód';
+            }
+        });
+    }
+
+    // --- KÓD MÁSOLÁS ÉS KÉP LETÖLTÉS GOMBOK ---
     function injectButtons() {
         // 1. Kód másolás gombok kezelése
         const codeBlocks = document.querySelectorAll('pre');
         codeBlocks.forEach(pre => {
-            if (pre.querySelector('.copy-btn')) return; // Ha már van gomb, nem duplázzuk
+            if (pre.querySelector('.copy-btn')) return; 
             
-            // Relatív pozíció a kóddoboznak, hogy a gomb a sarkába tudjon ülni
             pre.style.position = 'relative';
             
             const copyBtn = document.createElement('button');
+            copyBtn.className = 'copy-btn';
             copyBtn.innerText = '📋 Másolás';
             copyBtn.style.cssText = 'position: absolute; top: 8px; right: 8px; background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 4px 8px; border-radius: 4px; cursor: pointer; font-size: 11px; z-index: 5;';
             
+            // Ha világos mód van, alapból sötétebb legyen a gomb szövege
+            if(document.body.classList.contains('light-mode')) {
+                copyBtn.style.color = '#fff'; // A kódblokk sötét marad világos módban is, így a szöveg fehér
+            }
+
             copyBtn.onclick = () => {
                 const code = pre.querySelector('code') ? pre.querySelector('code').innerText : pre.innerText;
                 navigator.clipboard.writeText(code).then(() => {
@@ -122,10 +255,9 @@
         // 2. Kép letöltés gombok kezelése
         const images = document.querySelectorAll('.message-content img, .chat-message img, img');
         images.forEach(img => {
-            if (!img.src.includes('pollinations')) return; // Csak az AI képekre
-            if (img.parentElement.classList.contains('img-container')) return; // Ha már be van csomagolva
+            if (!img.src.includes('pollinations')) return; 
+            if (img.parentElement.classList.contains('img-container')) return; 
             
-            // Létrehozunk egy burkolót a kép köré
             const wrapper = document.createElement('div');
             wrapper.className = 'img-container';
             wrapper.style.cssText = 'position: relative; display: inline-block; max-width: 100%; margin-top: 8px;';
@@ -133,6 +265,7 @@
             wrapper.appendChild(img);
             
             const dlBtn = document.createElement('button');
+            dlBtn.className = 'download-btn';
             dlBtn.innerText = '⬇️ Letöltés';
             dlBtn.style.cssText = 'position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.4); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; z-index: 5;';
             
@@ -164,6 +297,6 @@
 
     // Futtatjuk folyamatosan, hogy az új üzeneteknél is azonnal megjelenjen
     setInterval(injectButtons, 500);
-</script>
+    </script>
 </body>
 </html>
