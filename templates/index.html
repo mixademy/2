@@ -11,26 +11,26 @@
     
     <style>
         /* =========================================
-           VILÁGOS MÓD (ÁTÜTŐ HÁTTÉR PACÁKKAL)
+           VILÁGOS MÓD (Tiszta fehér alap + áttetsző foltok)
            ========================================= */
         body.light-mode {
-            background: #d8dadf; /* Kicsit mélyebb tónus, hogy a színek jobban érvényesüljenek */
+            background: #f4f5f8; /* Tiszta világos alap */
             color: #0f172a;
         }
         
-        /* Itt növeltük meg a háttérpacák láthatóságát világos módban */
+        /* A háttérpacák szépen látszanak, de nem túlzóak */
         body.light-mode .liquid-bg { 
-            opacity: 0.65 !important; 
+            opacity: 0.5 !important; 
         }
 
-        /* Áttetszőbb üvegpanelek, hogy átsszüssön rajtuk a lila/rózsaszín ragyogás */
+        /* Fehér, de áttetsző üvegpanelek, amiken átütnek a színes foltok */
         body.light-mode .glass-panel,
         body.light-mode .sidebar {
-            background: rgba(255, 255, 255, 0.55);
-            backdrop-filter: blur(25px);
-            -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.08);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.9);
+            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.06);
             border-radius: 20px;
             overflow: hidden;
         }
@@ -44,15 +44,15 @@
         }
 
         body.light-mode .input-area {
-            background: rgba(255, 255, 255, 0.6);
+            background: rgba(255, 255, 255, 0.75);
             backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255, 255, 255, 0.5);
+            border-top: 1px solid rgba(255, 255, 255, 0.6);
         }
 
         body.light-mode .input-wrapper {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(0, 0, 0, 0.15);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.12);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
             border-radius: 20px;
         }
 
@@ -68,18 +68,18 @@
         }
         
         body.light-mode .chat-header {
-            background: rgba(255, 255, 255, 0.6);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+            background: rgba(255, 255, 255, 0.75);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
             border-top-right-radius: 20px;
         }
 
         body.light-mode .message.assistant .message-content,
         body.light-mode .message.system .message-content {
-            background: rgba(255, 255, 255, 0.9);
-            border: 1px solid rgba(0, 0, 0, 0.1);
+            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid rgba(0, 0, 0, 0.08);
             color: #0f172a;
             font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
         }
 
         body.light-mode .message.user .message-content {
@@ -91,17 +91,17 @@
         }
 
         body.light-mode .glass-btn {
-            background: rgba(255, 255, 255, 0.7) !important;
-            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            background: rgba(255, 255, 255, 0.8) !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
             color: #1e293b !important;
             font-weight: 600;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
             transition: all 0.3s ease;
         }
 
         body.light-mode .glass-btn:hover {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border-color: rgba(147, 51, 234, 0.5) !important;
+            background: rgba(255, 255, 255, 1) !important;
+            border-color: rgba(147, 51, 234, 0.4) !important;
             color: #9333ea !important;
         }
 
@@ -115,17 +115,17 @@
         body.light-mode .chat-list-item {
             color: #1e293b;
             font-weight: 500;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            border-bottom: 1px solid rgba(0,0,0,0.04);
         }
         body.light-mode .chat-list-item:hover {
-            background: rgba(255, 255, 255, 0.8);
+            background: rgba(255, 255, 255, 0.9);
             border-left: 4px solid #9333ea;
         }
 
         body.light-mode select {
             color: #0f172a !important;
-            background: rgba(255,255,255,0.8) !important;
-            border: 1px solid rgba(0,0,0,0.2) !important;
+            background: rgba(255,255,255,0.9) !important;
+            border: 1px solid rgba(0,0,0,0.15) !important;
         }
         body.light-mode select option {
             background: #ffffff;
