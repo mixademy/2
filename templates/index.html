@@ -13,38 +13,29 @@
         /* =========================================
            KÖZÉPRE IGAZÍTOTT CHAT FELÜLET (GEMINI STÍLUS)
            ========================================= */
-        .messages-container {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important; /* Középre húzza az üzeneteket */
-            width: 100% !important;
-        }
-        
         .message, .chat-message {
             width: 100% !important;
             max-width: 850px !important; /* Maximális szélesség limitálása */
+            margin-left: auto !important; /* Középre igazítja a sort */
+            margin-right: auto !important; /* Középre igazítja a sort */
             box-sizing: border-box !important;
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-        }
-
-        .input-area {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important; /* Középre húzza a beviteli mezőt */
-            padding-left: 20px !important;
-            padding-right: 20px !important;
+            padding-left: 15px !important;
+            padding-right: 15px !important;
         }
 
         .input-wrapper {
             width: 100% !important;
             max-width: 810px !important; /* Igazodik a chat üzenetekhez */
+            margin-left: auto !important;
+            margin-right: auto !important;
         }
 
         .disclaimer {
             width: 100% !important;
             max-width: 810px !important;
             text-align: center !important;
+            margin-left: auto !important;
+            margin-right: auto !important;
         }
 
         /* =========================================
