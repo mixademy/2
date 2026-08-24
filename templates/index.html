@@ -11,7 +11,7 @@
     
     <style>
         /* =========================================
-           MODERN GÖRGETŐSÁV (SCROLLBAR) GLOBÁLISAN
+           MODERN GÖRGETŐSÁV (SCROLLBAR)
            ========================================= */
         ::-webkit-scrollbar {
             width: 8px;
@@ -23,7 +23,6 @@
         ::-webkit-scrollbar-thumb {
             background: rgba(163, 112, 247, 0.3);
             border-radius: 10px;
-            transition: background 0.2s;
         }
         ::-webkit-scrollbar-thumb:hover {
             background: rgba(163, 112, 247, 0.6);
@@ -157,7 +156,7 @@
         }
 
         /* =========================================
-           KÓD BLOKK ÉS HELYREÁLLÍTOTT GOMB
+           KÓD BLOKK ÉS TÖKÉLETESEN HELYREHOZOTT GOMB
            ========================================= */
         .code-window {
             background: #1e1e2e;
@@ -189,28 +188,28 @@
             letter-spacing: 0.5px;
         }
         
-        /* Teljesen átszabott, stabil, kompakt másolás gomb */
+        /* Újraírt, fixálva egységes gomb */
         .code-header .copy-btn {
-            all: unset;
-            box-sizing: border-box;
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            color: #e2e8f0;
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: 1px solid rgba(255, 255, 255, 0.2) !important;
+            color: #e2e8f0 !important;
             cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-            font-size: 12px;
-            font-family: sans-serif;
-            padding: 5px 12px;
-            border-radius: 6px;
-            transition: background 0.2s, border-color 0.2s;
+            display: inline-flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: center !important;
+            gap: 6px !important;
+            font-size: 12px !important;
+            font-family: sans-serif !important;
+            padding: 6px 12px !important;
+            border-radius: 6px !important;
+            outline: none !important;
+            box-shadow: none !important;
+            white-space: nowrap !important;
         }
         .code-header .copy-btn:hover {
-            background: rgba(255, 255, 255, 0.2);
-            border-color: rgba(255, 255, 255, 0.3);
-            color: #ffffff;
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: #ffffff !important;
         }
         .code-window pre {
             margin: 0;
