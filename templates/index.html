@@ -11,79 +11,33 @@
     
     <style>
         /* =========================================
-           KÖZÉPRE IGAZÍTOTT CHAT & BUBORÉKOK (GEMINI STÍLUS)
+           KÖZÉPRE IGAZÍTOTT CHAT (GEMINI STÍLUS)
+           A legtisztább módszer: a konténert szorítjuk be, nem a buborékokat rontjuk el!
            ========================================= */
         .messages-container {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
+            /* Dinamikusan kiszámolja a helyet, hogy középen pont max 850px maradjon */
+            padding-left: max(24px, calc(50% - 425px)) !important;
+            padding-right: max(24px, calc(50% - 425px)) !important;
+        }
+
+        .input-wrapper, .disclaimer {
+            max-width: 850px !important;
             width: 100% !important;
-            overflow-x: hidden; 
+        }
+
+        /* --- BUBORÉKOK JAVÍTÁSA (Tiszteletben tartva a style.css-edet) --- */
+        .message {
+            width: fit-content !important; /* Engedi, hogy rázsugorodjon a szövegre */
+            display: block !important; /* Garantálja, hogy a szöveg és a kódblokk EGYMÁS ALÁ kerüljön */
+            word-wrap: break-word !important;
         }
         
-        .message, .chat-message {
-            display: flex !important;
-            width: 100% !important;
-            max-width: 850px !important;
-            margin-left: auto !important;
-            margin-right: auto !important;
-            box-sizing: border-box !important;
-            padding-left: 15px !important;
-            padding-right: 15px !important;
-            margin-bottom: 24px !important;
+        .message.assistant, .message.system {
+            max-width: 100% !important; /* Az AI buborék kitöltheti a 850px-et, ha széles a kód */
         }
 
         .message.user {
-            justify-content: flex-end !important; 
-        }
-
-        .message.assistant, .message.system {
-            justify-content: flex-start !important; 
-        }
-
-        /* --- JAVÍTOTT FELHASZNÁLÓI BUBORÉK (Tényleg zsugorodik!) --- */
-        .message.user .message-content {
-            width: fit-content !important; 
-            max-width: 100% !important;
-            display: block !important; 
-            flex: 0 1 auto !important; /* Kikapcsolja a kitöltési kényszert */
-            text-align: left !important;
-            word-wrap: break-word !important;
-        }
-
-        /* --- JAVÍTOTT AI BUBORÉK (Egymás ALÁ kerülés kényszerítése) --- */
-        .message.assistant .message-content, 
-        .message.system .message-content {
-            width: 100% !important;
-            max-width: 100% !important;
-            display: flex !important; 
-            flex-direction: column !important; /* EZ az a varázsszó, ami egymás alá teszi a kódot és a szöveget */
-            align-items: stretch !important;
-            word-wrap: break-word !important;
-        }
-        
-        .message.assistant .message-content .code-window {
-            width: 100% !important;
-            box-sizing: border-box !important;
-        }
-
-        .input-area {
-            display: flex !important;
-            flex-direction: column !important;
-            align-items: center !important;
-            padding-left: 20px !important;
-            padding-right: 20px !important;
-        }
-
-        .input-wrapper {
-            width: 100% !important;
-            max-width: 810px !important;
-        }
-
-        .disclaimer {
-            width: 100% !important;
-            max-width: 810px !important;
-            text-align: center !important;
+            max-width: 85% !important; /* Felhasználó picit rövidebb marad */
         }
 
         /* =========================================
@@ -197,21 +151,20 @@
             border-top-right-radius: 20px;
         }
 
-        body.light-mode .message.assistant .message-content,
-        body.light-mode .message.system .message-content {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            color: #0f172a;
-            font-weight: 500;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
+        /* Világos mód buborék színek */
+        body.light-mode .message.assistant,
+        body.light-mode .message.system {
+            background: rgba(255, 255, 255, 0.95) !important;
+            border: 1px solid rgba(0, 0, 0, 0.08) !important;
+            color: #0f172a !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04) !important;
         }
 
-        body.light-mode .message.user .message-content {
-            background: linear-gradient(135deg, #9333ea, #6366f1);
-            color: #ffffff;
-            font-weight: 500;
-            border: none;
-            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.25);
+        body.light-mode .message.user {
+            background: linear-gradient(135deg, #9333ea, #6366f1) !important;
+            color: #ffffff !important;
+            border: none !important;
+            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.25) !important;
         }
 
         body.light-mode .glass-btn {
@@ -236,7 +189,6 @@
             box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3) !important;
         }
         
-        /* HAMBURGER MENÜ IKON FEKETE VILÁGOS MÓDBAN */
         body.light-mode .mobile-menu-btn {
             color: #0f172a !important;
         }
@@ -291,6 +243,7 @@
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
             border: 1px solid rgba(255,255,255,0.1);
             text-align: left;
+            width: 100%;
             max-width: 100%;
         }
         body.light-mode .code-window {
