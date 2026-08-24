@@ -11,7 +11,7 @@
     
     <style>
         /* =========================================
-           LOGÓ ÉS FORGÁS TÖKÉLETES FIXÁLÁSA
+           TÖKÉLETESEN STABIL, HELYBEN FORGÓ LOGÓ
            ========================================= */
         .orion-brand {
             display: flex !important;
@@ -26,11 +26,12 @@
             min-height: 40px !important;
             flex-shrink: 0 !important;
             overflow: visible !important;
+            display: block !important;
         }
 
         .spinning-ring {
             transform-origin: 50px 50px !important; 
-            transform-box: fill-box !important;
+            transform-box: view-box !important;
         }
 
         .fa-spin, .fa-spinner, .fa-circle-notch, .img-loading i {
@@ -369,8 +370,11 @@
             <button id="close-menu-btn" class="close-menu-btn"><i class="fas fa-times"></i></button>
 
             <div class="orion-brand">
+                <!-- TÖKÉLETESEN KÖZÉPRE IGAZÍTOTT SVG LOGÓ -->
                 <svg class="orion-logo" width="40" height="40" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30" stroke-linecap="round" class="spinning-ring"/>
+                    <g class="spinning-ring">
+                        <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30" stroke-linecap="round"/>
+                    </g>
                     <circle cx="32" cy="68" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)"/>
                     <circle cx="50" cy="50" r="6" fill="#a370f7" filter="drop-shadow(0 0 8px #a370f7)"/>
                     <circle cx="68" cy="32" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)"/>
