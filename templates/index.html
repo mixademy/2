@@ -34,29 +34,37 @@
         }
 
         .message.user {
-            justify-content: flex-end !important; /* Felhasználó jobbra */
+            justify-content: flex-end !important; 
         }
 
         .message.assistant, .message.system {
-            justify-content: flex-start !important; /* AI balra */
+            justify-content: flex-start !important; 
         }
 
-        /* --- JAVÍTOTT FELHASZNÁLÓI BUBORÉK (Szövegre zsugorodik) --- */
+        /* --- JAVÍTOTT FELHASZNÁLÓI BUBORÉK (Tényleg zsugorodik!) --- */
         .message.user .message-content {
-            width: auto !important; 
+            width: fit-content !important; 
             max-width: 100% !important;
-            display: inline-block !important; /* Kényszeríti, hogy csak a tartalom méretét vegye fel */
+            display: block !important; 
+            flex: 0 1 auto !important; /* Kikapcsolja a kitöltési kényszert */
             text-align: left !important;
             word-wrap: break-word !important;
         }
 
-        /* --- JAVÍTOTT AI BUBORÉK (Egymás mellé csúszás megakadályozása) --- */
+        /* --- JAVÍTOTT AI BUBORÉK (Egymás ALÁ kerülés kényszerítése) --- */
         .message.assistant .message-content, 
         .message.system .message-content {
             width: 100% !important;
             max-width: 100% !important;
-            display: block !important; /* Kötelezővé teszi az elemek egymás ALÁ rendeződését */
+            display: flex !important; 
+            flex-direction: column !important; /* EZ az a varázsszó, ami egymás alá teszi a kódot és a szöveget */
+            align-items: stretch !important;
             word-wrap: break-word !important;
+        }
+        
+        .message.assistant .message-content .code-window {
+            width: 100% !important;
+            box-sizing: border-box !important;
         }
 
         .input-area {
