@@ -32,7 +32,7 @@
         body.light-mode .orion-title { color: #0f172a; font-weight: 800; }
 
         body.light-mode h1, body.light-mode h2, body.light-mode h3, 
-        body.light-mode p, body.light-mode .disclaimer {
+        body.light-mode p, body.light-mode .disclaimer, body.light-mode label {
             color: #0f172a !important; 
             font-weight: 500;
         }
@@ -83,7 +83,7 @@
             box-shadow: 0 4px 15px rgba(147, 51, 234, 0.25);
         }
 
-        body.light-mode .glass-btn, body.light-mode #theme-toggle-btn {
+        body.light-mode .glass-btn {
             background: rgba(255, 255, 255, 0.8) !important;
             border: 1px solid rgba(0, 0, 0, 0.15) !important;
             color: #1e293b !important;
@@ -92,13 +92,13 @@
             transition: all 0.3s ease;
         }
 
-        body.light-mode .glass-btn:hover, body.light-mode #theme-toggle-btn:hover {
+        body.light-mode .glass-btn:hover {
             background: #ffffff !important;
             border-color: rgba(147, 51, 234, 0.5) !important;
             color: #9333ea !important;
         }
 
-        body.light-mode #new-chat-btn {
+        body.light-mode #new-chat-btn, body.light-mode #save-settings-btn {
             background: linear-gradient(135deg, #9333ea, #7c3aed) !important;
             color: white !important;
             border: none !important;
@@ -115,8 +115,18 @@
             border-left: 4px solid #9333ea;
         }
 
+        body.light-mode select {
+            color: #0f172a !important;
+            background: rgba(255,255,255,0.7) !important;
+            border: 1px solid rgba(0,0,0,0.2) !important;
+        }
+        body.light-mode select option {
+            background: #ffffff;
+            color: #0f172a;
+        }
+
         /* =========================================
-           KÓD BLOKK KINÉZET (Elkülönített ablak design)
+           KÓD BLOKK KINÉZET
            ========================================= */
         .code-window {
             background: #1e1e2e;
@@ -127,12 +137,10 @@
             border: 1px solid rgba(255,255,255,0.1);
             text-align: left;
         }
-
         body.light-mode .code-window {
             box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             border: 1px solid rgba(0,0,0,0.2);
         }
-
         .code-header {
             display: flex;
             justify-content: space-between;
@@ -144,13 +152,11 @@
             color: #a0aec0;
             border-bottom: 1px solid rgba(255,255,255,0.05);
         }
-
         .code-header .lang-label {
             text-transform: uppercase;
             font-weight: bold;
             letter-spacing: 0.5px;
         }
-
         .code-header .copy-btn {
             background: transparent;
             border: none;
@@ -163,11 +169,7 @@
             transition: color 0.2s;
             padding: 0;
         }
-
-        .code-header .copy-btn:hover {
-            color: #ffffff;
-        }
-
+        .code-header .copy-btn:hover { color: #ffffff; }
         .code-window pre {
             margin: 0;
             padding: 15px;
@@ -175,11 +177,29 @@
             border: none !important;
             overflow-x: auto;
         }
-
         .code-window code {
             color: #e0e0e0;
             font-family: 'Courier New', Courier, monospace;
             font-size: 14px;
+        }
+
+        /* Csúszka (Range input) dizájn */
+        input[type=range] {
+            -webkit-appearance: none;
+            background: rgba(255, 255, 255, 0.2);
+            height: 6px;
+            border-radius: 3px;
+            outline: none;
+        }
+        body.light-mode input[type=range] { background: rgba(0, 0, 0, 0.2); }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            background: #a370f7;
+            cursor: pointer;
         }
     </style>
 </head>
@@ -220,13 +240,6 @@
             
             <div class="chat-list" id="chat-list"></div>
 
-            <!-- KOMPAKT VILÁGOS/SÖTÉT MÓD GOMB -->
-            <div style="display: flex; justify-content: center; margin: 15px 0;">
-                <button id="theme-toggle-btn" class="glass-btn" style="width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; padding: 0;" title="Téma váltása">
-                    <span id="theme-icon">☀️</span>
-                </button>
-            </div>
-
             <div class="user-info-bottom">
                 {% if username == 'admin' %}
                 <a href="{{ url_for('admin_panel') }}" class="glass-btn compact-btn" style="text-decoration: none; text-align: center; margin-bottom: 15px;">
@@ -246,9 +259,14 @@
         </aside>
 
         <main class="chat-window">
-            <div class="chat-header" style="display: flex; align-items: center; gap: 15px;">
-                <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
+            <div class="chat-header" style="display: flex; align-items: center; justify-content: space-between; gap: 15px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
+                </div>
+                <button id="open-settings-btn" class="glass-btn" style="padding: 8px 12px; border-radius: 8px; font-size: 14px; cursor: pointer; display: flex; align-items: center; gap: 6px;">
+                    <i class="fas fa-cog"></i> <span class="hide-on-mobile">Beállítások</span>
+                </button>
             </div>
             
             <div class="messages-container" id="messages-container"></div>
@@ -265,6 +283,53 @@
         </main>
     </div>
 
+    <!-- BEÁLLÍTÁSOK MODAL (Ablak) -->
+    <div id="settings-modal" class="broadcast-modal" style="display: none;">
+        <div class="glass-panel broadcast-content" style="text-align: left; max-width: 400px; width: 90%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color: var(--accent-color); margin: 0; font-size: 20px;"><i class="fas fa-sliders-h"></i> Beállítások</h3>
+                <button id="close-settings-btn" style="background: transparent; border: none; color: inherit; cursor: pointer; font-size: 20px;"><i class="fas fa-times"></i></button>
+            </div>
+            
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">Megjelenés</label>
+                <select id="theme-select" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
+                    <option value="dark">🌙 Sötét mód</option>
+                    <option value="light">☀️ Világos mód</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">AI Nyelve</label>
+                <select id="language-select" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
+                    <option value="hu">🇭🇺 Magyar</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="es">🇪🇸 Español</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; opacity: 0.8;">
+                    <span>Kreativitás szintje</span>
+                    <span id="creativity-val">50%</span>
+                </label>
+                <input type="range" id="creativity-slider" min="1" max="100" value="50" style="width: 100%;">
+                <div style="display: flex; justify-content: space-between; font-size: 10px; opacity: 0.5; margin-top: 5px;">
+                    <span>Precíz / Faktuális</span>
+                    <span>Kreatív / Fantáziadús</span>
+                </div>
+            </div>
+
+            <button id="save-settings-btn" class="glass-btn" style="width: 100%; padding: 12px; font-size: 15px; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-save"></i> Beállítások Mentése
+            </button>
+        </div>
+    </div>
+
+    <!-- RENDSZERÜZENET MODAL -->
     <div id="broadcast-modal" class="broadcast-modal">
         <div class="glass-panel broadcast-content">
             <div style="font-size: 40px; color: var(--accent-color); filter: drop-shadow(0 0 10px var(--accent-glow));"><i class="fas fa-bullhorn"></i></div>
@@ -277,39 +342,79 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     
     <script>
-    // --- VILÁGOS MÓD VÁLTÁS LOGIKA ---
-    const themeBtn = document.getElementById('theme-toggle-btn');
-    const themeIcon = document.getElementById('theme-icon');
+    // --- BEÁLLÍTÁSOK ABLAK LOGIKA ---
+    const settingsBtn = document.getElementById('open-settings-btn');
+    const settingsModal = document.getElementById('settings-modal');
+    const closeSettingsBtn = document.getElementById('close-settings-btn');
+    const saveSettingsBtn = document.getElementById('save-settings-btn');
 
-    if (themeBtn) {
-        if (localStorage.getItem('orion_theme') === 'light') {
+    const themeSelect = document.getElementById('theme-select');
+    const languageSelect = document.getElementById('language-select');
+    const creativitySlider = document.getElementById('creativity-slider');
+    const creativityVal = document.getElementById('creativity-val');
+
+    // Alapértékek betöltése induláskor
+    if (localStorage.getItem('orion_theme') === 'light') {
+        document.body.classList.add('light-mode');
+        themeSelect.value = 'light';
+    } else {
+        themeSelect.value = 'dark';
+    }
+
+    if (localStorage.getItem('orion_language')) {
+        languageSelect.value = localStorage.getItem('orion_language');
+    }
+
+    if (localStorage.getItem('orion_creativity')) {
+        creativitySlider.value = localStorage.getItem('orion_creativity');
+        creativityVal.innerText = creativitySlider.value + '%';
+    }
+
+    // Csúszka értékének frissítése húzás közben
+    creativitySlider.addEventListener('input', (e) => {
+        creativityVal.innerText = e.target.value + '%';
+    });
+
+    // Ablak megnyitása / bezárása
+    settingsBtn.onclick = () => { settingsModal.style.display = 'flex'; };
+    closeSettingsBtn.onclick = () => { settingsModal.style.display = 'none'; };
+
+    // Mentés gomb kattintás
+    saveSettingsBtn.onclick = () => {
+        // Téma mentése és alkalmazása
+        const selectedTheme = themeSelect.value;
+        localStorage.setItem('orion_theme', selectedTheme);
+        if (selectedTheme === 'light') {
             document.body.classList.add('light-mode');
-            themeIcon.innerText = '🌙';
+        } else {
+            document.body.classList.remove('light-mode');
         }
 
-        themeBtn.addEventListener('click', () => {
-            document.body.classList.toggle('light-mode');
-            
-            if (document.body.classList.contains('light-mode')) {
-                localStorage.setItem('orion_theme', 'light');
-                themeIcon.innerText = '🌙';
-            } else {
-                localStorage.setItem('orion_theme', 'dark');
-                themeIcon.innerText = '☀️';
-            }
-        });
-    }
+        // Nyelv és Kreativitás mentése
+        localStorage.setItem('orion_language', languageSelect.value);
+        localStorage.setItem('orion_creativity', creativitySlider.value);
+
+        // Vizuális visszajelzés
+        const originalText = saveSettingsBtn.innerHTML;
+        saveSettingsBtn.innerHTML = '<i class="fas fa-check"></i> Elmentve!';
+        saveSettingsBtn.style.background = '#4ade80'; // Zöld
+        
+        setTimeout(() => {
+            saveSettingsBtn.innerHTML = originalText;
+            saveSettingsBtn.style.background = ''; // Vissza az eredetire
+            settingsModal.style.display = 'none'; // Ablak bezárása
+        }, 1000);
+    };
 
     // --- GLOBÁLIS KÓD MÁSOLÓ FÜGGVÉNY ---
     window.orionCopyCode = function(button) {
         const pre = button.closest('.code-window').querySelector('pre');
-        // Vágólapra másoljuk a formázott kódot
         const codeText = pre.innerText;
         
         navigator.clipboard.writeText(codeText).then(() => {
             const originalHTML = button.innerHTML;
             button.innerHTML = '<i class="fas fa-check"></i> Másolva!';
-            button.style.color = '#4ade80'; // Zöld visszajelzés
+            button.style.color = '#4ade80'; 
             setTimeout(() => {
                 button.innerHTML = originalHTML;
                 button.style.color = '';
@@ -320,22 +425,17 @@
         });
     };
 
-    // --- OKOS FORMÁZÓ: Kódblokk Generáló és Kép Letöltő ---
+    // --- OKOS FORMÁZÓ: Kódblokk és Kép ---
     function injectAndFormat() {
-        // 1. Nyers Markdown KÓDOK átalakítása elkülönített ablakká
         const msgDivs = document.querySelectorAll('.message, .message-content, .chat-message');
         msgDivs.forEach(div => {
-            // Ha még nincs formázva és látunk benne három visszavonás jelet
             if (div.dataset.codeParsed !== 'true' && div.innerHTML.includes('```')) {
                 let html = div.innerHTML;
                 
-                // Megkeressük a ``` kódrészeket és kicseréljük a mi ablak-dizájnunkra
                 const codeRegex = /```([a-zA-Z0-9+#\-]*)[ \t]*(?:<br\s*\/?>|\r|\n)*([\s\S]*?)```/gi;
                 
                 html = html.replace(codeRegex, function(match, lang, codeContent) {
-                    // Tisztítjuk a script.js által esetleg betett <br> tageket újsorrá
                     let cleanCode = codeContent.replace(/(<br\s*\/?>)/gi, '\n');
-                    
                     return `
                     <div class="code-window">
                         <div class="code-header">
@@ -353,7 +453,6 @@
             }
         });
 
-        // 2. KÉP LETÖLTÉS
         const images = document.querySelectorAll('.message-content img, .chat-message img, img');
         images.forEach(img => {
             if (!img.src.includes('pollinations')) return; 
@@ -399,7 +498,6 @@
         });
     }
 
-    // Fél másodpercenként fut, hogy azonnal formázza a bejövő AI kódokat!
     setInterval(injectAndFormat, 500);
     </script>
 </body>
