@@ -11,8 +11,13 @@
     
     <style>
         /* =========================================
-           FORGÓ ANIMÁCIÓK JAVÍTÁSA (Egyhelyben forgás)
+           FORGÓ ANIMÁCIÓK ÉS LOGÓ STABILIZÁLÁS
            ========================================= */
+        .orion-logo {
+            flex-shrink: 0 !important;
+            transform: none !important;
+        }
+
         .spinning-ring {
             transform-origin: 50px 50px !important; 
             transform-box: fill-box !important;
@@ -54,7 +59,7 @@
             text-align: center !important;
         }
 
-        /* --- BUBORÉKOK IGAZÍTÁSA (Rázsugorodnak a tartalomra) --- */
+        /* --- BUBORÉKOK IGAZÍTÁSA --- */
         .message.user {
             align-self: flex-end !important; 
             width: fit-content !important;
@@ -65,7 +70,7 @@
 
         .message.assistant, .message.system {
             align-self: flex-start !important; 
-            width: fit-content !important; /* <--- ITT A JAVÍTÁS: Csak akkora, amekkora a szöveg! */
+            width: fit-content !important; 
             max-width: 100% !important;
             display: flex !important;
             flex-direction: column !important;
