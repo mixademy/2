@@ -11,7 +11,7 @@
     
     <style>
         /* =========================================
-           VILÁGOS MÓD (LIGHT MODE)
+           VILÁGOS MÓD (LIGHT MODE) & SAROK KERETEK JAVÍTÁSA
            ========================================= */
         body.light-mode {
             background: #e2e4ea;
@@ -20,6 +20,7 @@
         
         body.light-mode .liquid-bg { opacity: 0.15; }
 
+        /* Biztosítjuk a lekerekítést világos módban is a paneleken */
         body.light-mode .glass-panel,
         body.light-mode .sidebar {
             background: rgba(255, 255, 255, 0.85);
@@ -27,6 +28,8 @@
             -webkit-backdrop-filter: blur(25px);
             border: 1px solid rgba(255, 255, 255, 1);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
+            border-radius: 20px; /* Lekerekített sarkak */
+            overflow: hidden;
         }
         
         body.light-mode .orion-title { color: #0f172a; font-weight: 800; }
@@ -64,6 +67,7 @@
         body.light-mode .chat-header {
             background: rgba(255, 255, 255, 0.85);
             border-bottom: 1px solid rgba(200, 200, 200, 0.5);
+            border-top-right-radius: 20px;
         }
 
         body.light-mode .message.assistant .message-content,
@@ -182,25 +186,6 @@
             font-family: 'Courier New', Courier, monospace;
             font-size: 14px;
         }
-
-        /* Csúszka (Range input) dizájn */
-        input[type=range] {
-            -webkit-appearance: none;
-            background: rgba(255, 255, 255, 0.2);
-            height: 6px;
-            border-radius: 3px;
-            outline: none;
-        }
-        body.light-mode input[type=range] { background: rgba(0, 0, 0, 0.2); }
-        input[type=range]::-webkit-slider-thumb {
-            -webkit-appearance: none;
-            appearance: none;
-            width: 16px;
-            height: 16px;
-            border-radius: 50%;
-            background: #a370f7;
-            cursor: pointer;
-        }
     </style>
 </head>
 <body data-user="{{ username }}">
@@ -264,7 +249,6 @@
                     <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
                     <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500; margin: 0;"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
                 </div>
-                <!-- JAVÍTOTT FOGASKERÉK GOMB: Csak egy elegáns ikon a sarokban -->
                 <button id="open-settings-btn" style="background: transparent; border: none; color: inherit; font-size: 22px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;" onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Beállítások">
                     <i class="fas fa-cog"></i>
                 </button>
@@ -300,7 +284,7 @@
                 </select>
             </div>
 
-            <div style="margin-bottom: 15px;">
+            <div style="margin-bottom: 25px;">
                 <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">AI Nyelve</label>
                 <select id="language-select" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
                     <option value="hu">🇭🇺 Magyar</option>
@@ -310,18 +294,6 @@
                     <option value="fr">🇫🇷 Français</option>
                     <option value="es">🇪🇸 Español</option>
                 </select>
-            </div>
-
-            <div style="margin-bottom: 25px;">
-                <label style="display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 13px; opacity: 0.8;">
-                    <span>Kreativitás szintje</span>
-                    <span id="creativity-val">50%</span>
-                </label>
-                <input type="range" id="creativity-slider" min="1" max="100" value="50" style="width: 100%;">
-                <div style="display: flex; justify-content: space-between; font-size: 10px; opacity: 0.5; margin-top: 5px;">
-                    <span>Precíz / Faktuális</span>
-                    <span>Kreatív / Fantáziadús</span>
-                </div>
             </div>
 
             <button id="save-settings-btn" class="glass-btn" style="width: 100%; padding: 12px; font-size: 15px; border-radius: 8px; cursor: pointer;">
@@ -351,8 +323,6 @@
 
     const themeSelect = document.getElementById('theme-select');
     const languageSelect = document.getElementById('language-select');
-    const creativitySlider = document.getElementById('creativity-slider');
-    const creativityVal = document.getElementById('creativity-val');
 
     // Alapértékek betöltése induláskor
     if (localStorage.getItem('orion_theme') === 'light') {
@@ -365,16 +335,6 @@
     if (localStorage.getItem('orion_language')) {
         languageSelect.value = localStorage.getItem('orion_language');
     }
-
-    if (localStorage.getItem('orion_creativity')) {
-        creativitySlider.value = localStorage.getItem('orion_creativity');
-        creativityVal.innerText = creativitySlider.value + '%';
-    }
-
-    // Csúszka értékének frissítése húzás közben
-    creativitySlider.addEventListener('input', (e) => {
-        creativityVal.innerText = e.target.value + '%';
-    });
 
     // Ablak megnyitása / bezárása
     settingsBtn.onclick = () => { settingsModal.style.display = 'flex'; };
@@ -391,9 +351,8 @@
             document.body.classList.remove('light-mode');
         }
 
-        // Nyelv és Kreativitás mentése
+        // Nyelv mentése
         localStorage.setItem('orion_language', languageSelect.value);
-        localStorage.setItem('orion_creativity', creativitySlider.value);
 
         // Vizuális visszajelzés
         const originalText = saveSettingsBtn.innerHTML;
