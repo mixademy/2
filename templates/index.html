@@ -11,102 +11,109 @@
     
     <style>
         /* =========================================
-           VILÁGOS MÓD (LIGHT MODE)
+           VILÁGOS MÓD (LIGHT MODE) - KIVÁLÓ OLVASHATÓSÁG
            ========================================= */
         body.light-mode {
-            background: #e9eaf0;
-            color: #2d3748;
+            background: #e2e4ea; /* Egy fokkal kontrasztosabb szürke háttér */
+            color: #0f172a; /* Nagyon sötét palakék/fekete a tökéletes olvashatóságért */
         }
         
         body.light-mode .liquid-bg { opacity: 0.15; }
 
         body.light-mode .glass-panel,
         body.light-mode .sidebar {
-            background: rgba(255, 255, 255, 0.65);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(25px);
             -webkit-backdrop-filter: blur(25px);
-            border: 1px solid rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(255, 255, 255, 1);
             box-shadow: 0 8px 32px rgba(31, 38, 135, 0.05);
         }
         
-        body.light-mode .orion-title { color: #1a202c; }
+        body.light-mode .orion-title { color: #0f172a; font-weight: 800; }
 
         body.light-mode h1, body.light-mode h2, body.light-mode h3, 
         body.light-mode p, body.light-mode .disclaimer {
-            color: #2d3748 !important; 
+            color: #0f172a !important; 
+            font-weight: 500;
         }
 
         body.light-mode .input-area {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.85);
             backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255, 255, 255, 1);
+            border-top: 1px solid rgba(200, 200, 200, 0.5);
         }
 
         body.light-mode .input-wrapper {
             background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.08);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.2); /* Jól látható keret */
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
             border-radius: 20px;
         }
 
         body.light-mode input, body.light-mode textarea {
-            color: #2d3748;
+            color: #0f172a !important;
+            font-weight: 500;
             background: transparent !important;
             border: none !important;
         }
 
         body.light-mode input::placeholder, body.light-mode textarea::placeholder {
-            color: #a0aec0;
+            color: #475569; /* Sötétebb placeholder */
         }
         
         body.light-mode .chat-header {
-            background: rgba(255, 255, 255, 0.7);
-            border-bottom: 1px solid rgba(255, 255, 255, 1);
+            background: rgba(255, 255, 255, 0.85);
+            border-bottom: 1px solid rgba(200, 200, 200, 0.5);
         }
 
+        /* Üzenetbuborékok olvashatósága */
         body.light-mode .message.assistant .message-content,
         body.light-mode .message.system .message-content {
             background: #ffffff;
-            border: 1px solid rgba(0, 0, 0, 0.05);
-            color: #2d3748;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+            border: 1px solid rgba(0, 0, 0, 0.15); /* Határozottabb körvonal */
+            color: #0f172a;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
         }
 
         body.light-mode .message.user .message-content {
-            background: linear-gradient(135deg, #a855f7, #6366f1);
+            background: linear-gradient(135deg, #9333ea, #6366f1);
             color: #ffffff;
+            font-weight: 500;
             border: none;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.2);
+            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.25);
         }
 
         body.light-mode .glass-btn, body.light-mode #theme-toggle-btn {
-            background: rgba(255, 255, 255, 0.6) !important;
-            border: 1px solid rgba(0, 0, 0, 0.05) !important;
-            color: #4a5568 !important;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+            background: rgba(255, 255, 255, 0.8) !important;
+            border: 1px solid rgba(0, 0, 0, 0.15) !important;
+            color: #1e293b !important;
+            font-weight: 600;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
         }
 
         body.light-mode .glass-btn:hover, body.light-mode #theme-toggle-btn:hover {
             background: #ffffff !important;
-            border-color: rgba(168, 85, 247, 0.4) !important;
-            color: #a855f7 !important;
+            border-color: rgba(147, 51, 234, 0.5) !important;
+            color: #9333ea !important;
         }
 
         body.light-mode #new-chat-btn {
-            background: linear-gradient(135deg, #a855f7, #8b5cf6) !important;
+            background: linear-gradient(135deg, #9333ea, #7c3aed) !important;
             color: white !important;
             border: none !important;
-            box-shadow: 0 4px 15px rgba(168, 85, 247, 0.3) !important;
+            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3) !important;
         }
         
         body.light-mode .chat-list-item {
-            color: #4a5568;
-            border-bottom: 1px solid rgba(0,0,0,0.03);
+            color: #1e293b;
+            font-weight: 500;
+            border-bottom: 1px solid rgba(0,0,0,0.05);
         }
         body.light-mode .chat-list-item:hover {
-            background: rgba(255, 255, 255, 0.9);
-            border-left: 3px solid #a855f7;
+            background: rgba(255, 255, 255, 1);
+            border-left: 4px solid #9333ea;
         }
 
         /* =========================================
@@ -123,8 +130,8 @@
         }
 
         body.light-mode .code-window {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            border: 1px solid rgba(0,0,0,0.1);
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            border: 1px solid rgba(0,0,0,0.2);
         }
 
         .code-header {
@@ -214,9 +221,12 @@
             
             <div class="chat-list" id="chat-list"></div>
 
-            <button id="theme-toggle-btn" class="glass-btn" style="width: 90%; margin: 10px auto; display: flex; align-items: center; justify-content: center; gap: 10px; cursor: pointer;">
-                <span id="theme-icon">☀️</span> <span id="theme-text">Világos mód</span>
-            </button>
+            <!-- KOMPAKT VILÁGOS/SÖTÉT MÓD GOMB -->
+            <div style="display: flex; justify-content: center; margin: 15px 0;">
+                <button id="theme-toggle-btn" class="glass-btn" style="width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 22px; cursor: pointer; padding: 0;" title="Téma váltása">
+                    <span id="theme-icon">☀️</span>
+                </button>
+            </div>
 
             <div class="user-info-bottom">
                 {% if username == 'admin' %}
@@ -270,13 +280,11 @@
     // --- VILÁGOS MÓD VÁLTÁS LOGIKA ---
     const themeBtn = document.getElementById('theme-toggle-btn');
     const themeIcon = document.getElementById('theme-icon');
-    const themeText = document.getElementById('theme-text');
 
     if (themeBtn) {
         if (localStorage.getItem('orion_theme') === 'light') {
             document.body.classList.add('light-mode');
             themeIcon.innerText = '🌙';
-            themeText.innerText = 'Sötét mód';
         }
 
         themeBtn.addEventListener('click', () => {
@@ -285,11 +293,9 @@
             if (document.body.classList.contains('light-mode')) {
                 localStorage.setItem('orion_theme', 'light');
                 themeIcon.innerText = '🌙';
-                themeText.innerText = 'Sötét mód';
             } else {
                 localStorage.setItem('orion_theme', 'dark');
                 themeIcon.innerText = '☀️';
-                themeText.innerText = 'Világos mód';
             }
         });
     }
@@ -299,10 +305,8 @@
         // 1. KÓD BLOKK (Ablak design és Másolás)
         const codeBlocks = document.querySelectorAll('pre');
         codeBlocks.forEach(pre => {
-            // Ha már be van csomagolva az ablakba, átugorjuk
             if (pre.parentElement && pre.parentElement.classList.contains('code-window')) return; 
             
-            // Kiderítjük a nyelvet (pl. python, html)
             let lang = "KÓD";
             const codeEl = pre.querySelector('code');
             if (codeEl && codeEl.className) {
@@ -310,7 +314,6 @@
                 if (match) lang = match[1];
             }
 
-            // Konténer és fejléc létrehozása
             const wrapper = document.createElement('div');
             wrapper.className = 'code-window';
             
@@ -325,12 +328,11 @@
             copyBtn.className = 'copy-btn';
             copyBtn.innerHTML = '<i class="fas fa-copy"></i> Másolás';
 
-            // Másolás funkció, ami most már TÉNYLEG CSAK a kódot másolja
             copyBtn.onclick = () => {
                 const textToCopy = codeEl ? codeEl.textContent : pre.textContent;
                 navigator.clipboard.writeText(textToCopy).then(() => {
                     copyBtn.innerHTML = '<i class="fas fa-check"></i> Másolva!';
-                    copyBtn.style.color = '#4ade80'; // Siker esetén zöld lesz a szöveg
+                    copyBtn.style.color = '#4ade80';
                     setTimeout(() => {
                         copyBtn.innerHTML = '<i class="fas fa-copy"></i> Másolás';
                         copyBtn.style.color = '';
@@ -338,7 +340,6 @@
                 });
             };
             
-            // Összeszerelés a DOM-ban
             header.appendChild(langLabel);
             header.appendChild(copyBtn);
             
@@ -347,7 +348,7 @@
             wrapper.appendChild(pre);
         });
 
-        // 2. KÉP LETÖLTÉS (Maradt a hibátlan, jól bevált kód)
+        // 2. KÉP LETÖLTÉS
         const images = document.querySelectorAll('.message-content img, .chat-message img, img');
         images.forEach(img => {
             if (!img.src.includes('pollinations')) return; 
