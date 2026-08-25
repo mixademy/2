@@ -15,11 +15,51 @@
            KIEGÉSZÍTŐ STÍLUSOK (Csak az, ami hiányzik a style.css-ből)
            ============================================================== */
 
-        /* 1. Fejléc helyrerakása (Gombok két szélen) */
+        /* 1. Fejléc helyrerakása (Hamburger menü + Gombok két szélen) */
         .chat-header {
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
+        }
+
+        .header-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
+        }
+
+        .mobile-menu-btn {
+            display: block !important;
+            background: transparent !important;
+            border: none !important;
+            color: var(--text-main);
+            font-size: 20px !important;
+            cursor: pointer !important;
+            padding: 5px !important;
+        }
+
+        body.light-mode .mobile-menu-btn {
+            color: #0f172a !important;
+        }
+
+        .header-right {
             display: flex;
-            justify-content: space-between;
             align-items: center;
+            gap: 10px;
+        }
+
+        #open-settings-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 20px;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
+
+        #open-settings-btn:hover {
+            opacity: 1;
         }
 
         /* 2. Forgó logó */
@@ -45,11 +85,28 @@
             opacity: 0.9 !important;
         }
 
-        /* 4. Chat lista menü (3 pötty és lebegő ablak) helyrerakása */
+        /* 4. Chat lista menü (3 pötty FIXÁLÁSA EGY SORBA A JOBB SZÉLRE) */
+        .chat-item {
+            display: flex !important;
+            flex-direction: row !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            flex-wrap: nowrap !important;
+        }
+
+        .chat-title {
+            flex: 1;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
         .chat-actions {
             position: relative;
             display: flex;
             align-items: center;
+            flex-shrink: 0 !important;
+            margin-left: 10px !important;
         }
 
         .dots-btn {
@@ -107,16 +164,16 @@
             color: #fca5a5;
         }
 
-        /* 5. Töltés és fájl melléklet stílusok */
+        /* 5. Töltés, fájl melléklet ÉS MODELLVÁLASZTÓ */
         .model-select {
             appearance: none;
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 12px;
+            font-size: 14.5px !important;
             font-weight: 600;
             cursor: pointer;
-            padding: 6px 16px 6px 6px;
+            padding: 8px 15px 8px 10px !important;
             outline: none;
         }
 
@@ -137,6 +194,7 @@
             padding: 8px;
             margin-right: 5px;
             transition: color 0.2s;
+            font-size: 16px;
         }
 
         .attach-btn:hover {
@@ -156,21 +214,7 @@
             max-width: 900px;
         }
 
-        #open-settings-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-size: 20px;
-            cursor: pointer;
-            opacity: 0.8;
-            transition: opacity 0.2s;
-        }
-
-        #open-settings-btn:hover {
-            opacity: 1;
-        }
-
-        /* 6. Világos mód (Sötét betűkkel, hogy olvasható legyen) */
+        /* 6. Világos mód (MINDEN SZÖVEG SÖTÉT - 100% Kontraszt) */
         body.light-mode {
             background: #f8fafc;
             color: #0f172a;
@@ -218,7 +262,7 @@
         }
 
         body.light-mode #message-input {
-            color: #0f172a;
+            color: #0f172a !important;
         }
 
         body.light-mode .user-info-content {
@@ -242,6 +286,73 @@
             background: #f1f5f9;
             border-color: #cbd5e1;
             color: #0f172a;
+        }
+
+        body.light-mode .model-select {
+            color: #0f172a !important;
+        }
+
+        body.light-mode .model-select option {
+            background: #ffffff !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode .attach-btn {
+            color: #475569 !important;
+        }
+
+        body.light-mode .disclaimer {
+            color: #64748b !important;
+        }
+
+        body.light-mode .dots-btn {
+            color: #475569 !important;
+        }
+
+        body.light-mode .dots-btn:hover {
+            color: #0f172a !important;
+        }
+
+        /* Asztali oldalsáv összecsukás (Hamburger menühöz PC-n) */
+        @media (min-width: 769px) {
+            .sidebar.desktop-collapsed {
+                display: none !important;
+            }
+        }
+
+        /* MOBIL OPTIMALIZÁLÁS ÉS BILLENTYŰZET JAVÍTÁS */
+        @media (max-width: 768px) {
+
+            /* Fixáljuk a teljes hátteret, így a billentyűzet nem tolja el az egész oldalt, csak az app-container rugózik */
+            html,
+            body {
+                position: fixed !important;
+                top: 0;
+                left: 0;
+                width: 100vw !important;
+                height: 100% !important;
+                height: 100dvh !important;
+                overflow: hidden !important;
+            }
+
+            .app-container {
+                width: 100vw !important;
+                height: 100% !important;
+                height: 100dvh !important;
+                border-radius: 0 !important;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+
+            /* Extra margó a beállítások gombnak, hogy ne tapadjon a szélre */
+            #open-settings-btn {
+                margin-right: 15px !important;
+            }
+
+            /* Modellválasztó igazítása mobilon a fejlécben */
+            #header-model-slot {
+                margin-right: 5px;
+            }
         }
     </style>
 </head>
@@ -314,11 +425,15 @@
         <!-- CHAT ABLAK -->
         <main class="chat-window">
             <div class="chat-header">
-                <div style="display: flex; align-items: center; gap: 12px;">
+                <div class="header-left">
                     <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
                     <h2 id="current-chat-title" style="margin: 0;">Orion AI</h2>
                 </div>
-                <button id="open-settings-btn" title="Beállítások"><i class="fas fa-cog"></i></button>
+                <div class="header-right">
+                    <!-- Mobilon ide kerül a Smart/Fast választó -->
+                    <div id="header-model-slot"></div>
+                    <button id="open-settings-btn" title="Beállítások"><i class="fas fa-cog"></i></button>
+                </div>
             </div>
 
             <div class="messages-container" id="messages-container"></div>
@@ -346,12 +461,15 @@
                     <textarea id="message-input" placeholder="Kérdezz az Oriontól..." rows="1"></textarea>
 
                     <div class="input-controls">
-                        <select id="model-selector" class="model-select">
-                            <option value="smart">🧠 Smart</option>
-                            <option value="fast">⚡ Fast</option>
-                            <option value="creative">🔥 Creative</option>
-                            <option value="code">💻 Code</option>
-                        </select>
+                        <!-- Asztali gépen itt marad a választó -->
+                        <div id="footer-model-slot">
+                            <select id="model-selector" class="model-select">
+                                <option value="smart">🧠 Smart</option>
+                                <option value="fast">⚡ Fast</option>
+                                <option value="creative">🔥 Creative</option>
+                                <option value="code">💻 Code</option>
+                            </select>
+                        </div>
                         <button id="send-btn" class="circle-send-btn"><i class="fas fa-arrow-up"></i></button>
                     </div>
                 </div>
@@ -413,7 +531,26 @@
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
     <script>
-        /* HAMBURGER MENÜ LOGIKA (A te .open és .active class-aid alapján) */
+        /* MODELLVÁLASZTÓ MOZGATÁSA (Mobil: Fejléc, PC: Lábjegyzet) */
+        function adaptModelSelector() {
+            const modelSelector = document.getElementById('model-selector');
+            const headerSlot = document.getElementById('header-model-slot');
+            const footerSlot = document.getElementById('footer-model-slot');
+
+            if (window.innerWidth <= 768) {
+                if (modelSelector && headerSlot && !headerSlot.contains(modelSelector)) {
+                    headerSlot.appendChild(modelSelector);
+                }
+            } else {
+                if (modelSelector && footerSlot && !footerSlot.contains(modelSelector)) {
+                    footerSlot.appendChild(modelSelector);
+                }
+            }
+        }
+        window.addEventListener('resize', adaptModelSelector);
+        window.addEventListener('DOMContentLoaded', adaptModelSelector);
+
+        /* HAMBURGER MENÜ LOGIKA (Asztali és Mobil) */
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const sidebar = document.getElementById('sidebar');
         const mobileOverlay = document.getElementById('mobile-overlay');
@@ -421,9 +558,13 @@
 
         if (mobileMenuBtn) {
             mobileMenuBtn.addEventListener('click', () => {
-                sidebar.classList.add('open');
-                if (mobileOverlay) {
-                    mobileOverlay.classList.add('active');
+                if (window.innerWidth > 768) {
+                    // PC asztali gép: oldalsáv elrejtése/mutatása
+                    sidebar.classList.toggle('desktop-collapsed');
+                } else {
+                    // Mobil: oldalsáv becsúsztatása
+                    sidebar.classList.add('open');
+                    if (mobileOverlay) mobileOverlay.classList.add('active');
                 }
             });
         }
