@@ -5,14 +5,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Orion AI</title>
-    <!-- A TE EREDETI STYLE.CSS FÁJLOD -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
     <style>
         /* ==============================================================
-           KIEGÉSZÍTŐ STÍLUSOK (Csak a minimális, roncsolásmentes fixek!)
+           ATOMBOMBA MEGOLDÁS - MINDENT KÖNYÖRTELENÜL FELÜLÍRUNK!
            ============================================================== */
 
         /* 1. Fejléc */
@@ -64,7 +63,7 @@
             opacity: 1;
         }
 
-        /* 2. Forgó logó és lila Új beszélgetés gomb */
+        /* 2. Forgó logó és lila gomb */
         .spinning-ring {
             transform-origin: 50px 50px;
             animation: spinLogo 10s linear infinite;
@@ -87,36 +86,59 @@
             background: #8b5cf6 !important;
         }
 
-        /* 3. CHAT LISTA 3 PÖTTY FIX (Nem rontja el az eredeti dobozodat!) */
-        /* A cím kap min-width: 0-t, hogy levágódjon (3 ponttal a végén), ha nem fér el.
-           A pöttyök (chat-actions) pedig flex: 0 0 auto-t, hogy sose nyomódjanak össze. */
+        /* 3. A CHAT LISTA ÉS A 3 PÖTTY (CSS GRID = SOHA TÖBBÉ NEM ESIK SZÉT) */
+        .chat-item {
+            display: grid !important;
+            grid-template-columns: 1fr auto !important;
+            /* Szöveg kitölti a helyet, gomb a végén */
+            align-items: center !important;
+            gap: 10px !important;
+            background: rgba(255, 255, 255, 0.03) !important;
+            /* Visszakapja a kért hátteret! */
+            border: 1px solid rgba(255, 255, 255, 0.05) !important;
+            padding: 12px 14px !important;
+            border-radius: 10px !important;
+            margin-bottom: 8px !important;
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+        }
+
+        .chat-item:hover,
+        .chat-item.active {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border-color: rgba(255, 255, 255, 0.2) !important;
+        }
+
         .chat-item>span,
         .chat-title {
-            flex: 1 1 auto;
-            min-width: 0;
-            padding-right: 10px;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            font-size: 14px !important;
+            color: var(--text-main) !important;
+            display: block !important;
         }
 
         .chat-actions {
-            flex: 0 0 auto;
-            position: relative;
-            display: flex;
-            align-items: center;
+            position: relative !important;
+            display: flex !important;
+            align-items: center !important;
         }
 
         .dots-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            cursor: pointer;
-            padding: 4px;
-            font-size: 14px;
+            background: transparent !important;
+            border: none !important;
+            color: var(--text-muted) !important;
+            cursor: pointer !important;
+            padding: 2px 6px !important;
+            font-size: 16px !important;
         }
 
         .dots-btn:hover {
-            color: var(--text-main);
+            color: white !important;
         }
 
+        /* 3/b. Lebegő menü */
         .chat-dropdown {
             position: absolute;
             right: 0;
@@ -132,7 +154,7 @@
         }
 
         .chat-dropdown.show {
-            display: flex;
+            display: flex !important;
         }
 
         .chat-dropdown button {
@@ -158,14 +180,63 @@
             color: #fca5a5;
         }
 
-        /* 4. CHAT ÜZENETEK IGAZÍTÁSA (Beviteli mezőhöz igazítva!) */
-        /* A konténert max 948px-re (900px mező + oldalsó padding) állítjuk, így 
-           a style.css-edben lévő align-self: flex-end/start pont a 2 szélére fogja tolni az üzeneteket! */
+        /* 4. CHAT BUBORÉKOK (KÖZÉPRE ZÁRT OSZLOP + 2 SZÉLRE IGAZÍTOTT ÜZENETEK) */
         .messages-container {
-            max-width: 948px !important;
+            display: flex !important;
+            flex-direction: column !important;
+            max-width: 900px !important;
+            /* Pontosan megegyezik a beviteli mező szélességével */
             margin: 0 auto !important;
-            /* Középre húzza a beszélgetés oszlopát */
+            /* Középre húzza a képernyőn */
             width: 100% !important;
+            padding: 24px !important;
+        }
+
+        .message {
+            width: fit-content !important;
+            /* Szigorúan csak akkora, mint a szöveg */
+            max-width: 80% !important;
+            padding: 14px 20px !important;
+            border-radius: 18px !important;
+            line-height: 1.6 !important;
+            font-size: 15px !important;
+            margin-bottom: 16px !important;
+            word-wrap: break-word !important;
+            display: block !important;
+        }
+
+        .message.user {
+            background: var(--accent-color) !important;
+            color: white !important;
+            margin-left: auto !important;
+            /* Kilöki a fal jobb szélére */
+            margin-right: 0 !important;
+            border-bottom-right-radius: 4px !important;
+        }
+
+        .message.assistant {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.1) !important;
+            color: var(--text-main) !important;
+            margin-right: auto !important;
+            /* Kilöki a fal bal szélére */
+            margin-left: 0 !important;
+            border-bottom-left-radius: 4px !important;
+        }
+
+        /* Biztonsági tartalék, ha a JS becsomagolná a buborékokat plusz div-ekbe: */
+        .messages-container>div {
+            width: 100% !important;
+            display: flex !important;
+            flex-direction: column !important;
+        }
+
+        .messages-container>div.user {
+            align-items: flex-end !important;
+        }
+
+        .messages-container>div.assistant {
+            align-items: flex-start !important;
         }
 
         /* 5. Töltés, fájl melléklet, modellválasztó */
@@ -174,10 +245,10 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 14.5px;
+            font-size: 14.5px !important;
             font-weight: 600;
             cursor: pointer;
-            padding: 8px 15px 8px 10px;
+            padding: 8px 15px 8px 10px !important;
             outline: none;
         }
 
@@ -246,19 +317,25 @@
         }
 
         body.light-mode .chat-item {
-            color: #334155;
+            background: rgba(0, 0, 0, 0.03) !important;
+            border-color: rgba(0, 0, 0, 0.05) !important;
         }
 
         body.light-mode .chat-item:hover,
         body.light-mode .chat-item.active {
-            background: #e2e8f0;
-            color: #0f172a;
+            background: rgba(0, 0, 0, 0.08) !important;
+            border-color: rgba(0, 0, 0, 0.15) !important;
+        }
+
+        body.light-mode .chat-item>span,
+        body.light-mode .chat-title {
+            color: #0f172a !important;
         }
 
         body.light-mode .message.assistant {
-            background: #f1f5f9;
-            border-color: #e2e8f0;
-            color: #0f172a;
+            background: #f1f5f9 !important;
+            border-color: #cbd5e1 !important;
+            color: #0f172a !important;
         }
 
         body.light-mode .input-wrapper {
@@ -267,7 +344,7 @@
         }
 
         body.light-mode #message-input {
-            color: #0f172a;
+            color: #0f172a !important;
         }
 
         body.light-mode .user-info-content {
@@ -294,26 +371,26 @@
         }
 
         body.light-mode .model-select {
-            color: #0f172a;
+            color: #0f172a !important;
         }
 
         body.light-mode .model-select option {
-            background: #ffffff;
-            color: #0f172a;
+            background: #ffffff !important;
+            color: #0f172a !important;
         }
 
         body.light-mode .attach-btn,
         body.light-mode .dots-btn {
-            color: #475569;
+            color: #475569 !important;
         }
 
         body.light-mode .disclaimer {
-            color: #64748b;
+            color: #64748b !important;
         }
 
         body.light-mode .attach-btn:hover,
         body.light-mode .dots-btn:hover {
-            color: #0f172a;
+            color: #0f172a !important;
         }
 
         /* 7. Oldalsáv animáció (Asztali gép kicsúszás) */
@@ -566,10 +643,8 @@
         if (mobileMenuBtn) {
             mobileMenuBtn.addEventListener('click', () => {
                 if (window.innerWidth > 768) {
-                    // PC asztali gép: lágy animációs becsukás
                     sidebar.classList.toggle('desktop-collapsed');
                 } else {
-                    // Mobil: oldalsáv becsúsztatása
                     sidebar.classList.add('open');
                     if (mobileOverlay) mobileOverlay.classList.add('active');
                 }
