@@ -11,21 +11,39 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
     <style>
-        /* Márkajelzés és ikonok */
+        /* Stabil mobil nézet és magasságkezelés */
+        html,
+        body {
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            overflow: hidden;
+            position: fixed;
+            /* Megakadályozza a billentyűzet alatti elcsúszást/nagyítást */
+        }
+
         .orion-brand {
             display: flex !important;
             align-items: center !important;
-            gap: 15px !important;
+            gap: 12px !important;
+            margin: 0 !important;
+            padding: 0 !important;
         }
 
         .orion-logo {
-            width: 36px !important;
-            height: 36px !important;
-            min-width: 36px !important;
-            min-height: 36px !important;
+            width: 32px !important;
+            height: 32px !important;
+            min-width: 32px !important;
+            min-height: 32px !important;
             flex-shrink: 0 !important;
             overflow: visible !important;
             display: block !important;
+        }
+
+        .orion-title {
+            font-size: 18px !important;
         }
 
         .spinning-ring {
@@ -46,9 +64,41 @@
             margin: 0 auto !important;
         }
 
-        /* 3 pöttyös menü */
-        .chat-actions {
-            position: relative;
+        /* Chat elemek és rejtett menü hosszan nyomáshoz (Long Press) */
+        .chat-list-item {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            gap: 8px !important;
+            padding: 12px !important;
+            width: 100% !important;
+            box-sizing: border-box !important;
+            position: relative !important;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .chat-title {
+            flex: 1 !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+        }
+
+        /* Mobilon eltüntetjük a 3 pöttyöt, helyette hosszan nyomás van */
+        @media (max-width: 768px) {
+            .chat-actions {
+                display: none !important;
+            }
+        }
+
+        @media (min-width: 769px) {
+            .chat-actions {
+                position: relative !important;
+                flex-shrink: 0 !important;
+                display: flex !important;
+                align-items: center !important;
+            }
         }
 
         .dots-btn {
@@ -75,8 +125,8 @@
             border-radius: 8px;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             flex-direction: column;
-            min-width: 120px;
-            z-index: 50;
+            min-width: 130px;
+            z-index: 100;
             overflow: hidden;
             display: none;
         }
@@ -97,6 +147,7 @@
             display: flex;
             align-items: center;
             gap: 8px;
+            width: 100%;
         }
 
         .chat-dropdown button:hover {
@@ -109,6 +160,16 @@
         }
 
         /* Üzenet buborékok */
+        .messages-container {
+            display: flex !important;
+            flex-direction: column !important;
+            gap: 15px !important;
+            padding: 20px !important;
+            overflow-y: auto !important;
+            height: 100%;
+            box-sizing: border-box;
+        }
+
         .message-wrapper {
             position: relative;
             width: 100%;
@@ -128,27 +189,26 @@
 
         .message {
             padding: 12px 18px;
-            border-radius: 14px;
+            border-radius: 16px;
             font-size: 14px;
             line-height: 1.6;
             word-break: break-word;
-            margin-bottom: 10px;
+            width: fit-content !important;
+            max-width: 85% !important;
+            box-sizing: border-box;
         }
 
         .message.user {
             background: #9333ea;
             color: white;
             border-bottom-right-radius: 4px;
-            max-width: 80%;
         }
 
         .message.assistant {
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: var(--text-main);
-            width: 100%;
             border-bottom-left-radius: 4px;
-            box-sizing: border-box;
         }
 
         .edit-message-btn {
@@ -168,14 +228,15 @@
             opacity: 1;
         }
 
-        /* Kompakt beviteli mező (kapszula) */
+        /* Beviteli mező */
         .input-area {
             display: flex !important;
             flex-direction: column !important;
             align-items: center !important;
-            padding: 12px 15px !important;
+            padding: 12px 20px 20px 20px !important;
             width: 100% !important;
             box-sizing: border-box !important;
+            flex-shrink: 0;
         }
 
         .input-wrapper {
@@ -188,7 +249,7 @@
             background: rgba(30, 30, 46, 0.8) !important;
             border: 1px solid rgba(255, 255, 255, 0.1) !important;
             border-radius: 24px !important;
-            padding: 8px 12px !important;
+            padding: 6px 12px !important;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15) !important;
         }
 
@@ -229,12 +290,35 @@
             text-align: center !important;
             font-size: 10px;
             opacity: 0.5;
-            margin-top: 6px;
+            margin-top: 8px;
         }
 
-        /* PC és mobil oldalsáv beállítások */
+        .sidebar-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 20px;
+            padding: 5px 0;
+        }
+
+        .close-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: var(--text-main);
+            font-size: 22px;
+            cursor: pointer;
+            padding: 0;
+            transition: 0.2s;
+            opacity: 0.7;
+        }
+
+        .close-menu-btn:hover {
+            opacity: 1;
+        }
+
         .sidebar {
-            transition: width 0.3s ease, transform 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+            transition: transform 0.3s ease;
         }
 
         @media (min-width: 769px) {
@@ -255,9 +339,11 @@
                 top: 0;
                 left: 0;
                 height: 100%;
+                height: 100dvh;
                 transform: translateX(-100%);
                 z-index: 1000;
-                width: 270px;
+                width: 280px;
+                box-sizing: border-box;
             }
 
             .sidebar.mobile-open {
@@ -268,35 +354,90 @@
                 display: block;
             }
 
+            .close-menu-btn {
+                display: block;
+            }
+
+            .chat-header {
+                padding: 10px 12px !important;
+                gap: 8px !important;
+            }
+
+            #current-chat-title {
+                font-size: 14px !important;
+            }
+
+            #mobile-menu-btn,
+            #open-settings-btn {
+                font-size: 18px !important;
+                padding: 4px !important;
+            }
+
+            .model-select {
+                font-size: 11px !important;
+                padding: 4px 14px 4px 4px !important;
+            }
+
             .messages-container {
-                padding: 12px !important;
+                padding: 15px 12px !important;
+                gap: 12px !important;
+            }
+
+            .message {
+                font-size: 13.5px;
+                padding: 10px 14px;
+                max-width: 90% !important;
+            }
+
+            .input-area {
+                padding: 10px 12px 15px 12px !important;
+            }
+
+            .input-wrapper {
+                padding: 6px 10px !important;
+            }
+
+            .attach-btn,
+            .circle-send-btn {
+                margin-bottom: 2px !important;
+            }
+
+            #message-input {
+                padding: 8px 0 !important;
+                font-size: 13.5px !important;
             }
         }
 
-        /* --- TELJES KÖRŰ VILÁGOS MÓD (LIGHT MODE) --- */
+        /* VILÁGOS MÓD KONTRASZT */
         body.light-mode {
-            background-color: #f1f5f9 !important;
+            background-color: #f8fafc !important;
             color: #0f172a !important;
         }
 
         body.light-mode .app-container {
-            background: rgba(255, 255, 255, 0.95) !important;
+            background: #ffffff !important;
         }
 
         body.light-mode .sidebar {
-            background: #ffffff !important;
+            background: #f1f5f9 !important;
             border-right-color: rgba(0, 0, 0, 0.1) !important;
         }
 
         body.light-mode .chat-header {
             background: #ffffff !important;
             border-bottom-color: rgba(0, 0, 0, 0.1) !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode .input-area {
+            background: #ffffff !important;
+            border-top-color: rgba(0, 0, 0, 0.1) !important;
         }
 
         body.light-mode .input-wrapper {
-            background: #ffffff !important;
+            background: #f1f5f9 !important;
             border: 1px solid rgba(0, 0, 0, 0.15) !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05) !important;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03) !important;
         }
 
         body.light-mode .input-wrapper textarea {
@@ -304,32 +445,38 @@
         }
 
         body.light-mode .message.assistant {
-            background: #ffffff !important;
+            background: #f1f5f9 !important;
             border: 1px solid rgba(0, 0, 0, 0.1) !important;
             color: #0f172a !important;
         }
 
         body.light-mode .chat-list-item {
-            color: #475569 !important;
+            color: #334155 !important;
         }
 
         body.light-mode .chat-list-item:hover,
         body.light-mode .chat-list-item.active {
-            background: rgba(0, 0, 0, 0.05) !important;
+            background: rgba(0, 0, 0, 0.07) !important;
             color: #0f172a !important;
+            font-weight: 600;
         }
 
         body.light-mode .chat-dropdown {
             background: #ffffff !important;
-            border-color: rgba(0, 0, 0, 0.1) !important;
+            border-color: rgba(0, 0, 0, 0.15) !important;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1) !important;
         }
 
         body.light-mode .chat-dropdown button {
             color: #0f172a !important;
         }
 
+        body.light-mode .chat-dropdown button:hover {
+            background: rgba(0, 0, 0, 0.05) !important;
+        }
+
         body.light-mode .model-select {
-            color: #475569 !important;
+            color: #334155 !important;
         }
 
         body.light-mode .model-select option {
@@ -353,6 +500,18 @@
             color: #0f172a !important;
             border-color: rgba(0, 0, 0, 0.2) !important;
         }
+
+        body.light-mode .close-menu-btn {
+            color: #0f172a !important;
+        }
+
+        body.light-mode .orion-title {
+            color: #0f172a !important;
+        }
+
+        body.light-mode .user-info-content {
+            color: #334155 !important;
+        }
     </style>
 </head>
 
@@ -363,79 +522,87 @@
         <div class="blob three"></div>
     </div>
 
-    <div class="glass-panel app-container">
-        <div class="mobile-overlay" id="mobile-overlay"></div>
+    <div class="glass-panel app-container"
+        style="display: flex; width: 100vw; height: 100vh; height: 100dvh; overflow: hidden; position: relative;">
+        <div class="mobile-overlay" id="mobile-overlay"
+            style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); z-index: 900; backdrop-filter: blur(3px);">
+        </div>
 
         <!-- OLDALSÁV -->
-        <aside class="sidebar" id="sidebar">
-            <button id="close-menu-btn" class="close-menu-btn"><i class="fas fa-times"></i></button>
-
-            <div class="orion-brand">
-                <svg class="orion-logo" viewBox="0 0 100 100" fill="none">
-                    <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30"
-                        stroke-linecap="round" />
-                    <circle cx="32" cy="68" r="5" fill="#ffffff" />
-                    <circle cx="50" cy="50" r="6" fill="#a370f7" />
-                    <circle cx="68" cy="32" r="5" fill="#ffffff" />
-                    <defs>
-                        <linearGradient id="gradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#a370f7" />
-                            <stop offset="1" stop-color="#4f46e5" />
-                        </linearGradient>
-                    </defs>
-                </svg>
-                <h1 class="orion-title">Orion <span>AI</span></h1>
+        <aside class="sidebar" id="sidebar"
+            style="width: 280px; background: rgba(15, 23, 42, 0.95); border-right: 1px solid rgba(255,255,255,0.1); display: flex; flex-direction: column; padding: 15px; box-sizing: border-box; z-index: 1000;">
+            <div class="sidebar-header">
+                <div class="orion-brand">
+                    <svg class="orion-logo" viewBox="0 0 100 100" fill="none">
+                        <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30"
+                            stroke-linecap="round" />
+                        <circle cx="32" cy="68" r="5" fill="#ffffff" />
+                        <circle cx="50" cy="50" r="6" fill="#a370f7" />
+                        <circle cx="68" cy="32" r="5" fill="#ffffff" />
+                        <defs>
+                            <linearGradient id="gradient" x1="0" y1="0" x2="100" y2="100"
+                                gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#a370f7" />
+                                <stop offset="1" stop-color="#4f46e5" />
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <h1 class="orion-title">Orion <span>AI</span></h1>
+                </div>
+                <button id="close-menu-btn" class="close-menu-btn"><i class="fas fa-times"></i></button>
             </div>
 
             <button id="new-chat-btn" class="glass-btn compact-btn"
-                style="padding: 10px 14px; font-size: 13px; border-radius: 10px;">
+                style="padding: 10px 14px; font-size: 13px; border-radius: 10px; margin-bottom: 10px; background: var(--accent); color: white; border: none; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 8px;">
                 <i class="fas fa-plus"></i> Új beszélgetés
             </button>
 
-            <div class="chat-list" id="chat-list"></div>
+            <div class="chat-list" id="chat-list"
+                style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 4px;"></div>
 
-            <div class="user-info-bottom">
+            <div class="user-info-bottom"
+                style="border-top: 1px solid rgba(255,255,255,0.1); padding-top: 15px; margin-top: 10px;">
                 {% if username == 'admin' %}
                 <a href="{{ url_for('admin_panel') }}" class="glass-btn compact-btn"
-                    style="text-decoration: none; text-align: center; margin-bottom: 10px; display: block; padding: 8px;">
+                    style="text-decoration: none; text-align: center; margin-bottom: 10px; display: block; padding: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; color: inherit;">
                     <i class="fas fa-shield-alt"></i> Admin Panel
                 </a>
                 {% endif %}
-                <div class="user-info-content">
+                <div class="user-info-content"
+                    style="display: flex; align-items: center; justify-content: space-between; font-size: 13px;">
                     {% if username == 'Vendég' %}
-                    <span><i class="fas fa-user-secret" style="color: var(--text-muted);"></i> <b>{{ username
-                            }}</b></span>
+                    <span><i class="fas fa-user-secret"></i> <b>{{ username }}</b></span>
                     <a href="{{ url_for('login') }}" class="logout-link"
-                        style="color: var(--accent-color); font-weight: 600;"><i class="fas fa-sign-in-alt"></i>
-                        Belépés</a>
+                        style="color: var(--accent); font-weight: 600; text-decoration: none;"><i
+                            class="fas fa-sign-in-alt"></i> Belépés</a>
                     {% else %}
                     <span><i class="fas fa-user-astronaut"></i> <b>{{ username }}</b></span>
-                    <a href="{{ url_for('logout') }}" class="logout-link"><i class="fas fa-sign-out-alt"></i>
-                        Kilépés</a>
+                    <a href="{{ url_for('logout') }}" class="logout-link"
+                        style="color: var(--accent); font-weight: 600; text-decoration: none;"><i
+                            class="fas fa-sign-out-alt"></i> Kilépés</a>
                     {% endif %}
                 </div>
             </div>
         </aside>
 
         <!-- CHAT ABLAK -->
-        <main class="chat-window">
+        <main class="chat-window"
+            style="flex: 1; display: flex; flex-direction: column; height: 100%; overflow: hidden; position: relative;">
             <div class="chat-header"
-                style="display: flex; align-items: center; justify-content: space-between; padding: 12px 15px;">
+                style="display: flex; align-items: center; justify-content: space-between; padding: 12px 20px; border-bottom: 1px solid rgba(255,255,255,0.1);">
                 <div style="display: flex; align-items: center; gap: 12px; overflow: hidden; flex: 1;">
                     <button id="mobile-menu-btn"
-                        style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: inherit;"
+                        style="background: transparent; border: none; font-size: 18px; cursor: pointer; color: inherit; padding: 4px;"
                         title="Menü">
                         <i class="fas fa-bars"></i>
                     </button>
                     <h2 id="current-chat-title"
-                        style="font-size: 15px; font-weight: 500; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
+                        style="font-size: 16px; font-weight: 500; margin: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">
                         <i class="fas fa-sparkles"></i> Orion AI</h2>
                 </div>
 
-                <div style="display: flex; align-items: center; gap: 8px;">
-                    <!-- IDE KERÜL A MODELLVÁLASZTÓ MOBILON -->
+                <div style="display: flex; align-items: center; gap: 8px; flex-shrink: 0;">
                     <div id="header-model-slot"></div>
-
                     <button id="open-settings-btn"
                         style="background: transparent; border: none; color: inherit; font-size: 18px; cursor: pointer; opacity: 0.7; padding: 4px;"
                         title="Beállítások">
@@ -449,10 +616,9 @@
             <div class="input-area">
                 <div id="file-preview-container">
                     <div style="display: flex; align-items: center; gap: 8px; font-size: 12px;">
-                        <i class="fas fa-file-alt" style="color: var(--accent-color);"></i>
+                        <i class="fas fa-file-alt" style="color: var(--accent);"></i>
                         <span id="file-preview-name">file.txt</span>
-                        <span id="file-preview-loading"
-                            style="display:none; color: var(--accent-color); font-size: 11px;"><i
+                        <span id="file-preview-loading" style="display:none; color: var(--accent); font-size: 11px;"><i
                                 class="fas fa-spinner fa-spin"></i></span>
                     </div>
                     <button id="remove-file-btn"
@@ -462,18 +628,16 @@
 
                 <div class="input-wrapper">
                     <label for="file-upload" class="attach-btn" title="Fájl csatolása"
-                        style="background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0; margin-bottom: 2px;">
-                        <i class="fas fa-plus" style="font-size: 12px;"></i>
+                        style="background: rgba(255,255,255,0.05); border: none; color: var(--text-muted); width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center; flex-shrink: 0;">
+                        <i class="fas fa-plus" style="font-size: 13px;"></i>
                     </label>
                     <input type="file" id="file-upload" style="display: none;"
                         accept=".pdf,.txt,.py,.js,.html,.css,.jpg,.jpeg,.png,.webp">
 
                     <textarea id="message-input" placeholder="Írj üzenetet..." rows="1"
-                        style="flex: 1; background: transparent; border: none; color: inherit; resize: none; outline: none; font-size: 14px; line-height: 20px; padding: 6px 0; max-height: 120px;"></textarea>
+                        style="flex: 1; background: transparent; border: none; color: inherit; resize: none; outline: none; font-size: 14px; line-height: 20px; padding: 8px 0; max-height: 120px;"></textarea>
 
-                    <div class="input-controls"
-                        style="display: flex; align-items: center; gap: 6px; flex-shrink: 0; margin-bottom: 2px;">
-                        <!-- IDE KERÜL A MODELLVÁLASZTÓ PC-N -->
+                    <div class="input-controls" style="display: flex; align-items: center; gap: 6px; flex-shrink: 0;">
                         <div id="footer-model-slot">
                             <select id="model-selector" class="model-select">
                                 <option value="smart">🧠 Smart</option>
@@ -484,7 +648,7 @@
                         </div>
                         <button id="send-btn" class="circle-send-btn"
                             style="background: var(--text-main); color: #000; border: none; width: 32px; height: 32px; border-radius: 50%; cursor: pointer; display: flex; justify-content: center; align-items: center;"><i
-                                class="fas fa-arrow-up" style="font-size: 12px;"></i></button>
+                                class="fas fa-arrow-up" style="font-size: 13px;"></i></button>
                     </div>
                 </div>
                 <div class="disclaimer">
@@ -496,11 +660,11 @@
 
     <!-- BEÁLLÍTÁSOK MODAL -->
     <div id="settings-modal" class="broadcast-modal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+        style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 2000; justify-content: center; align-items: center;">
         <div class="glass-panel broadcast-content"
-            style="text-align: left; max-width: 380px; width: 90%; padding: 20px; border-radius: 16px;">
+            style="text-align: left; max-width: 380px; width: 90%; padding: 20px; border-radius: 16px; background: #1e1e2e; border: 1px solid rgba(255,255,255,0.1);">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
-                <h3 style="color: var(--accent-color); margin: 0; font-size: 18px;"><i class="fas fa-sliders-h"></i>
+                <h3 style="color: var(--accent); margin: 0; font-size: 18px;"><i class="fas fa-sliders-h"></i>
                     Beállítások</h3>
                 <button id="close-settings-btn"
                     style="background: transparent; border: none; color: inherit; cursor: pointer; font-size: 18px;"><i
@@ -526,29 +690,14 @@
             </div>
 
             <button id="save-settings-btn" class="glass-btn"
-                style="width: 100%; padding: 10px; font-size: 14px; border-radius: 8px; cursor: pointer;">Mentés</button>
-        </div>
-    </div>
-
-    <!-- RENDSZERÜZENET MODAL -->
-    <div id="broadcast-modal" class="broadcast-modal"
-        style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
-        <div class="glass-panel broadcast-content"
-            style="padding: 20px; border-radius: 16px; text-align: center; max-width: 320px; width: 90%;">
-            <div style="font-size: 32px; color: var(--accent-color);"><i class="fas fa-bullhorn"></i></div>
-            <h3 style="font-size: 16px; font-weight: 600; margin: 10px 0;">Rendszerüzenet</h3>
-            <p id="broadcast-text-content"
-                style="font-size: 13px; line-height: 1.4; background: rgba(0,0,0,0.2); padding: 10px; border-radius: 8px; text-align: left;">
-            </p>
-            <button id="close-broadcast-btn" class="glass-btn"
-                style="padding: 8px; font-size: 13px; border-radius: 8px; width: 100%; margin-top: 10px;">Bezárás</button>
+                style="width: 100%; padding: 10px; font-size: 14px; border-radius: 8px; cursor: pointer; background: var(--accent); border: none; color: white; font-weight: bold;">Mentés</button>
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
     <script>
-        // Dinamikusan áthelyezzük a modellválasztót mobilon a fejlécbe, PC-n pedig vissza alulra
+        // Modellválasztó helye mobilon és PC-n
         function adaptModelSelector() {
             const modelSelector = document.getElementById('model-selector');
             const headerSlot = document.getElementById('header-model-slot');
@@ -567,7 +716,7 @@
         window.addEventListener('resize', adaptModelSelector);
         window.addEventListener('DOMContentLoaded', adaptModelSelector);
 
-        // Hamburger és oldalsáv kezelés
+        // Oldalsáv kezelés és Swipe (jobbra húzás) gesztus mobilon
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const sidebar = document.getElementById('sidebar');
         const mobileOverlay = document.getElementById('mobile-overlay');
@@ -579,15 +728,34 @@
                     sidebar.classList.toggle('collapsed');
                 } else {
                     sidebar.classList.add('mobile-open');
+                    mobileOverlay.style.display = 'block';
                     mobileOverlay.classList.add('active');
                 }
             });
         }
 
-        if (closeMenuBtn) closeMenuBtn.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); mobileOverlay.classList.remove('active'); });
-        if (mobileOverlay) mobileOverlay.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); mobileOverlay.classList.remove('active'); });
+        function closeSidebar() {
+            sidebar.classList.remove('mobile-open');
+            mobileOverlay.classList.remove('active');
+            setTimeout(() => { if (!mobileOverlay.classList.contains('active')) mobileOverlay.style.display = 'none'; }, 300);
+        }
 
-        // Beállítások & Világos Mód mentése és betöltése
+        if (closeMenuBtn) closeMenuBtn.addEventListener('click', closeSidebar);
+        if (mobileOverlay) mobileOverlay.addEventListener('click', closeSidebar);
+
+        // Swipe gesztus támogatás (bal szélről jobbra húzás)
+        let touchStartX = 0;
+        window.addEventListener('touchstart', e => { touchStartX = e.touches[0].clientX; }, { passive: true });
+        window.addEventListener('touchend', e => {
+            let touchEndX = e.changedTouches[0].clientX;
+            if (touchStartX < 40 && touchEndX - touchStartX > 70 && window.innerWidth <= 768) {
+                sidebar.classList.add('mobile-open');
+                mobileOverlay.style.display = 'block';
+                mobileOverlay.classList.add('active');
+            }
+        }, { passive: true });
+
+        // Beállítások Modal logika
         const settingsBtn = document.getElementById('open-settings-btn');
         const settingsModal = document.getElementById('settings-modal');
         const closeSettingsBtn = document.getElementById('close-settings-btn');
