@@ -12,7 +12,7 @@
 
     <style>
         /* ==============================================================
-           ELEGÁNS ÜVEGES HÁTTÉR A CHAT ELŐZMÉNYEKRE
+           VÉGLEGES FIX: A GOMSOK SOHA TÖBBÉ NEM CSÚSZNAK ALÁ!
            ============================================================== */
 
         /* 1. Fejléc */
@@ -87,17 +87,20 @@
             background: #8b5cf6 !important;
         }
 
-        /* 3. CHAT ELŐZMÉNYEK: ÜVEGES, FÉLIG ÁTTETSZŐ HÁTTÉR (Mint a gombnak) */
+        /* 3. CHAT ELŐZMÉNYEK ÉS GOMBSOR (EGYETlen SORBA KÉNYSZERÍTve) */
         .dots-btn {
             display: none !important;
         }
 
         .chat-item {
             display: flex !important;
+            flex-direction: row !important;
+            /* Szigorúan egy sor! */
             align-items: center !important;
             justify-content: space-between !important;
+            flex-wrap: nowrap !important;
+            /* Nem törhet új sorba semmi! */
             background: rgba(255, 255, 255, 0.04) !important;
-            /* Finom üveges hatás */
             backdrop-filter: blur(10px) !important;
             -webkit-backdrop-filter: blur(10px) !important;
             border: 1px solid rgba(255, 255, 255, 0.08) !important;
@@ -110,7 +113,6 @@
         .chat-item:hover,
         .chat-item.active {
             background: rgba(163, 112, 247, 0.12) !important;
-            /* Enyhe lila tónus hoverkor */
             border-color: rgba(163, 112, 247, 0.3) !important;
         }
 
@@ -118,6 +120,7 @@
         .chat-title {
             flex: 1 1 auto !important;
             min-width: 0 !important;
+            /* Engedi a szöveget zsugorodni és levágódni */
             overflow: hidden !important;
             text-overflow: ellipsis !important;
             white-space: nowrap !important;
@@ -125,7 +128,7 @@
             font-size: 14px !important;
         }
 
-        /* 4. GOMBSOR AZ ELŐZMÉNYEKHEZ (Ceruza, Pin, Kuka) */
+        /* Gombok konténere: fixen mellette marad, nem csúszhat alá */
         .chat-dropdown {
             position: static !important;
             display: flex !important;
@@ -136,14 +139,14 @@
             padding: 0 !important;
             gap: 4px !important;
             min-width: auto !important;
+            flex-shrink: 0 !important;
+            /* A gombok soha nem mennek össze vagy alá */
             opacity: 0.3 !important;
-            /* Alapból halványabb, hogy ne zavarjon */
             transition: opacity 0.2s !important;
         }
 
         .chat-item:hover .chat-dropdown {
             opacity: 1 !important;
-            /* Ha ráviszed az egeret, teljesen látszik */
         }
 
         .chat-dropdown button {
@@ -172,7 +175,7 @@
             color: white !important;
         }
 
-        /* Törlés gomb (kuka) pirosas hátteres */
+        /* Törlés gomb (kuka) pirosas */
         .chat-dropdown button:last-child {
             background: rgba(239, 68, 68, 0.15) !important;
             color: #ef4444 !important;
@@ -185,14 +188,14 @@
             border-color: #ef4444 !important;
         }
 
-        /* 5. NEM KELLŐ ELEMEK KINYÍRÁSA A CHATBŐL */
+        /* 4. Felesleges elemek kiirtása a chatből */
         .messages-container button,
         .messages-container .edit-btn,
         .messages-container form {
             display: none !important;
         }
 
-        /* 6. ÜZENETEK PONTOS IGAZÍTÁSA A BEVITELI MEZŐHÖZ */
+        /* 5. ÜZENETEK PONTOS IGAZÍTÁSA */
         .messages-container {
             max-width: 900px !important;
             margin: 0 auto !important;
@@ -236,7 +239,7 @@
             align-items: flex-start !important;
         }
 
-        /* 7. Töltés, fájl melléklet, modellválasztó */
+        /* 6. Töltés, fájl, modellválasztó */
         .model-select {
             appearance: none;
             background: transparent;
@@ -286,7 +289,7 @@
             max-width: 900px;
         }
 
-        /* 8. Világos mód (100% kontraszt) */
+        /* 7. Világos mód kontraszt fixek */
         body.light-mode {
             background: #f8fafc;
             color: #0f172a;
@@ -397,7 +400,7 @@
             color: #0f172a !important;
         }
 
-        /* 9. Oldalsáv animáció (Asztali gép kicsúszás) */
+        /* 8. Oldalsáv animáció */
         @media (min-width: 769px) {
             .sidebar {
                 transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease !important;
@@ -411,7 +414,7 @@
             }
         }
 
-        /* 10. Mobil optimalizálás és billentyűzet fix */
+        /* 9. Mobil optimalizálás */
         @media (max-width: 768px) {
 
             html,
