@@ -12,10 +12,10 @@
 
     <style>
         /* ==============================================================
-           KIEGÉSZÍTŐ STÍLUSOK (Csak a javítások, semmi roncsolás!)
+           KIEGÉSZÍTŐ STÍLUSOK (Csak a minimális, roncsolásmentes fixek!)
            ============================================================== */
 
-        /* 1. Fejléc és menü gombok */
+        /* 1. Fejléc */
         .chat-header {
             display: flex !important;
             justify-content: space-between !important;
@@ -23,23 +23,9 @@
         }
 
         .header-left {
-            display: flex !important;
-            align-items: center !important;
-            gap: 15px !important;
-        }
-
-        .mobile-menu-btn {
-            display: block !important;
-            background: transparent !important;
-            border: none !important;
-            color: var(--text-main);
-            font-size: 20px !important;
-            cursor: pointer !important;
-            padding: 5px !important;
-        }
-
-        body.light-mode .mobile-menu-btn {
-            color: #0f172a !important;
+            display: flex;
+            align-items: center;
+            gap: 15px;
         }
 
         .header-right {
@@ -48,10 +34,26 @@
             gap: 10px;
         }
 
+        .mobile-menu-btn {
+            display: none;
+            background: transparent;
+            border: none;
+            color: inherit;
+            font-size: 20px;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block;
+            }
+        }
+
         #open-settings-btn {
             background: transparent;
             border: none;
-            color: var(--text-main);
+            color: inherit;
             font-size: 20px;
             cursor: pointer;
             opacity: 0.8;
@@ -62,7 +64,7 @@
             opacity: 1;
         }
 
-        /* 2. Forgó logó és lila gomb */
+        /* 2. Forgó logó és lila Új beszélgetés gomb */
         .spinning-ring {
             transform-origin: 50px 50px;
             animation: spinLogo 10s linear infinite;
@@ -82,22 +84,24 @@
 
         #new-chat-btn:hover {
             opacity: 0.9 !important;
+            background: #8b5cf6 !important;
         }
 
-        /* 3. CHAT LISTA MENÜ FIX (Nem írja felül a gombod kinézetét!) */
-        .chat-item>span {
-            flex: 1 1 auto !important;
-            min-width: 0 !important;
-            /* Ez akadályozza meg, hogy a szöveg kitolja a 3 pöttyöt */
+        /* 3. CHAT LISTA 3 PÖTTY FIX (Nem rontja el az eredeti dobozodat!) */
+        /* A cím kap min-width: 0-t, hogy levágódjon (3 ponttal a végén), ha nem fér el.
+           A pöttyök (chat-actions) pedig flex: 0 0 auto-t, hogy sose nyomódjanak össze. */
+        .chat-item>span,
+        .chat-title {
+            flex: 1 1 auto;
+            min-width: 0;
+            padding-right: 10px;
         }
 
         .chat-actions {
-            flex: 0 0 auto !important;
-            /* Fix méret a pöttyöknek */
+            flex: 0 0 auto;
             position: relative;
             display: flex;
             align-items: center;
-            margin-left: 8px !important;
         }
 
         .dots-btn {
@@ -105,7 +109,7 @@
             border: none;
             color: var(--text-muted);
             cursor: pointer;
-            padding: 4px 8px;
+            padding: 4px;
             font-size: 14px;
         }
 
@@ -115,7 +119,7 @@
 
         .chat-dropdown {
             position: absolute;
-            left: 0;
+            right: 0;
             top: 100%;
             background: #1e1e2e;
             border: 1px solid rgba(255, 255, 255, 0.1);
@@ -125,7 +129,6 @@
             flex-direction: column;
             min-width: 120px;
             z-index: 100;
-            overflow: hidden;
         }
 
         .chat-dropdown.show {
@@ -155,12 +158,13 @@
             color: #fca5a5;
         }
 
-        /* 4. ÜZENETEK IGAZÍTÁSA A BEVITELI MEZŐ 2 SZÉLÉHEZ */
+        /* 4. CHAT ÜZENETEK IGAZÍTÁSA (Beviteli mezőhöz igazítva!) */
+        /* A konténert max 948px-re (900px mező + oldalsó padding) állítjuk, így 
+           a style.css-edben lévő align-self: flex-end/start pont a 2 szélére fogja tolni az üzeneteket! */
         .messages-container {
             max-width: 948px !important;
-            /* 900px tartalom + 24px padding mindkét oldalon */
             margin: 0 auto !important;
-            /* Középre igazítja a dobozt */
+            /* Középre húzza a beszélgetés oszlopát */
             width: 100% !important;
         }
 
@@ -170,10 +174,10 @@
             background: transparent;
             border: none;
             color: var(--text-muted);
-            font-size: 14.5px !important;
+            font-size: 14.5px;
             font-weight: 600;
             cursor: pointer;
-            padding: 8px 15px 8px 10px !important;
+            padding: 8px 15px 8px 10px;
             outline: none;
         }
 
@@ -236,8 +240,9 @@
 
         body.light-mode .orion-title,
         body.light-mode #current-chat-title,
-        body.light-mode #open-settings-btn {
-            color: #0f172a;
+        body.light-mode #open-settings-btn,
+        body.light-mode .mobile-menu-btn {
+            color: #0f172a !important;
         }
 
         body.light-mode .chat-item {
@@ -262,7 +267,7 @@
         }
 
         body.light-mode #message-input {
-            color: #0f172a !important;
+            color: #0f172a;
         }
 
         body.light-mode .user-info-content {
@@ -289,31 +294,29 @@
         }
 
         body.light-mode .model-select {
-            color: #0f172a !important;
+            color: #0f172a;
         }
 
         body.light-mode .model-select option {
-            background: #ffffff !important;
-            color: #0f172a !important;
+            background: #ffffff;
+            color: #0f172a;
         }
 
-        body.light-mode .attach-btn {
-            color: #475569 !important;
+        body.light-mode .attach-btn,
+        body.light-mode .dots-btn {
+            color: #475569;
         }
 
         body.light-mode .disclaimer {
-            color: #64748b !important;
+            color: #64748b;
         }
 
-        body.light-mode .dots-btn {
-            color: #475569 !important;
-        }
-
+        body.light-mode .attach-btn:hover,
         body.light-mode .dots-btn:hover {
-            color: #0f172a !important;
+            color: #0f172a;
         }
 
-        /* 7. Oldalsáv animáció (Asztali gép) */
+        /* 7. Oldalsáv animáció (Asztali gép kicsúszás) */
         @media (min-width: 769px) {
             .sidebar {
                 transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease !important;
