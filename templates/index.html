@@ -11,168 +11,42 @@
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
     <style>
-        /* =========================================
-           ALAP STÍLUSOK & VÁLTOZÓK
-           ========================================= */
-        :root {
-            --bg-dark: #0f172a;
-            --panel-dark: rgba(30, 30, 46, 0.75);
-            --text-main: #f8fafc;
-            --text-muted: #94a3b8;
-            --accent: #a370f7;
-            --border-dark: rgba(255, 255, 255, 0.1);
-        }
-
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: var(--text-main);
-            overflow: hidden;
-            height: 100vh;
-            height: 100dvh;
-        }
-
-        /* Folytonos háttér animáció */
-        .liquid-bg {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            z-index: -1;
-            filter: blur(80px);
-            opacity: 0.4;
-            pointer-events: none;
-        }
-
-        .blob {
-            position: absolute;
-            width: 400px;
-            height: 400px;
-            background: var(--accent);
-            border-radius: 50%;
-            animation: float 10s infinite alternate;
-        }
-
-        @keyframes float {
-            0% {
-                transform: translate(0, 0);
-            }
-
-            100% {
-                transform: translate(100px, 50px);
-            }
-        }
-
-        /* Fő keret */
-        .app-container {
-            display: flex;
-            width: 100vw;
-            height: 100vh;
-            height: 100dvh;
-            background: var(--panel-dark);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            overflow: hidden;
-            position: relative;
-        }
-
-        /* =========================================
-           OLDALSÁV (SIDEBAR) & MOBIL CSÚSZKA
-           ========================================= */
-        .sidebar {
-            width: 280px;
-            background: rgba(15, 23, 42, 0.85);
-            border-right: 1px solid var(--border-dark);
-            display: flex;
-            flex-direction: column;
-            padding: 15px;
-            box-sizing: border-box;
-            z-index: 100;
-            transition: transform 0.3s ease, width 0.3s ease, opacity 0.3s ease;
-        }
-
+        /* Eredeti márkajelzés és ikonok stabilizálása */
         .orion-brand {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            margin-bottom: 20px;
-            padding: 5px;
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
         }
 
         .orion-logo {
-            width: 36px;
-            height: 36px;
+            width: 40px !important;
+            height: 40px !important;
+            min-width: 40px !important;
+            min-height: 40px !important;
+            flex-shrink: 0 !important;
+            overflow: visible !important;
+            display: block !important;
         }
 
-        .orion-title {
-            font-size: 20px;
-            font-weight: 700;
-            margin: 0;
-            letter-spacing: 0.5px;
+        .spinning-ring {
+            transform-origin: 50px 50px !important;
+            transform-box: view-box !important;
         }
 
-        .orion-title span {
-            color: var(--accent);
+        .fa-spinner,
+        .fa-circle-notch,
+        .fa-spin {
+            display: inline-block !important;
+            width: 24px !important;
+            height: 24px !important;
+            line-height: 24px !important;
+            text-align: center !important;
+            transform-origin: center center !important;
+            animation: fa-spin 1s linear infinite !important;
+            margin: 0 auto !important;
         }
 
-        .compact-btn {
-            padding: 10px 14px;
-            font-size: 13px;
-            border-radius: 10px;
-            border: 1px solid var(--border-dark);
-            background: rgba(255, 255, 255, 0.05);
-            color: var(--text-main);
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            transition: 0.2s;
-            font-weight: 500;
-            text-align: left;
-        }
-
-        .compact-btn:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .chat-list {
-            flex: 1;
-            overflow-y: auto;
-            margin-top: 15px;
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-        }
-
-        .chat-list-item {
-            padding: 10px 12px;
-            font-size: 13px;
-            border-radius: 8px;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            cursor: pointer;
-            color: var(--text-muted);
-            transition: 0.2s;
-        }
-
-        .chat-list-item:hover,
-        .chat-list-item.active {
-            background: rgba(255, 255, 255, 0.08);
-            color: var(--text-main);
-        }
-
-        .chat-title {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
-        }
-
-        /* 3 Pötty menü */
+        /* 3 pöttyös menü az eredeti designhoz igazítva */
         .chat-actions {
             position: relative;
         }
@@ -184,6 +58,7 @@
             cursor: pointer;
             padding: 4px 8px;
             border-radius: 4px;
+            transition: 0.2s;
         }
 
         .dots-btn:hover {
@@ -196,14 +71,14 @@
             right: 0;
             top: 100%;
             background: #1e1e2e;
-            border: 1px solid var(--border-dark);
+            border: 1px solid rgba(255, 255, 255, 0.1);
             border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
-            display: none;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
             flex-direction: column;
-            min-width: 130px;
-            z-index: 200;
+            min-width: 120px;
+            z-index: 50;
             overflow: hidden;
+            display: none;
         }
 
         .chat-dropdown.show {
@@ -218,6 +93,7 @@
             text-align: left;
             font-size: 12px;
             cursor: pointer;
+            transition: 0.2s;
             display: flex;
             align-items: center;
             gap: 8px;
@@ -232,96 +108,11 @@
             color: #fca5a5;
         }
 
-        .user-info-bottom {
-            border-top: 1px solid var(--border-dark);
-            padding-top: 15px;
-            margin-top: 10px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-        }
-
-        .user-info-content {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            font-size: 13px;
-            color: var(--text-muted);
-        }
-
-        .logout-link {
-            color: var(--accent);
-            text-decoration: none;
-            font-weight: 600;
-        }
-
-        /* Bezáró gomb mobilon */
-        .close-menu-btn {
-            display: none;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-size: 20px;
-            cursor: pointer;
-            align-self: flex-end;
-        }
-
-        .mobile-overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 90;
-            backdrop-filter: blur(3px);
-        }
-
-        /* =========================================
-           CHAT ABLAK & ÜZENETEK
-           ========================================= */
-        .chat-window {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            height: 100%;
-            overflow: hidden;
-            position: relative;
-        }
-
-        .chat-header {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 15px 20px;
-            border-bottom: 1px solid var(--border-dark);
-            background: rgba(15, 23, 42, 0.4);
-        }
-
-        .mobile-menu-btn {
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            font-size: 20px;
-            cursor: pointer;
-            display: none;
-        }
-
-        .messages-container {
-            flex: 1;
-            overflow-y: auto;
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
-            scroll-behavior: smooth;
-        }
-
+        /* Üzenet szerkesztő gomb */
         .message-wrapper {
             position: relative;
             width: fit-content;
-            max-width: 85%;
+            max-width: 100%;
         }
 
         .message-wrapper.user-wrapper {
@@ -331,30 +122,6 @@
         .message-wrapper.assistant-wrapper {
             align-self: flex-start;
             width: 100%;
-            max-width: 100%;
-        }
-
-        .message {
-            padding: 12px 16px;
-            border-radius: 16px;
-            font-size: 14px;
-            line-height: 1.5;
-            word-break: break-word;
-        }
-
-        .message.user {
-            background: linear-gradient(135deg, #9333ea, #6366f1);
-            color: white;
-            border-bottom-right-radius: 4px;
-        }
-
-        .message.assistant {
-            background: rgba(255, 255, 255, 0.07);
-            border: 1px solid var(--border-dark);
-            color: var(--text-main);
-            border-bottom-left-radius: 4px;
-            width: 100%;
-            box-sizing: border-box;
         }
 
         .edit-message-btn {
@@ -367,324 +134,74 @@
             color: var(--text-muted);
             cursor: pointer;
             opacity: 0;
-            transition: 0.2s;
-            font-size: 13px;
+            transition: opacity 0.2s;
+            font-size: 14px;
+            padding: 5px;
         }
 
         .message-wrapper.user-wrapper:hover .edit-message-btn {
             opacity: 1;
         }
 
-        /* =========================================
-           BEVITELI SÁV & KAPSZULA
-           ========================================= */
-        .input-area {
-            padding: 15px 20px;
-            background: rgba(15, 23, 42, 0.4);
-            border-top: 1px solid var(--border-dark);
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+        .edit-message-btn:hover {
+            color: var(--text-main);
         }
 
+        /* Fájl előnézet */
         #file-preview-container {
             display: none;
             align-items: center;
             justify-content: space-between;
             background: rgba(30, 30, 46, 0.9);
-            border: 1px solid var(--accent);
-            border-radius: 10px;
-            padding: 8px 12px;
-            font-size: 12px;
+            border: 1px solid rgba(163, 112, 247, 0.3);
+            border-radius: 12px;
+            padding: 8px 15px;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        .input-wrapper {
-            display: flex;
-            align-items: flex-end;
-            gap: 8px;
-            background: rgba(30, 30, 46, 0.8);
-            border: 1px solid var(--border-dark);
-            border-radius: 24px;
-            padding: 8px 12px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-        }
-
-        .attach-btn {
-            background: rgba(255, 255, 255, 0.05);
-            border: none;
-            color: var(--text-muted);
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            flex-shrink: 0;
-            transition: 0.2s;
-            margin-bottom: 2px;
-        }
-
-        .attach-btn:hover {
-            background: rgba(255, 255, 255, 0.15);
-            color: var(--text-main);
-        }
-
-        .input-wrapper textarea {
-            flex: 1;
-            background: transparent;
-            border: none;
-            color: var(--text-main);
-            resize: none;
-            outline: none;
-            font-size: 14px;
-            line-height: 20px;
-            padding: 7px 0;
-            max-height: 120px;
-        }
-
-        .input-controls {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            flex-shrink: 0;
-            margin-bottom: 2px;
-        }
-
-        .model-select {
-            appearance: none;
-            background: transparent;
-            border: none;
-            color: var(--text-muted);
-            font-size: 12px;
-            font-weight: 600;
-            cursor: pointer;
-            padding: 6px 18px 6px 6px;
-            outline: none;
-        }
-
-        .model-select option {
-            background: #0f172a;
-            color: white;
-        }
-
-        .circle-send-btn {
-            background: var(--text-main);
-            color: #000;
-            border: none;
-            width: 34px;
-            height: 34px;
-            border-radius: 50%;
-            cursor: pointer;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            transition: 0.2s;
-        }
-
-        .circle-send-btn.stop-mode {
-            background: rgba(239, 68, 68, 0.8);
-            color: white;
-            border-radius: 10px;
-        }
-
-        .disclaimer {
-            text-align: center;
-            font-size: 10px;
-            opacity: 0.5;
-        }
-
-        /* =========================================
-           IGAZI TELJES KÖRŰ VILÁGOS MÓD (LIGHT MODE)
-           ========================================= */
-        body.light-mode {
-            --bg-dark: #f1f5f9;
-            --panel-dark: rgba(255, 255, 255, 0.85);
-            --text-main: #0f172a;
-            --text-muted: #64748b;
-            --border-dark: rgba(0, 0, 0, 0.1);
-        }
-
-        body.light-mode .sidebar {
-            background: #ffffff;
-            border-right-color: var(--border-dark);
-        }
-
-        body.light-mode .chat-header {
-            background: #ffffff;
-            border-bottom-color: var(--border-dark);
-        }
-
-        body.light-mode .input-area {
-            background: #ffffff;
-            border-top-color: var(--border-dark);
-        }
-
-        body.light-mode .input-wrapper {
-            background: #f8fafc;
-            border: 1px solid var(--border-dark);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
-        }
-
-        body.light-mode .input-wrapper textarea {
-            color: #0f172a;
-        }
-
-        body.light-mode .message.assistant {
-            background: #ffffff;
-            border-color: var(--border-dark);
-            color: #0f172a;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.02);
-        }
-
-        body.light-mode .chat-dropdown {
-            background: #ffffff;
-            border-color: var(--border-dark);
-        }
-
-        body.light-mode .chat-dropdown button {
-            color: #0f172a;
-        }
-
-        body.light-mode .model-select option {
-            background: #ffffff;
-            color: #0f172a;
-        }
-
-        body.light-mode .circle-send-btn {
-            background: #0f172a;
-            color: #ffffff;
-        }
-
-        /* =========================================
-           MOBIL OPTIMALIZÁLÁS (RESPONSIVE)
-           ========================================= */
+        /* Reszponzív sidebar és mobil kezelés */
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
                 top: 0;
                 left: 0;
                 height: 100%;
-                width: 270px;
                 transform: translateX(-100%);
                 transition: transform 0.3s ease;
-                box-shadow: 5px 0 25px rgba(0, 0, 0, 0.5);
+                z-index: 1000;
             }
 
             .sidebar.mobile-open {
                 transform: translateX(0);
             }
 
-            .close-menu-btn {
-                display: block;
-            }
-
-            .mobile-menu-btn {
-                display: block;
-            }
-
             .mobile-overlay.active {
                 display: block;
             }
-
-            .messages-container,
-            .input-area {
-                padding-left: 15px !important;
-                padding-right: 15px !important;
-            }
-
-            .message-wrapper {
-                max-width: 92%;
-            }
         }
 
-        /* PC-s összecsukhatóság */
         @media (min-width: 769px) {
-            .mobile-menu-btn {
-                display: block;
-            }
-
             .sidebar.collapsed {
                 width: 0 !important;
                 padding-left: 0 !important;
                 padding-right: 0 !important;
-                border-right: none !important;
+                border-color: transparent !important;
                 overflow: hidden !important;
                 opacity: 0 !important;
             }
         }
-
-        /* Modals & Code Windows */
-        .broadcast-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100vw;
-            height: 100vh;
-            background: rgba(0, 0, 0, 0.6);
-            z-index: 1000;
-            justify-content: center;
-            align-items: center;
-        }
-
-        .broadcast-content {
-            background: var(--bg-dark);
-            border: 1px solid var(--border-dark);
-            padding: 25px;
-            border-radius: 16px;
-            text-align: center;
-            max-width: 350px;
-            width: 90%;
-        }
-
-        .glass-btn {
-            background: var(--accent);
-            color: white;
-            border: none;
-            padding: 10px;
-            border-radius: 8px;
-            cursor: pointer;
-            width: 100%;
-            font-weight: 600;
-        }
-
-        .code-window {
-            background: #1e1e2e;
-            border-radius: 10px;
-            overflow: hidden;
-            margin: 10px 0;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            width: 100%;
-        }
-
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            background: rgba(0, 0, 0, 0.4);
-            padding: 6px 12px;
-            font-size: 11px;
-            color: #a0aec0;
-        }
-
-        .code-window pre {
-            margin: 0;
-            padding: 12px;
-            overflow-x: auto;
-            color: #e2e8f0;
-            font-family: monospace;
-            font-size: 12px;
-        }
     </style>
 </head>
 
-<body data-user="{{ username }}">
+<body data-user="{{ username }}" class="dark-mode">
     <div class="liquid-bg">
         <div class="blob one"></div>
         <div class="blob two"></div>
+        <div class="blob three"></div>
     </div>
 
-    <div class="app-container">
+    <div class="glass-panel app-container">
         <div class="mobile-overlay" id="mobile-overlay"></div>
 
         <!-- OLDALSÁV -->
@@ -692,12 +209,16 @@
             <button id="close-menu-btn" class="close-menu-btn"><i class="fas fa-times"></i></button>
 
             <div class="orion-brand">
-                <svg class="orion-logo" viewBox="0 0 100 100" fill="none">
-                    <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30"
-                        stroke-linecap="round" />
-                    <circle cx="32" cy="68" r="5" fill="#ffffff" />
-                    <circle cx="50" cy="50" r="6" fill="#a370f7" />
-                    <circle cx="68" cy="32" r="5" fill="#ffffff" />
+                <svg class="orion-logo" width="40" height="40" viewBox="0 0 100 100" fill="none">
+                    <g class="spinning-ring">
+                        <circle cx="50" cy="50" r="42" stroke="url(#gradient)" stroke-width="4" stroke-dasharray="60 30"
+                            stroke-linecap="round" />
+                    </g>
+                    <circle cx="32" cy="68" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)" />
+                    <circle cx="50" cy="50" r="6" fill="#a370f7" filter="drop-shadow(0 0 8px #a370f7)" />
+                    <circle cx="68" cy="32" r="5" fill="#ffffff" filter="drop-shadow(0 0 6px #fff)" />
+                    <line x1="35" y1="65" x2="46" y2="54" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
+                    <line x1="54" y1="46" x2="65" y2="35" stroke="rgba(255,255,255,0.4)" stroke-width="2" />
                     <defs>
                         <linearGradient id="gradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
                             <stop stop-color="#a370f7" />
@@ -708,7 +229,8 @@
                 <h1 class="orion-title">Orion <span>AI</span></h1>
             </div>
 
-            <button id="new-chat-btn" class="compact-btn">
+            <button id="new-chat-btn" class="glass-btn compact-btn"
+                style="padding: 10px 14px; font-size: 13px; border-radius: 10px;">
                 <i class="fas fa-plus"></i> Új beszélgetés
             </button>
 
@@ -716,15 +238,18 @@
 
             <div class="user-info-bottom">
                 {% if username == 'admin' %}
-                <a href="{{ url_for('admin_panel') }}" class="compact-btn"
-                    style="text-decoration: none; justify-content: center;">
+                <a href="{{ url_for('admin_panel') }}" class="glass-btn compact-btn"
+                    style="text-decoration: none; text-align: center; margin-bottom: 10px; display: block; padding: 8px;">
                     <i class="fas fa-shield-alt"></i> Admin Panel
                 </a>
                 {% endif %}
                 <div class="user-info-content">
                     {% if username == 'Vendég' %}
-                    <span><i class="fas fa-user-secret"></i> <b>{{ username }}</b></span>
-                    <a href="{{ url_for('login') }}" class="logout-link"><i class="fas fa-sign-in-alt"></i> Belépés</a>
+                    <span><i class="fas fa-user-secret" style="color: var(--text-muted);"></i> <b>{{ username
+                            }}</b></span>
+                    <a href="{{ url_for('login') }}" class="logout-link"
+                        style="color: var(--accent-color); font-weight: 600;"><i class="fas fa-sign-in-alt"></i>
+                        Belépés</a>
                     {% else %}
                     <span><i class="fas fa-user-astronaut"></i> <b>{{ username }}</b></span>
                     <a href="{{ url_for('logout') }}" class="logout-link"><i class="fas fa-sign-out-alt"></i>
@@ -734,17 +259,21 @@
             </div>
         </aside>
 
-        <!-- CHAT FELÜLET -->
+        <!-- CHAT ABLAK -->
         <main class="chat-window">
-            <div class="chat-header">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                    <h2 id="current-chat-title" style="font-size: 16px; font-weight: 500; margin: 0;"><i
+            <div class="chat-header"
+                style="display: flex; align-items: center; justify-content: space-between; padding: 15px 20px;">
+                <div style="display: flex; align-items: center; gap: 15px;">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn"
+                        style="background: transparent; border: none; font-size: 20px; cursor: pointer; color: inherit;"><i
+                            class="fas fa-bars"></i></button>
+                    <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500; margin: 0;"><i
                             class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
                 </div>
+                <!-- BEÁLLÍTÁSOK GOMB -->
                 <button id="open-settings-btn"
-                    style="background: transparent; border: none; color: inherit; font-size: 20px; cursor: pointer; opacity: 0.7;"
-                    title="Beállítások">
+                    style="background: transparent; border: none; color: inherit; font-size: 22px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;"
+                    onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Beállítások">
                     <i class="fas fa-cog"></i>
                 </button>
             </div>
@@ -752,11 +281,12 @@
             <div class="messages-container" id="messages-container"></div>
 
             <div class="input-area">
+                <!-- Fájl előnézet -->
                 <div id="file-preview-container">
-                    <div style="display: flex; align-items: center; gap: 8px;">
-                        <i class="fas fa-file-alt" style="color: var(--accent);"></i>
+                    <div style="display: flex; align-items: center; gap: 10px; color: #e2e8f0; font-size: 13px;">
+                        <i class="fas fa-file-alt" style="color: var(--accent-color);"></i>
                         <span id="file-preview-name">file.txt</span>
-                        <span id="file-preview-loading" style="display:none; color: var(--accent); font-size: 11px;"><i
+                        <span id="file-preview-loading" style="display:none; color: #a370f7; font-size: 11px;"><i
                                 class="fas fa-spinner fa-spin"></i> Feldolgozás...</span>
                     </div>
                     <button id="remove-file-btn"
@@ -765,6 +295,7 @@
                 </div>
 
                 <div class="input-wrapper">
+                    <!-- Fájlfeltöltés gomb -->
                     <label for="file-upload" class="attach-btn" title="Fájl csatolása">
                         <i class="fas fa-plus"></i>
                     </label>
@@ -783,48 +314,68 @@
                         <button id="send-btn" class="circle-send-btn"><i class="fas fa-arrow-up"></i></button>
                     </div>
                 </div>
-                <div class="disclaimer">Az Orion AI hibázhat. Ellenőrizd a fontos adatokat.</div>
+                <div class="disclaimer">
+                    Az Orion AI hibázhat. Kérjük, ellenőrizd a fontos adatokat.
+                </div>
             </div>
         </main>
     </div>
 
     <!-- BEÁLLÍTÁSOK MODAL -->
-    <div id="settings-modal" class="broadcast-modal" style="display: none;">
-        <div class="broadcast-content" style="text-align: left;">
+    <div id="settings-modal" class="broadcast-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="glass-panel broadcast-content"
+            style="text-align: left; max-width: 400px; width: 90%; padding: 25px; border-radius: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
-                <h3 style="color: var(--accent); margin: 0; font-size: 18px;"><i class="fas fa-sliders-h"></i>
+                <h3 style="color: var(--accent-color); margin: 0; font-size: 20px;"><i class="fas fa-sliders-h"></i>
                     Beállítások</h3>
                 <button id="close-settings-btn"
-                    style="background: transparent; border: none; color: inherit; cursor: pointer; font-size: 18px;"><i
+                    style="background: transparent; border: none; color: inherit; cursor: pointer; font-size: 20px;"><i
                         class="fas fa-times"></i></button>
             </div>
 
             <div style="margin-bottom: 15px;">
-                <label style="display: block; margin-bottom: 5px; font-size: 12px; opacity: 0.8;">Megjelenés</label>
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">Megjelenés</label>
                 <select id="theme-select"
-                    style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: inherit; border: 1px solid var(--border-dark); outline: none;">
+                    style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
                     <option value="dark">🌙 Sötét mód</option>
                     <option value="light">☀️ Világos mód</option>
                 </select>
             </div>
 
-            <div style="margin-bottom: 20px;">
-                <label style="display: block; margin-bottom: 5px; font-size: 12px; opacity: 0.8;">Nyelv</label>
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">Nyelv</label>
                 <select id="language-select"
-                    style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: inherit; border: 1px solid var(--border-dark); outline: none;">
+                    style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
                     <option value="hu">🇭🇺 Magyar</option>
                     <option value="en">🇬🇧 English</option>
                 </select>
             </div>
 
-            <button id="save-settings-btn" class="glass-btn">Mentés</button>
+            <button id="save-settings-btn" class="glass-btn"
+                style="width: 100%; padding: 12px; font-size: 15px; border-radius: 8px; cursor: pointer;">Mentés</button>
+        </div>
+    </div>
+
+    <!-- RENDSZERÜZENET MODAL -->
+    <div id="broadcast-modal" class="broadcast-modal"
+        style="display: none; position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.6); z-index: 1000; justify-content: center; align-items: center;">
+        <div class="glass-panel broadcast-content"
+            style="padding: 25px; border-radius: 16px; text-align: center; max-width: 350px; width: 90%;">
+            <div style="font-size: 40px; color: var(--accent-color);"><i class="fas fa-bullhorn"></i></div>
+            <h3 style="color: white; font-size: 18px; font-weight: 600;">Rendszerüzenet</h3>
+            <p id="broadcast-text-content"
+                style="color: var(--text-main); font-size: 14px; line-height: 1.5; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; text-align: left;">
+            </p>
+            <button id="close-broadcast-btn" class="glass-btn"
+                style="padding: 10px; font-size: 14px; border-radius: 10px; width: 100%; margin-top: 10px;">Bezárás</button>
         </div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
 
     <script>
-        // --- HAMBURGER ÉS MENÜ LOGIKA (Kijavítva!) ---
+        // --- HAMBURGER ÉS BEÁLLÍTÁSOK KEZELÉSE ---
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const sidebar = document.getElementById('sidebar');
         const mobileOverlay = document.getElementById('mobile-overlay');
@@ -833,9 +384,9 @@
         if (mobileMenuBtn) {
             mobileMenuBtn.addEventListener('click', () => {
                 if (window.innerWidth > 768) {
-                    sidebar.classList.toggle('collapsed'); // PC-n összecsukja
+                    sidebar.classList.toggle('collapsed');
                 } else {
-                    sidebar.classList.add('mobile-open'); // Mobilon becsúsztatja
+                    sidebar.classList.add('mobile-open');
                     mobileOverlay.classList.add('active');
                 }
             });
@@ -843,6 +394,34 @@
 
         if (closeMenuBtn) closeMenuBtn.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); mobileOverlay.classList.remove('active'); });
         if (mobileOverlay) mobileOverlay.addEventListener('click', () => { sidebar.classList.remove('mobile-open'); mobileOverlay.classList.remove('active'); });
+
+        // Beállítások Modal logika
+        const settingsBtn = document.getElementById('open-settings-btn');
+        const settingsModal = document.getElementById('settings-modal');
+        const closeSettingsBtn = document.getElementById('close-settings-btn');
+        const saveSettingsBtn = document.getElementById('save-settings-btn');
+        const themeSelect = document.getElementById('theme-select');
+        const languageSelect = document.getElementById('language-select');
+
+        if (localStorage.getItem('orion_theme') === 'light') {
+            document.body.classList.add('light-mode');
+            if (themeSelect) themeSelect.value = 'light';
+        }
+        if (localStorage.getItem('orion_language') && languageSelect) {
+            languageSelect.value = localStorage.getItem('orion_language');
+        }
+
+        if (settingsBtn) settingsBtn.onclick = () => settingsModal.style.display = 'flex';
+        if (closeSettingsBtn) closeSettingsBtn.onclick = () => settingsModal.style.display = 'none';
+        if (saveSettingsBtn) {
+            saveSettingsBtn.onclick = () => {
+                localStorage.setItem('orion_theme', themeSelect.value);
+                if (themeSelect.value === 'light') document.body.classList.add('light-mode');
+                else document.body.classList.remove('light-mode');
+                localStorage.setItem('orion_language', languageSelect.value);
+                settingsModal.style.display = 'none';
+            };
+        }
     </script>
 </body>
 
