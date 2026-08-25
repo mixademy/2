@@ -5,13 +5,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Orion AI</title>
+    <!-- A TE EREDETI STYLE.CSS FÁJLOD -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
     <style>
         /* ==============================================================
-           ATOMBOMBA MEGOLDÁS - MINDENT KÖNYÖRTELENÜL FELÜLÍRUNK!
+           BRUTÁLIS JAVÍTÁSOK: KUKÁBA A FELESLEGGEL!
            ============================================================== */
 
         /* 1. Fejléc */
@@ -86,145 +87,142 @@
             background: #8b5cf6 !important;
         }
 
-        /* 3. A CHAT LISTA ÉS A 3 PÖTTY (CSS GRID = SOHA TÖBBÉ NEM ESIK SZÉT) */
-        .chat-item {
-            display: grid !important;
-            grid-template-columns: 1fr auto !important;
-            /* Szöveg kitölti a helyet, gomb a végén */
-            align-items: center !important;
-            gap: 10px !important;
-            background: rgba(255, 255, 255, 0.03) !important;
-            /* Visszakapja a kért hátteret! */
-            border: 1px solid rgba(255, 255, 255, 0.05) !important;
-            padding: 12px 14px !important;
-            border-radius: 10px !important;
-            margin-bottom: 8px !important;
-            cursor: pointer !important;
-            transition: all 0.2s !important;
+        /* ==========================================
+           3. KUKÁBA A 3 PÖTTYEL! JÖHETNEK AZ INLINE IKONOK! 
+           ========================================== */
+        /* A pöttyök gombjának teljes eltüntetése */
+        .dots-btn {
+            display: none !important;
         }
 
-        .chat-item:hover,
-        .chat-item.active {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border-color: rgba(255, 255, 255, 0.2) !important;
+        /* A listaelem igazítása, hogy elférjenek a gombok */
+        .chat-item {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
         }
 
         .chat-item>span,
         .chat-title {
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
             overflow: hidden !important;
             text-overflow: ellipsis !important;
             white-space: nowrap !important;
-            font-size: 14px !important;
-            color: var(--text-main) !important;
-            display: block !important;
+            margin-right: 10px !important;
         }
 
-        .chat-actions {
-            position: relative !important;
+        /* A lenyíló menüből csinálunk egy vízszintes gombsort */
+        .chat-dropdown {
+            position: static !important;
             display: flex !important;
-            align-items: center !important;
-        }
-
-        .dots-btn {
+            flex-direction: row !important;
             background: transparent !important;
             border: none !important;
-            color: var(--text-muted) !important;
-            cursor: pointer !important;
-            padding: 2px 6px !important;
-            font-size: 16px !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            gap: 6px !important;
+            min-width: auto !important;
+            opacity: 0.4 !important;
+            /* Alapból halvány */
+            transition: opacity 0.2s !important;
         }
 
-        .dots-btn:hover {
-            color: white !important;
+        .chat-item:hover .chat-dropdown {
+            opacity: 1 !important;
+            /* Ha ráviszed az egeret, felerősödik */
         }
 
-        /* 3/b. Lebegő menü */
-        .chat-dropdown {
-            position: absolute;
-            right: 0;
-            top: 100%;
-            background: #1e1e2e;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 8px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
-            display: none;
-            flex-direction: column;
-            min-width: 120px;
-            z-index: 100;
-        }
-
-        .chat-dropdown.show {
-            display: flex !important;
-        }
-
+        /* Átlátszó lila stílus a kis ikonoknak (ceruza, pin, kuka) */
         .chat-dropdown button {
-            background: transparent;
-            border: none;
-            color: #e2e8f0;
-            padding: 10px 12px;
-            text-align: left;
-            font-size: 13px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            width: 100%;
+            background: rgba(163, 112, 247, 0.15) !important;
+            color: var(--accent-color) !important;
+            border: 1px solid rgba(163, 112, 247, 0.3) !important;
+            border-radius: 6px !important;
+            padding: 0 !important;
+            width: 28px !important;
+            height: 28px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-size: 0 !important;
+            /* Eltüntetjük a szöveget (Szerkesztés, Törlés) */
+            cursor: pointer !important;
+            transition: all 0.2s !important;
+        }
+
+        .chat-dropdown button i {
+            font-size: 12px !important;
+            /* Csak az ikon látszik */
+            margin: 0 !important;
         }
 
         .chat-dropdown button:hover {
-            background: rgba(255, 255, 255, 0.1);
+            background: var(--accent-color) !important;
+            color: white !important;
         }
 
-        .chat-dropdown button.delete-action:hover {
-            background: rgba(239, 68, 68, 0.2);
-            color: #fca5a5;
+        /* A legutolsó gomb (kuka) legyen halvány piros */
+        .chat-dropdown button:last-child {
+            background: rgba(239, 68, 68, 0.15) !important;
+            color: #ef4444 !important;
+            border-color: rgba(239, 68, 68, 0.3) !important;
         }
 
-        /* 4. CHAT BUBORÉKOK (KÖZÉPRE ZÁRT OSZLOP + 2 SZÉLRE IGAZÍTOTT ÜZENETEK) */
+        .chat-dropdown button:last-child:hover {
+            background: #ef4444 !important;
+            color: white !important;
+            border-color: #ef4444 !important;
+        }
+
+        /* ==========================================
+           4. KUKÁBA A CHAT SZERKESZTŐ GOMBBAL! 
+           ========================================== */
+        /* Minden oda nem illő gombot és dobozt kilövünk a chat falról */
+        .messages-container button,
+        .messages-container .edit-btn,
+        .messages-container form {
+            display: none !important;
+        }
+
+        /* ==========================================
+           5. ÜZENETEK HAJSZÁLPONTOS IGAZÍTÁSA 
+           ========================================== */
         .messages-container {
+            max-width: 900px !important;
+            /* Pont, mint a lenti beviteli mező */
+            margin: 0 auto !important;
+            /* Képernyő közepe */
+            width: 100% !important;
+            padding: 24px 0 !important;
+            /* NINCS oldalsó belső margó, hogy kiérjen a széléig! */
             display: flex !important;
             flex-direction: column !important;
-            max-width: 900px !important;
-            /* Pontosan megegyezik a beviteli mező szélességével */
-            margin: 0 auto !important;
-            /* Középre húzza a képernyőn */
-            width: 100% !important;
-            padding: 24px !important;
         }
 
         .message {
             width: fit-content !important;
-            /* Szigorúan csak akkora, mint a szöveg */
             max-width: 80% !important;
             padding: 14px 20px !important;
             border-radius: 18px !important;
             line-height: 1.6 !important;
             font-size: 15px !important;
             margin-bottom: 16px !important;
-            word-wrap: break-word !important;
-            display: block !important;
         }
 
         .message.user {
-            background: var(--accent-color) !important;
-            color: white !important;
             margin-left: auto !important;
-            /* Kilöki a fal jobb szélére */
+            /* Kőkeményen letapad a jobb szélre */
             margin-right: 0 !important;
-            border-bottom-right-radius: 4px !important;
         }
 
         .message.assistant {
-            background: rgba(255, 255, 255, 0.05) !important;
-            border: 1px solid rgba(255, 255, 255, 0.1) !important;
-            color: var(--text-main) !important;
             margin-right: auto !important;
-            /* Kilöki a fal bal szélére */
+            /* Kőkeményen letapad a bal szélre */
             margin-left: 0 !important;
-            border-bottom-left-radius: 4px !important;
         }
 
-        /* Biztonsági tartalék, ha a JS becsomagolná a buborékokat plusz div-ekbe: */
+        /* Ha extra div-be tenné a JS: */
         .messages-container>div {
             width: 100% !important;
             display: flex !important;
@@ -239,7 +237,7 @@
             align-items: flex-start !important;
         }
 
-        /* 5. Töltés, fájl melléklet, modellválasztó */
+        /* 6. Töltés, fájl melléklet, modellválasztó */
         .model-select {
             appearance: none;
             background: transparent;
@@ -289,7 +287,7 @@
             max-width: 900px;
         }
 
-        /* 6. Világos mód (100% kontraszt) */
+        /* 7. Világos mód kontraszt fixek */
         body.light-mode {
             background: #f8fafc;
             color: #0f172a;
@@ -317,14 +315,13 @@
         }
 
         body.light-mode .chat-item {
-            background: rgba(0, 0, 0, 0.03) !important;
-            border-color: rgba(0, 0, 0, 0.05) !important;
+            color: #334155;
         }
 
         body.light-mode .chat-item:hover,
         body.light-mode .chat-item.active {
-            background: rgba(0, 0, 0, 0.08) !important;
-            border-color: rgba(0, 0, 0, 0.15) !important;
+            background: #e2e8f0;
+            color: #0f172a;
         }
 
         body.light-mode .chat-item>span,
@@ -351,17 +348,27 @@
             color: #334155;
         }
 
-        body.light-mode .chat-dropdown {
-            background: #ffffff;
-            border-color: #e2e8f0;
-        }
-
+        /* Világos mód - Inline gombok */
         body.light-mode .chat-dropdown button {
-            color: #0f172a;
+            background: rgba(163, 112, 247, 0.1) !important;
+            color: #a370f7 !important;
+            border-color: rgba(163, 112, 247, 0.2) !important;
         }
 
         body.light-mode .chat-dropdown button:hover {
-            background: #f1f5f9;
+            background: #a370f7 !important;
+            color: white !important;
+        }
+
+        body.light-mode .chat-dropdown button:last-child {
+            background: rgba(239, 68, 68, 0.1) !important;
+            color: #ef4444 !important;
+            border-color: rgba(239, 68, 68, 0.2) !important;
+        }
+
+        body.light-mode .chat-dropdown button:last-child:hover {
+            background: #ef4444 !important;
+            color: white !important;
         }
 
         body.light-mode #file-preview-container {
@@ -379,8 +386,7 @@
             color: #0f172a !important;
         }
 
-        body.light-mode .attach-btn,
-        body.light-mode .dots-btn {
+        body.light-mode .attach-btn {
             color: #475569 !important;
         }
 
@@ -388,12 +394,11 @@
             color: #64748b !important;
         }
 
-        body.light-mode .attach-btn:hover,
-        body.light-mode .dots-btn:hover {
+        body.light-mode .attach-btn:hover {
             color: #0f172a !important;
         }
 
-        /* 7. Oldalsáv animáció (Asztali gép kicsúszás) */
+        /* 8. Oldalsáv animáció (Asztali gép kicsúszás) */
         @media (min-width: 769px) {
             .sidebar {
                 transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease !important;
@@ -407,7 +412,7 @@
             }
         }
 
-        /* 8. Mobil optimalizálás és billentyűzet fix */
+        /* 9. Mobil optimalizálás és billentyűzet fix */
         @media (max-width: 768px) {
 
             html,
@@ -437,6 +442,12 @@
             #header-model-slot {
                 margin-right: 5px;
             }
+
+            .messages-container {
+                padding: 15px 15px !important;
+            }
+
+            /* Mobilon kell egy kis margó */
         }
     </style>
 </head>
