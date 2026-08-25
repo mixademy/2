@@ -12,10 +12,10 @@
 
     <style>
         /* ==============================================================
-           KIEGÉSZÍTŐ STÍLUSOK (Csak az, ami hiányzik a style.css-ből)
+           KIEGÉSZÍTŐ STÍLUSOK ÉS HIBÁK JAVÍTÁSA
            ============================================================== */
 
-        /* 1. Fejléc helyrerakása (Hamburger menü + Gombok két szélen) */
+        /* 1. Fejléc helyrerakása */
         .chat-header {
             display: flex !important;
             justify-content: space-between !important;
@@ -85,7 +85,7 @@
             opacity: 0.9 !important;
         }
 
-        /* 4. Chat lista menü (3 pötty FIXÁLÁSA EGY SORBA A JOBB SZÉLRE) */
+        /* 4. CHAT LISTA MENÜ (3 PÖTTY FIXÁLÁSA A JOBB SZÉLRE - NEM CSÚSZIK LE!) */
         .chat-item {
             display: flex !important;
             flex-direction: row !important;
@@ -95,18 +95,21 @@
         }
 
         .chat-title {
-            flex: 1;
-            overflow: hidden;
-            text-overflow: ellipsis;
-            white-space: nowrap;
+            flex: 1 1 auto !important;
+            min-width: 0 !important;
+            /* <--- EZ AKADÁLYOZZA MEG, HOGY A SZÖVEG KITOLJA A GOMBOT */
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            white-space: nowrap !important;
+            padding-right: 10px !important;
         }
 
         .chat-actions {
+            flex: 0 0 auto !important;
+            /* Fix méret, nem zsugorodik, nem nő */
             position: relative;
             display: flex;
             align-items: center;
-            flex-shrink: 0 !important;
-            margin-left: 10px !important;
         }
 
         .dots-btn {
@@ -164,7 +167,39 @@
             color: #fca5a5;
         }
 
-        /* 5. Töltés, fájl melléklet ÉS MODELLVÁLASZTÓ */
+        /* 5. CHAT ÜZENETEK ÉS CERUZA (Visszaállítás normális méretre) */
+        .message {
+            width: fit-content !important;
+            /* Ne húzza ki a képernyő széléig! */
+            max-width: 75% !important;
+        }
+
+        .message.user {
+            margin-left: auto !important;
+            /* Jobbra igazítás */
+        }
+
+        .message.assistant {
+            margin-right: auto !important;
+            /* Balra igazítás */
+        }
+
+        /* Ha a JS plusz wrapperbe rakta a ceruzát, ezek is jobbra/balra igazítják: */
+        .messages-container>div {
+            display: flex;
+            flex-direction: column;
+            width: 100%;
+        }
+
+        .messages-container>div.user {
+            align-items: flex-end;
+        }
+
+        .messages-container>div.assistant {
+            align-items: flex-start;
+        }
+
+        /* 6. Töltés, fájl melléklet ÉS MODELLVÁLASZTÓ */
         .model-select {
             appearance: none;
             background: transparent;
@@ -214,7 +249,7 @@
             max-width: 900px;
         }
 
-        /* 6. Világos mód (MINDEN SZÖVEG SÖTÉT - 100% Kontraszt) */
+        /* 7. Világos mód kontraszt fix */
         body.light-mode {
             background: #f8fafc;
             color: #0f172a;
@@ -313,17 +348,26 @@
             color: #0f172a !important;
         }
 
-        /* Asztali oldalsáv összecsukás (Hamburger menühöz PC-n) */
+        /* 8. OLDALSÁV ANIMÁCIÓ (Asztali gép - Gyönyörű kicsúszás) */
         @media (min-width: 769px) {
+            .sidebar {
+                /* Sima eltűnés helyett lágy átmenet */
+                transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease !important;
+            }
+
             .sidebar.desktop-collapsed {
-                display: none !important;
+                margin-left: -320px !important;
+                /* Szépen kicsúszik balra */
+                opacity: 0 !important;
+                pointer-events: none !important;
+                display: flex !important;
+                /* Hogy az animáció le tudjon futni (ne display:none legyen) */
             }
         }
 
-        /* MOBIL OPTIMALIZÁLÁS ÉS BILLENTYŰZET JAVÍTÁS */
+        /* 9. MOBIL OPTIMALIZÁLÁS ÉS BILLENTYŰZET JAVÍTÁS */
         @media (max-width: 768px) {
 
-            /* Fixáljuk a teljes hátteret, így a billentyűzet nem tolja el az egész oldalt, csak az app-container rugózik */
             html,
             body {
                 position: fixed !important;
@@ -344,12 +388,10 @@
                 flex-direction: column !important;
             }
 
-            /* Extra margó a beállítások gombnak, hogy ne tapadjon a szélre */
             #open-settings-btn {
                 margin-right: 15px !important;
             }
 
-            /* Modellválasztó igazítása mobilon a fejlécben */
             #header-model-slot {
                 margin-right: 5px;
             }
@@ -550,7 +592,7 @@
         window.addEventListener('resize', adaptModelSelector);
         window.addEventListener('DOMContentLoaded', adaptModelSelector);
 
-        /* HAMBURGER MENÜ LOGIKA (Asztali és Mobil) */
+        /* HAMBURGER MENÜ LOGIKA */
         const mobileMenuBtn = document.getElementById('mobile-menu-btn');
         const sidebar = document.getElementById('sidebar');
         const mobileOverlay = document.getElementById('mobile-overlay');
@@ -559,7 +601,7 @@
         if (mobileMenuBtn) {
             mobileMenuBtn.addEventListener('click', () => {
                 if (window.innerWidth > 768) {
-                    // PC asztali gép: oldalsáv elrejtése/mutatása
+                    // PC asztali gép: lágy animációs becsukás
                     sidebar.classList.toggle('desktop-collapsed');
                 } else {
                     // Mobil: oldalsáv becsúsztatása
