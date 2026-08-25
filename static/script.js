@@ -59,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
+    // --- HAMBURGER MENÜ LOGIKA (Asztali és Mobil) ---
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const closeMenuBtn = document.getElementById('close-menu-btn');
     const sidebar = document.querySelector('.sidebar');
@@ -66,12 +67,29 @@ document.addEventListener('DOMContentLoaded', () => {
 
     function toggleMobileMenu(show) {
         sidebar.classList.toggle('open', show);
-        mobileOverlay.classList.toggle('active', show);
+        if (mobileOverlay) mobileOverlay.classList.toggle('active', show);
     }
-    if (mobileMenuBtn) mobileMenuBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleMobileMenu(true); });
+
+    if (mobileMenuBtn) {
+        mobileMenuBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (window.innerWidth > 768) {
+                // Asztali nézeten kicsúszik balra
+                sidebar.classList.toggle('desktop-collapsed');
+            } else {
+                // Mobilon bejön
+                toggleMobileMenu(true);
+            }
+        });
+    }
+    
     if (closeMenuBtn) closeMenuBtn.addEventListener('click', () => toggleMobileMenu(false));
     if (mobileOverlay) mobileOverlay.addEventListener('click', () => toggleMobileMenu(false));
-    document.addEventListener('click', (e) => { if (sidebar.classList.contains('open') && !sidebar.contains(e.target)) toggleMobileMenu(false); });
+    document.addEventListener('click', (e) => { 
+        if (window.innerWidth <= 768 && sidebar.classList.contains('open') && !sidebar.contains(e.target) && e.target !== mobileMenuBtn && !mobileMenuBtn.contains(e.target)) {
+            toggleMobileMenu(false);
+        }
+    });
 
     function showWelcomeScreen() {
         currentChatTitle.innerHTML = '<i class="fas fa-sparkles"></i> Orion AI';
@@ -101,7 +119,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 const div = document.createElement('div'); div.className = `chat-list-item ${chat.id === currentChatId ? 'active' : ''}`;
                 const pinIcon = chat.pinned ? '<i class="fas fa-thumbtack" style="font-size:10px; margin-right:5px; color:var(--accent-color);"></i> ' : '';
                 
-                // JAVÍTVA: A gombok közvetlenül a span mellett vannak egy sorban, nincs dropdown burkoló ami letördelné!
                 div.innerHTML = `
                     <span class="chat-title">${pinIcon}${chat.title}</span>
                     <div class="chat-actions">
@@ -268,4 +285,23 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     setInterval(checkBroadcasts, 4000); checkBroadcasts();
     showWelcomeScreen(); loadChats();
+    
+    // Modellválasztó reszponzivitás javítás
+    function adaptModelSelector() {
+        const modelSelector = document.getElementById('model-selector');
+        const headerSlot = document.getElementById('header-model-slot');
+        const footerSlot = document.getElementById('footer-model-slot');
+        
+        if (window.innerWidth <= 768) {
+            if (modelSelector && headerSlot && !headerSlot.contains(modelSelector)) {
+                headerSlot.appendChild(modelSelector);
+            }
+        } else {
+            if (modelSelector && footerSlot && !footerSlot.contains(modelSelector)) {
+                footerSlot.appendChild(modelSelector);
+            }
+        }
+    }
+    window.addEventListener('resize', adaptModelSelector);
+    adaptModelSelector();
 });
