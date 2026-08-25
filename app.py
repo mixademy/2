@@ -13,23 +13,17 @@ from flask import (
     url_for,
     session
 )
-
-from werkzeug.security import (
-    generate_password_hash,
-    check_password_hash
-)
-
+from werkzeug.security import generate_password_hash, check_password_hash
 from groq import Groq
 
 # FIREBASE IMPORTOK
 import firebase_admin
-from firebase_admin import credentials
-from firebase_admin import db
+from firebase_admin import credentials, db
 
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY", "alapertelmezett_titkos_kulcs")
 
-# FIREBASE INICIALIZÁLÁS KÖRNYEZETI VÁLTOZÓBÓL
+# FIREBASE INICIALIZÁLÁS KÖRNYEZETI VÁLTOZÓBÓL VAGY FÁJLBÓL
 firebase_key_json = os.environ.get("FIREBASE_KEY_JSON")
 if firebase_key_json:
     key_dict = json.loads(firebase_key_json)
@@ -43,14 +37,18 @@ firebase_admin.initialize_app(cred, {
 })
 
 # GROQ KLIENS
-client = Groq(
-    api_key=os.environ.get("GROQ_API_KEY")
-)
+client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 
 MAINTENANCE_MODE = False
-BROADCAST_MESSAGE = {
-    "id": "",
-    "text": ""
+BROADCAST_MESSAGE = {"id": "", "text": ""}
+
+# --- MODELL VÁLASZTÓ MAPPING ---
+# Ezek a hivatalos Groq modellek, amelyek a leggyorsabbak és legjobbak a feladatokra
+MODEL_MAPPING = {
+    "fast": "llama-3.1-8b-instant",
+    "smart": "llama-3.1-70b-versatile",
+    "creative": "mixtral-8x7b-32768",
+    "code": "gemma2-9b-it" # Kiváló kódolásra
 }
 
 # -------------------------
@@ -58,9 +56,7 @@ BROADCAST_MESSAGE = {
 # -------------------------
 def create_default_admin():
     admin_ref = db.reference('users/admin')
-    admin_data = admin_ref.get()
-    
-    if not admin_data:
+    if not admin_ref.get():
         admin_ref.set({
             'id': str(uuid.uuid4()),
             'username': 'admin',
@@ -69,7 +65,6 @@ def create_default_admin():
 
 with app.app_context():
     create_default_admin()
-
 
 def login_required(f):
     @wraps(f)
@@ -80,7 +75,7 @@ def login_required(f):
     return decorated
 
 # -------------------------
-# LOGIN / REGISTER
+# LOGIN / REGISTER / LOGOUT
 # -------------------------
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -88,19 +83,14 @@ def login():
     if request.method == 'POST':
         username = request.form.get("username")
         password = request.form.get("password")
-
         user_data = db.reference(f'users/{username}').get()
-
         if user_data and check_password_hash(user_data['password'], password):
             session["user_id"] = user_data['id']
             session["username"] = user_data['username']
             session.pop("guest_id", None)
             return redirect(url_for("index"))
-
         error = "Hibás felhasználónév vagy jelszó!"
-
     return render_template("login.html", error=error)
-
 
 @app.route('/register', methods=['GET','POST'])
 def register():
@@ -108,11 +98,8 @@ def register():
     if request.method == "POST":
         username = request.form.get("username")
         password = request.form.get("password")
-
         user_ref = db.reference(f'users/{username}')
-        exists = user_ref.get()
-
-        if exists:
+        if user_ref.get():
             error = "Ez a felhasználónév már foglalt!"
         else:
             user_ref.set({
@@ -121,9 +108,7 @@ def register():
                 'password': generate_password_hash(password, method="pbkdf2:sha256")
             })
             return redirect(url_for("login"))
-
     return render_template("register.html", error=error)
-
 
 @app.route('/logout')
 def logout():
@@ -144,16 +129,14 @@ def index():
 
     if MAINTENANCE_MODE and username != "admin":
         return render_template("maintenance.html")
-
     return render_template("index.html", username=username)
 
 # -------------------------
-# CHAT LISTA
+# CHAT LISTA (Kitűzés funkcióval)
 # -------------------------
 @app.route("/api/chats", methods=["GET","POST"])
 def api_chats():
     current_user = session.get("user_id") or session.get("guest_id")
-    
     if not current_user:
         session["guest_id"] = "guest_" + str(uuid.uuid4())
         current_user = session["guest_id"]
@@ -164,42 +147,75 @@ def api_chats():
         chat_id = str(uuid.uuid4())
         chats_ref.child(chat_id).set({
             "title": "Új beszélgetés",
-            "timestamp": int(time.time())
+            "timestamp": int(time.time()),
+            "pinned": False
         })
-        return jsonify({"id": chat_id, "title": "Új beszélgetés"})
+        return jsonify({"id": chat_id, "title": "Új beszélgetés", "pinned": False})
 
     chats_data = chats_ref.get() or {}
-    chats_list = [{"id": cid, "title": data["title"]} for cid, data in chats_data.items()]
+    chats_list = [{"id": cid, "title": data["title"], "pinned": data.get("pinned", False)} for cid, data in chats_data.items()]
+    
+    # Rendezzük a listát: elöl a kitűzöttek, aztán időrendben (legújabb legfelül)
+    chats_list.sort(key=lambda x: (not x["pinned"], -chats_data[x["id"]].get("timestamp", 0)))
     
     return jsonify(chats_list)
 
 # -------------------------
-# CHAT TÖRLÉS
+# CHAT MŰVELETEK (Átnevezés, Kitűzés, Törlés)
 # -------------------------
-@app.route("/api/chats/<c_id>", methods=["DELETE"])
-def delete_chat(c_id):
+@app.route("/api/chats/<c_id>", methods=["DELETE", "PUT"])
+def manage_chat(c_id):
     current_user = session.get("user_id") or session.get("guest_id")
+    chat_ref = db.reference(f'user_chats/{current_user}/{c_id}')
     
-    db.reference(f'user_chats/{current_user}/{c_id}').delete()
-    db.reference(f'messages/{c_id}').delete()
-
-    return jsonify({"success": True})
-
-# -------------------------
-# ÜZENETEK LEKÉRÉSE
-# -------------------------
-@app.route("/api/chats/<c_id>/messages", methods=["GET"])
-def get_msgs(c_id):
-    msgs_data = db.reference(f'messages/{c_id}').order_by_child('timestamp').get()
-    
-    if not msgs_data:
-        return jsonify([])
+    if request.method == "DELETE":
+        chat_ref.delete()
+        db.reference(f'messages/{c_id}').delete()
+        return jsonify({"success": True})
         
-    messages = [
-        {"role": msg["role"], "content": msg["content"]} 
-        for msg_id, msg in msgs_data.items()
-    ]
-    return jsonify(messages)
+    if request.method == "PUT":
+        data = request.json
+        if "title" in data:
+            chat_ref.update({"title": data["title"]})
+        if "pinned" in data:
+            chat_ref.update({"pinned": data["pinned"]})
+        return jsonify({"success": True})
+
+# -------------------------
+# ÜZENETEK LEKÉRÉSE ÉS SZERKESZTÉSE
+# -------------------------
+@app.route("/api/chats/<c_id>/messages", methods=["GET", "PUT"])
+def manage_msgs(c_id):
+    msgs_ref = db.reference(f'messages/{c_id}')
+    
+    if request.method == "GET":
+        msgs_data = msgs_ref.order_by_child('timestamp').get()
+        if not msgs_data:
+            return jsonify([])
+        messages = [{"id": msg_id, "role": msg["role"], "content": msg["content"]} for msg_id, msg in msgs_data.items()]
+        return jsonify(messages)
+        
+    if request.method == "PUT":
+        # Üzenet szerkesztése (Frontend ezután újraküldi a generálási kérelmet)
+        data = request.json
+        msg_id_to_edit = data.get("msg_id")
+        new_content = data.get("content")
+        
+        if msg_id_to_edit:
+            msgs_ref.child(msg_id_to_edit).update({"content": new_content, "timestamp": int(time.time())})
+            return jsonify({"success": True})
+        return jsonify({"success": False, "error": "Hiányzó adat"})
+
+# -------------------------
+# FÁJLFELTÖLTÉS (Előkészület - Később ide jön a PyPDF2 logikája)
+# -------------------------
+@app.route("/api/upload", methods=["POST"])
+def upload_file():
+    if 'file' not in request.files:
+        return jsonify({"success": False, "error": "Nincs fájl kiválasztva"})
+    file = request.files['file']
+    # Ide kerül majd a fájlfeldolgozó logika
+    return jsonify({"success": True, "message": "Fájl feltöltve, feldolgozás alatt..."})
 
 # -------------------------
 # AI ÜZENET KÜLDÉS
@@ -208,11 +224,11 @@ def get_msgs(c_id):
 def send_msg(c_id):
     data = request.json
     user_message = data["message"]
-
-    if "user_id" in session:
-        model_name = "openai/gpt-oss-120b"
-    else:
-        model_name = "openai/gpt-oss-20b"
+    requested_model = data.get("model", "smart")
+    
+    # Ha a felhasználó nem bejelentkezett (vendég), akkor kényszerítjük a legkisebb modellt
+    if "user_id" not in session:
+        model_name = "llama-3.1-8b-instant"
         guest_id = session.get("guest_id")
         now = int(time.time())
         limit_time = now - (3 * 3600)
@@ -229,12 +245,15 @@ def send_msg(c_id):
 
         if valid_count >= 15:
             return jsonify({
-                "reply": "⚠️ Elérted a vendég limitet! Regisztrálj a korlátlan használathoz.",
+                "reply": "⚠️ Elérted a vendég limitet (15 üzenet / 3 óra)! Regisztrálj a korlátlan használathoz.",
                 "title_updated": False,
                 "new_title": ""
             })
 
         usage_ref.push(now)
+    else:
+        # Bejelentkezett felhasználónál a kiválasztott modellt használjuk
+        model_name = MODEL_MAPPING.get(requested_model, "llama-3.1-70b-versatile")
 
     messages_ref = db.reference(f'messages/{c_id}')
     messages_ref.push({
@@ -249,14 +268,22 @@ def send_msg(c_id):
     title_updated = False
     new_title = ""
 
+    # 1. DINAMIKUS CÍMADÁS (Téma alapján, az első üzenetnél)
     if msg_count == 1:
-        new_title = user_message[:25] + "..." if len(user_message) > 25 else user_message
+        try:
+            title_resp = client.chat.completions.create(
+                model="llama-3.1-8b-instant",
+                messages=[{"role": "user", "content": f"Foglald össze ennek a kérdésnek a témáját maximum 3-4 szóban. Csak a témát írd le, semmi mást (pl. ha a kérdés python kódról szól, írd azt hogy 'Python Kódolás'): {user_message}"}]
+            )
+            new_title = title_resp.choices[0].message.content.replace('"', '').strip()
+        except Exception:
+            new_title = user_message[:25] + "..." if len(user_message) > 25 else user_message
+            
         db.reference(f'user_chats/{current_user}/{c_id}').update({"title": new_title})
         title_updated = True
 
     history_data = messages_ref.order_by_child('timestamp').get() or {}
     
-    # A rendszerutasítást áttettem egyetlen biztonságos sorba, hogy a chat soha ne törje szét!
     api_messages = [{
         "role": "system",
         "content": "You are Orion AI, a highly intelligent and professional assistant.\nCRITICAL RULE: YOU MUST REPLY IN THE EXACT SAME LANGUAGE AS THE USER'S PROMPT.\nIf the user writes in English, you MUST reply in English. Ha a felhasználó magyarul ír, válaszolj magyarul.\nHasználj tökéletes, nyelvtanilag helyes magyar ragozást és mondatszerkezeteket. Kerüld az anglicizmusokat és a tükörfordításokat!\n\nKÓDOLÁS ÉS PROGRAMOZÁS / CODING:\nAmikor kódot, szkriptet, vagy HTML/CSS/JS fájlt generálsz, azt KIVÉTEL NÉLKÜL egy megfelelő Markdown kódblokkba kell tenned, jelezve a nyelvet is. Például:\n```python\nprint(\"Hello World\")\n```\nHa a kódhoz magyarázatot fűzöl, a szöveg maradjon a kódblokkon kívül.\n\nKÉPGENERÁLÁS / IMAGE GENERATION:\nHa a felhasználó képet kér, kötelezően egy Markdown képlinket kell visszadnod a következő formátumban:\n![Kép](https://image.pollinations.ai/prompt/{angol_nyelvu_reszletes_leiras}?width=1024&height=1024&model=flux&nologo=true)\n\nSZABÁLYOK A KÉPGENERÁLÁSHOZ:\n1. Az {angol_nyelvu_reszletes_leiras} helyére a felhasználó kérésének PROFI, RÉSZLETES, ANGOL nyelvű fordítását és kibővítését kell beírnod. A szavakat %20-szal válaszd el (pl. cyberpunk%20city,%20neon%20lights).\n2. Használj professzionális kulcsszavakat a leírásban (pl. \"photorealistic, 8k resolution, cinematic lighting, highly detailed\").\n3. Soha ne adj meg más linket, csak a megadott URL-t a \"model=flux\" és \"nologo=true\" paraméterekkel. A kép mellé írj egy rövid, kedves mondatot."
@@ -389,7 +416,6 @@ def delete_user(username):
         user_ref.delete()
 
     return redirect(url_for("admin_panel"))
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)

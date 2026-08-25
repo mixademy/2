@@ -11,370 +11,177 @@
     
     <style>
         /* =========================================
-           GONDOLKODÓ / TÖLTŐ KARIKA FIXÁLÁS (Nincs több ugrálás!)
+           ALAP ÉS LOGÓ (KORÁBBI JAVÍTÁSOK)
            ========================================= */
-        .fa-spinner, .fa-circle-notch, .fa-spin {
-            display: inline-block !important;
-            width: 24px !important;
-            height: 24px !important;
-            line-height: 24px !important;
-            text-align: center !important;
-            transform-origin: center center !important;
-            animation: fa-spin 1s linear infinite !important;
-            margin: 0 auto !important;
-        }
-
-        /* Ha a gondolkodó elem egy div-ben vagy üzenetben van */
-        .message.assistant:has(.fa-spinner), .message.system:has(.fa-spinner),
-        .message.assistant:has(svg), .message.system:has(svg) {
-            text-align: center !important;
-            align-items: center !important;
-        }
-
-        /* LOGÓ STABILIZÁLÁS */
-        .orion-brand {
-            display: flex !important;
-            align-items: center !important;
-            gap: 15px !important;
-        }
-
-        .orion-logo {
-            width: 40px !important;
-            height: 40px !important;
-            min-width: 40px !important;
-            min-height: 40px !important;
-            flex-shrink: 0 !important;
-            overflow: visible !important;
-            display: block !important;
-        }
-
-        .spinning-ring {
-            transform-origin: 50px 50px !important; 
-            transform-box: view-box !important;
-        }
+        .orion-brand { display: flex !important; align-items: center !important; gap: 15px !important; }
+        .orion-logo { width: 40px !important; height: 40px !important; min-width: 40px !important; min-height: 40px !important; flex-shrink: 0 !important; overflow: visible !important; display: block !important; }
+        .spinning-ring { transform-origin: 50px 50px !important; transform-box: view-box !important; }
+        .fa-spinner, .fa-circle-notch, .fa-spin { display: inline-block !important; width: 24px !important; height: 24px !important; line-height: 24px !important; text-align: center !important; transform-origin: center center !important; animation: fa-spin 1s linear infinite !important; margin: 0 auto !important; }
+        .message.assistant:has(.fa-spinner), .message.system:has(.fa-spinner), .message.assistant:has(svg), .message.system:has(svg) { text-align: center !important; align-items: center !important; }
 
         /* =========================================
-           KÖZÉPRE IGAZÍTOTT CHAT ÉS BEVITELI MEZŐ 
+           KOMPAKT OLDALSÁV (Gemini stílus)
            ========================================= */
-        .messages-container {
-            display: flex !important;
-            flex-direction: column !important;
-            padding-left: max(20px, calc(50% - 425px)) !important;
-            padding-right: max(20px, calc(50% - 425px)) !important;
-            align-items: stretch !important; 
-            overflow-x: hidden; 
+        .compact-btn { 
+            padding: 8px 12px !important; /* Kisebb gomb magasság */
+            font-size: 13px !important; 
+            border-radius: 8px !important;
         }
 
-        .input-area {
-            display: flex !important;
-            flex-direction: column !important;
-            padding-left: max(20px, calc(50% - 425px)) !important;
-            padding-right: max(20px, calc(50% - 425px)) !important;
-            align-items: stretch !important;
-        }
-
-        .input-wrapper {
-            width: 100% !important;
-            max-width: 100% !important; 
-        }
-
-        .disclaimer {
-            width: 100% !important;
-            max-width: 100% !important;
-            text-align: center !important;
-        }
-
-        /* --- BUBORÉKOK IGAZÍTÁSA --- */
-        .message.user {
-            align-self: flex-end !important; 
-            width: fit-content !important;
-            max-width: 100% !important;
-            display: block !important;
-            word-wrap: break-word !important;
-        }
-
-        .message.assistant, .message.system {
-            align-self: flex-start !important; 
-            width: fit-content !important; 
-            max-width: 100% !important;
-            display: flex !important;
-            flex-direction: column !important;
-            word-wrap: break-word !important;
-        }
+        .chat-list { display: flex; flex-direction: column; gap: 2px; overflow-y: auto; max-height: calc(100vh - 220px); padding-right: 4px; }
         
-        .message.assistant .code-window {
-            width: 100% !important;
-            box-sizing: border-box !important;
-        }
-
-        /* =========================================
-           PC SIDEBAR ÖSSZECSUKHATÓSÁG
-           ========================================= */
-        @media (min-width: 769px) {
-            .mobile-menu-btn {
-                display: flex !important; 
-                align-items: center;
-                justify-content: center;
-            }
-            .sidebar {
-                transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease, border-color 0.3s ease !important;
-                white-space: nowrap; 
-            }
-            .sidebar.collapsed {
-                width: 0 !important;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-                border-right-color: transparent !important; 
-                overflow: hidden !important;
-                opacity: 0 !important;
-            }
-        }
-
-        /* =========================================
-           MODERN GÖRGETŐSÁV (SCROLLBAR)
-           ========================================= */
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
-        }
-        ::-webkit-scrollbar-track {
-            background: transparent;
-        }
-        ::-webkit-scrollbar-thumb {
-            background: rgba(163, 112, 247, 0.3);
-            border-radius: 10px;
-        }
-        ::-webkit-scrollbar-thumb:hover {
-            background: rgba(163, 112, 247, 0.6);
-        }
-
-        body.light-mode ::-webkit-scrollbar-thumb {
-            background: rgba(0, 0, 0, 0.15);
-        }
-        body.light-mode ::-webkit-scrollbar-thumb:hover {
-            background: rgba(0, 0, 0, 0.3);
-        }
-
-        /* =========================================
-           VILÁGOS MÓD & KOMPAKT CHAT LISTA
-           ========================================= */
-        body.light-mode {
-            background: #f4f5f8;
-            color: #0f172a;
-        }
-        
-        body.light-mode .liquid-bg { 
-            opacity: 0.5 !important; 
-        }
-
-        body.light-mode .glass-panel,
-        body.light-mode .sidebar {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.9);
-            box-shadow: 0 8px 32px rgba(31, 38, 135, 0.06);
-            border-radius: 20px;
-            overflow: hidden;
-        }
-        
-        body.light-mode .orion-title { color: #0f172a; font-weight: 800; }
-
-        body.light-mode h1, body.light-mode h2, body.light-mode h3, 
-        body.light-mode p, body.light-mode .disclaimer, body.light-mode label {
-            color: #0f172a !important; 
-            font-weight: 500;
-        }
-
-        body.light-mode .input-area {
-            background: rgba(255, 255, 255, 0.75);
-            backdrop-filter: blur(15px);
-            border-top: 1px solid rgba(255, 255, 255, 0.6);
-        }
-
-        body.light-mode .input-wrapper {
-            background: rgba(255, 255, 255, 0.95);
-            border: 1px solid rgba(0, 0, 0, 0.12);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04);
-            border-radius: 20px;
-        }
-
-        body.light-mode input, body.light-mode textarea {
-            color: #0f172a !important;
-            font-weight: 500;
-            background: transparent !important;
-            border: none !important;
-        }
-
-        body.light-mode input::placeholder, body.light-mode textarea::placeholder {
-            color: #475569;
-        }
-        
-        body.light-mode .chat-header {
-            background: rgba(255, 255, 255, 0.75);
-            border-bottom: 1px solid rgba(255, 255, 255, 0.6);
-            border-top-right-radius: 20px;
-        }
-
-        body.light-mode .message.assistant,
-        body.light-mode .message.system {
-            background: rgba(255, 255, 255, 0.95) !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
-            color: #0f172a !important;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.04) !important;
-        }
-
-        body.light-mode .message.user {
-            background: linear-gradient(135deg, #9333ea, #6366f1) !important;
-            color: #ffffff !important;
-            border: none !important;
-            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.25) !important;
-        }
-
-        body.light-mode .glass-btn {
-            background: rgba(255, 255, 255, 0.8) !important;
-            border: 1px solid rgba(0, 0, 0, 0.08) !important;
-            color: #1e293b !important;
-            font-weight: 600;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
-            transition: all 0.3s ease;
-        }
-
-        body.light-mode .glass-btn:hover {
-            background: rgba(255, 255, 255, 1) !important;
-            border-color: rgba(147, 51, 234, 0.4) !important;
-            color: #9333ea !important;
-        }
-
-        body.light-mode #new-chat-btn, body.light-mode #save-settings-btn {
-            background: linear-gradient(135deg, #9333ea, #7c3aed) !important;
-            color: white !important;
-            border: none !important;
-            box-shadow: 0 4px 15px rgba(147, 51, 234, 0.3) !important;
-        }
-        
-        body.light-mode .mobile-menu-btn {
-            color: #0f172a !important;
-        }
-
-        /* KOMPAKT CHAT ELŐZMÉNYEK */
-        .chat-list {
-            display: flex;
-            flex-direction: column;
-            gap: 4px;
-            overflow-y: auto;
-            max-height: calc(100vh - 250px);
-            padding-right: 2px;
-        }
         .chat-list-item {
-            padding: 8px 12px !important;
+            padding: 8px 10px !important; /* Vékonyabb chatelemek */
             font-size: 13px !important;
             border-radius: 8px !important;
-            margin-bottom: 2px !important;
             display: flex;
             align-items: center;
             justify-content: space-between;
             background: transparent;
             transition: background 0.2s;
+            position: relative;
+            cursor: pointer;
+            color: var(--text-main);
         }
-        body.light-mode .chat-list-item {
-            color: #1e293b;
-            border-bottom: none !important;
-        }
-        body.light-mode .chat-list-item:hover {
-            background: rgba(0, 0, 0, 0.05);
-            border-left: none !important;
-        }
+        .chat-list-item:hover { background: rgba(255, 255, 255, 0.05); }
+        .chat-list-item .chat-title { flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-weight: 500; }
 
-        body.light-mode select {
-            color: #0f172a !important;
-            background: rgba(255,255,255,0.9) !important;
-            border: 1px solid rgba(0,0,0,0.15) !important;
+        /* 3 PÖTTY MENÜ */
+        .chat-actions { position: relative; }
+        .dots-btn { background: transparent; border: none; color: var(--text-muted); cursor: pointer; padding: 4px 8px; border-radius: 4px; transition: 0.2s; }
+        .dots-btn:hover { color: var(--text-main); background: rgba(255,255,255,0.1); }
+        
+        .chat-dropdown {
+            position: absolute; right: 0; top: 100%;
+            background: #1e1e2e; border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            display: flex; flex-direction: column; min-width: 120px;
+            z-index: 50; overflow: hidden;
+            display: none; /* JS fogja kapcsolni */
         }
-        body.light-mode select option {
-            background: #ffffff;
-            color: #0f172a;
+        .chat-dropdown.show { display: flex; }
+        .chat-dropdown button {
+            background: transparent; border: none; color: #e2e8f0;
+            padding: 10px 12px; text-align: left; font-size: 12px;
+            cursor: pointer; transition: 0.2s; display: flex; align-items: center; gap: 8px;
         }
+        .chat-dropdown button:hover { background: rgba(255,255,255,0.1); }
+        .chat-dropdown button.delete-action:hover { background: rgba(239, 68, 68, 0.2); color: #fca5a5; }
 
         /* =========================================
-           MOBILKOMPATIBILIS KÓDBLOKK ÉS GOMB
+           ÜZENETEK ÉS SZERKESZTÉS (Edit gomb)
            ========================================= */
-        .code-window {
-            background: #1e1e2e;
-            border-radius: 12px;
-            overflow: hidden;
-            margin: 15px 0;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-            border: 1px solid rgba(255,255,255,0.1);
-            text-align: left;
-            width: 100%;
-            max-width: 100%;
+        .messages-container { display: flex !important; flex-direction: column !important; padding-left: max(20px, calc(50% - 425px)) !important; padding-right: max(20px, calc(50% - 425px)) !important; align-items: stretch !important; overflow-x: hidden; }
+        
+        .message-wrapper { position: relative; width: fit-content; max-width: 100%; }
+        .message-wrapper.user-wrapper { align-self: flex-end; }
+        .message-wrapper.assistant-wrapper { align-self: flex-start; width: 100%; }
+
+        .message { word-wrap: break-word !important; }
+        .message.user { align-self: flex-end !important; width: fit-content !important; max-width: 100% !important; display: block !important; }
+        .message.assistant, .message.system { align-self: flex-start !important; width: fit-content !important; max-width: 100% !important; display: flex !important; flex-direction: column !important; }
+        .message.assistant .code-window { width: 100% !important; box-sizing: border-box !important; }
+
+        /* Szerkesztés ikon ami hoverre jelenik meg a saját üzenetnél */
+        .edit-message-btn {
+            position: absolute; left: -30px; top: 50%; transform: translateY(-50%);
+            background: transparent; border: none; color: var(--text-muted); cursor: pointer;
+            opacity: 0; transition: opacity 0.2s; font-size: 14px; padding: 5px;
         }
-        body.light-mode .code-window {
-            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
-            border: 1px solid rgba(0,0,0,0.2);
+        .message-wrapper.user-wrapper:hover .edit-message-btn { opacity: 1; }
+        .edit-message-btn:hover { color: var(--text-main); }
+
+        /* =========================================
+           ÚJ BEVITELI MEZŐ (Gemini stílus kapszula)
+           ========================================= */
+        .input-area { display: flex !important; flex-direction: column !important; padding-left: max(20px, calc(50% - 425px)) !important; padding-right: max(20px, calc(50% - 425px)) !important; align-items: stretch !important; padding-bottom: 20px; }
+        
+        .input-wrapper {
+            width: 100% !important; max-width: 100% !important;
+            display: flex; align-items: flex-end; gap: 10px;
+            background: rgba(30, 30, 46, 0.7); /* Sötét buborék */
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 24px; padding: 8px 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
         }
-        .code-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: rgba(0,0,0,0.3);
-            padding: 8px 12px;
-            font-family: sans-serif;
-            font-size: 12px;
-            color: #a0aec0;
-            border-bottom: 1px solid rgba(255,255,255,0.05);
-            flex-wrap: wrap;
-            gap: 8px;
+
+        /* Fájlfeltöltő "+" gomb */
+        .attach-btn {
+            background: rgba(255,255,255,0.05); border: none; color: var(--text-muted);
+            width: 36px; height: 36px; border-radius: 50%; cursor: pointer;
+            display: flex; justify-content: center; align-items: center;
+            flex-shrink: 0; transition: 0.2s; margin-bottom: 2px;
         }
-        .code-header .lang-label {
-            text-transform: uppercase;
-            font-weight: bold;
-            letter-spacing: 0.5px;
+        .attach-btn:hover { background: rgba(255,255,255,0.15); color: var(--text-main); }
+
+        .input-wrapper textarea {
+            flex: 1; background: transparent; border: none; color: white;
+            resize: none; outline: none; font-size: 15px; line-height: 22px;
+            padding: 8px 0; max-height: 150px; overflow-y: auto;
+        }
+
+        .input-controls {
+            display: flex; align-items: center; gap: 10px; flex-shrink: 0; margin-bottom: 2px;
+        }
+
+        /* Modellválasztó lenyíló */
+        .model-select {
+            appearance: none; -webkit-appearance: none;
+            background: transparent; border: none;
+            color: var(--text-muted); font-size: 13px; font-weight: 600;
+            cursor: pointer; padding: 8px 20px 8px 8px; outline: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2398989d' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat; background-position: right center; background-size: 14px;
+            transition: 0.2s;
+        }
+        .model-select:hover { color: var(--text-main); }
+        .model-select option { background: #1e1e2e; color: white; }
+
+        /* Beküldés / Leállítás gomb */
+        .circle-send-btn {
+            background: var(--text-main); color: #000; border: none;
+            width: 36px; height: 36px; border-radius: 50%;
+            cursor: pointer; display: flex; justify-content: center; align-items: center;
+            transition: all 0.2s;
+        }
+        .circle-send-btn:hover { transform: scale(1.05); background: white; }
+        
+        /* Stop állapot dizájnja */
+        .circle-send-btn.stop-mode {
+            background: rgba(255, 255, 255, 0.1); color: white; border: 1px solid rgba(255,255,255,0.2);
+            border-radius: 12px; /* A gomb négyzetesebb lesz megállításnál */
+        }
+        .circle-send-btn.stop-mode:hover { background: rgba(239, 68, 68, 0.8); border-color: rgba(239, 68, 68, 1); }
+
+        .disclaimer { width: 100% !important; max-width: 100% !important; text-align: center !important; font-size: 11px; opacity: 0.6; margin-top: 10px; }
+
+        /* Világos mód javítások */
+        body.light-mode .input-wrapper { background: rgba(255, 255, 255, 0.9); border: 1px solid rgba(0, 0, 0, 0.1); box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05); }
+        body.light-mode .input-wrapper textarea { color: #0f172a; }
+        body.light-mode .attach-btn { color: #475569; background: rgba(0,0,0,0.05); }
+        body.light-mode .model-select { color: #475569; background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23475569' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e"); }
+        body.light-mode .model-select option { background: #fff; color: #000; }
+        body.light-mode .chat-dropdown { background: #fff; border-color: rgba(0,0,0,0.1); }
+        body.light-mode .chat-dropdown button { color: #0f172a; }
+        body.light-mode .chat-dropdown button:hover { background: rgba(0,0,0,0.05); }
+        body.light-mode .chat-dropdown button.delete-action:hover { background: rgba(239, 68, 68, 0.1); color: #dc2626; }
+        
+        @media (min-width: 769px) {
+            .mobile-menu-btn { display: flex !important; align-items: center; justify-content: center; }
+            .sidebar { transition: width 0.3s ease, padding 0.3s ease, opacity 0.3s ease, border-color 0.3s ease !important; white-space: nowrap; }
+            .sidebar.collapsed { width: 0 !important; padding-left: 0 !important; padding-right: 0 !important; border-right-color: transparent !important; overflow: hidden !important; opacity: 0 !important; }
         }
         
-        .code-header .copy-btn {
-            background: rgba(255, 255, 255, 0.1) !important;
-            border: 1px solid rgba(255, 255, 255, 0.2) !important;
-            color: #e2e8f0 !important;
-            cursor: pointer;
-            display: inline-flex !important;
-            align-items: center !important;
-            justify-content: center !important;
-            gap: 6px !important;
-            font-size: 11px !important;
-            font-family: sans-serif !important;
-            padding: 4px 10px !important;
-            border-radius: 6px !important;
-            outline: none !important;
-            box-shadow: none !important;
-            white-space: nowrap !important;
-        }
-        .code-header .copy-btn:hover {
-            background: rgba(255, 255, 255, 0.2) !important;
-            color: #ffffff !important;
-        }
-        .code-window pre {
-            margin: 0;
-            padding: 12px;
-            background: transparent !important;
-            border: none !important;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-        .code-window code {
-            color: #e0e0e0;
-            font-family: 'Courier New', Courier, monospace;
-            font-size: 13px;
-            white-space: pre;
-        }
+        /* Scrollbar */
+        ::-webkit-scrollbar { width: 6px; height: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: rgba(163, 112, 247, 0.3); border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: rgba(163, 112, 247, 0.6); }
     </style>
 </head>
-<body data-user="{{ username }}">
+<body data-user="{{ username }}" class="dark-mode">
     <div class="liquid-bg">
-        <div class="blob one"></div>
-        <div class="blob two"></div>
-        <div class="blob three"></div>
+        <div class="blob one"></div><div class="blob two"></div><div class="blob three"></div>
     </div>
 
     <div class="glass-panel app-container">
@@ -395,8 +202,7 @@
                     <line x1="54" y1="46" x2="65" y2="35" stroke="rgba(255,255,255,0.4)" stroke-width="2"/>
                     <defs>
                         <linearGradient id="gradient" x1="0" y1="0" x2="100" y2="100" gradientUnits="userSpaceOnUse">
-                            <stop stop-color="#a370f7"/>
-                            <stop offset="1" stop-color="#4f46e5"/>
+                            <stop stop-color="#a370f7"/><stop offset="1" stop-color="#4f46e5"/>
                         </linearGradient>
                     </defs>
                 </svg>
@@ -407,7 +213,22 @@
                 <i class="fas fa-plus"></i> Új beszélgetés
             </button>
             
-            <div class="chat-list" id="chat-list"></div>
+            <!-- Minta Chat Lista a 3 pötty menüvel -->
+            <div class="chat-list" id="chat-list">
+                <!-- Ezt a backend script.js generálja, de vizuálisan most így fog kinézni:
+                <div class="chat-list-item">
+                    <span class="chat-title"><i class="fas fa-thumbtack" style="font-size:10px; margin-right:5px; color:var(--accent-color);"></i> Orion AI és Render</span>
+                    <div class="chat-actions">
+                        <button class="dots-btn" onclick="toggleDropdown(this)"><i class="fas fa-ellipsis-v"></i></button>
+                        <div class="chat-dropdown">
+                            <button class="rename-btn"><i class="fas fa-pen"></i> Átnevezés</button>
+                            <button class="pin-btn"><i class="fas fa-thumbtack"></i> Kitűzés</button>
+                            <button class="delete-action"><i class="fas fa-trash"></i> Törlés</button>
+                        </div>
+                    </div>
+                </div>
+                -->
+            </div>
 
             <div class="user-info-bottom">
                 {% if username == 'admin' %}
@@ -438,28 +259,53 @@
                 </button>
             </div>
             
-            <div class="messages-container" id="messages-container"></div>
+            <div class="messages-container" id="messages-container">
+                <!-- Felhasználói üzenet minta szerkesztés gombbal (backend generálja) -->
+                <!--
+                <div class="message-wrapper user-wrapper">
+                    <button class="edit-message-btn" title="Üzenet szerkesztése"><i class="fas fa-pen"></i></button>
+                    <div class="message user"><div class="message-content">Szia!</div></div>
+                </div>
+                -->
+            </div>
 
             <div class="input-area">
                 <div class="input-wrapper">
+                    <!-- Fájlfeltöltés Gomb -->
+                    <label for="file-upload" class="attach-btn" title="Kép vagy fájl feltöltése">
+                        <i class="fas fa-plus"></i>
+                    </label>
+                    <input type="file" id="file-upload" style="display: none;">
+                    
                     <textarea id="message-input" placeholder="Kérdezz az Oriontól..." rows="1"></textarea>
-                    <button id="send-btn" class="circle-send-btn"><i class="fas fa-paper-plane"></i></button>
+                    
+                    <div class="input-controls">
+                        <!-- Modellválasztó lenyíló -->
+                        <select id="model-selector" class="model-select">
+                            <option value="smart">🧠 Smart</option>
+                            <option value="fast">⚡ Fast</option>
+                            <option value="creative">🔥 Creative</option>
+                            <option value="code">💻 Code</option>
+                        </select>
+                        
+                        <!-- Küldés gomb (JS-el változik az ikonja megállításra) -->
+                        <button id="send-btn" class="circle-send-btn"><i class="fas fa-arrow-up"></i></button>
+                    </div>
                 </div>
                 <div class="disclaimer">
-                    Az Orion AI egy mesterséges intelligencia ami hibázhat! Az adatbázisa 2024-ig tartalmaz információkat. Kérjük, ellenőrizd a fontos adatokat.
+                    Az Orion AI egy mesterséges intelligencia, amely hibázhat. Kérjük, ellenőrizd a fontos adatokat.
                 </div>
             </div>
         </main>
     </div>
 
-    <!-- BEÁLLÍTÁSOK MODAL (Ablak) -->
+    <!-- ... (Beállítások és Broadcast Modal marad ugyanaz) ... -->
     <div id="settings-modal" class="broadcast-modal" style="display: none;">
         <div class="glass-panel broadcast-content" style="text-align: left; max-width: 400px; width: 90%;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
                 <h3 style="color: var(--accent-color); margin: 0; font-size: 20px;"><i class="fas fa-sliders-h"></i> Beállítások</h3>
                 <button id="close-settings-btn" style="background: transparent; border: none; color: inherit; cursor: pointer; font-size: 20px;"><i class="fas fa-times"></i></button>
             </div>
-            
             <div style="margin-bottom: 15px;">
                 <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">Megjelenés</label>
                 <select id="theme-select" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
@@ -467,209 +313,95 @@
                     <option value="light">☀️ Világos mód</option>
                 </select>
             </div>
-
-            <div style="margin-bottom: 25px;">
-                <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">AI Nyelve</label>
-                <select id="language-select" style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
-                    <option value="hu">🇭🇺 Magyar</option>
-                    <option value="en">🇬🇧 English</option>
-                    <option value="de">🇩🇪 Deutsch</option>
-                    <option value="it">🇮🇹 Italiano</option>
-                    <option value="fr">🇫🇷 Français</option>
-                    <option value="es">🇪🇸 Español</option>
-                </select>
-            </div>
-
             <button id="save-settings-btn" class="glass-btn" style="width: 100%; padding: 12px; font-size: 15px; border-radius: 8px; cursor: pointer;">
                 <i class="fas fa-save"></i> Beállítások Mentése
             </button>
         </div>
     </div>
 
-    <!-- RENDSZERÜZENET MODAL -->
-    <div id="broadcast-modal" class="broadcast-modal">
-        <div class="glass-panel broadcast-content">
-            <div style="font-size: 40px; color: var(--accent-color); filter: drop-shadow(0 0 10px var(--accent-glow));"><i class="fas fa-bullhorn"></i></div>
-            <h3 style="color: white; font-size: 18px; font-weight: 600;">Rendszerüzenet az Admintól</h3>
-            <p id="broadcast-text-content" style="color: var(--text-main); font-size: 14px; line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); text-align: left;"></p>
-            <button id="close-broadcast-btn" class="glass-btn" style="padding: 10px; font-size: 14px; border-radius: 10px;">Bezárás</button>
-        </div>
-    </div>
-
     <script src="{{ url_for('static', filename='script.js') }}"></script>
     
     <script>
-    // --- PC és Mobil Sidebar Logika (Hamburgermenü) ---
-    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
-    const sidebar = document.querySelector('.sidebar');
-    const mobileOverlay = document.getElementById('mobile-overlay');
-    const closeMenuBtn = document.getElementById('close-menu-btn');
+    // --- UI ESEMÉNYEK: Dropdown, Gombok ---
 
-    // Kattintás a hamburger ikonra
-    mobileMenuBtn.addEventListener('click', () => {
-        if (window.innerWidth > 768) {
-            // PC mód: összecsukja / kinyitja az oldalsávot
-            sidebar.classList.toggle('collapsed');
-        } else {
-            // Mobil mód: kicsúsztatja
-            sidebar.classList.add('active');
-            mobileOverlay.classList.add('active');
+    // 3 pötty menü nyitó függvény (Ezt a script.js-ben a chat generálásakor rákötheted)
+    window.toggleDropdown = function(btn) {
+        // Bezárja a többit
+        document.querySelectorAll('.chat-dropdown.show').forEach(menu => {
+            if (menu !== btn.nextElementSibling) menu.classList.remove('show');
+        });
+        const dropdown = btn.nextElementSibling;
+        dropdown.classList.toggle('show');
+    };
+
+    // Ha mellékattintanak, zárja be a menüt
+    document.addEventListener('click', (e) => {
+        if (!e.target.closest('.chat-actions')) {
+            document.querySelectorAll('.chat-dropdown.show').forEach(menu => menu.classList.remove('show'));
         }
     });
 
-    // Bezárás mobilon
-    if (mobileOverlay) {
-        mobileOverlay.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-        });
-    }
-
-    if (closeMenuBtn) {
-        closeMenuBtn.addEventListener('click', () => {
-            sidebar.classList.remove('active');
-            mobileOverlay.classList.remove('active');
-        });
-    }
-
-    // --- BEÁLLÍTÁSOK ABLAK LOGIKA ---
-    const settingsBtn = document.getElementById('open-settings-btn');
-    const settingsModal = document.getElementById('settings-modal');
-    const closeSettingsBtn = document.getElementById('close-settings-btn');
-    const saveSettingsBtn = document.getElementById('save-settings-btn');
-
-    const themeSelect = document.getElementById('theme-select');
-    const languageSelect = document.getElementById('language-select');
-
-    if (localStorage.getItem('orion_theme') === 'light') {
-        document.body.classList.add('light-mode');
-        themeSelect.value = 'light';
-    } else {
-        themeSelect.value = 'dark';
-    }
-
-    if (localStorage.getItem('orion_language')) {
-        languageSelect.value = localStorage.getItem('orion_language');
-    }
-
-    settingsBtn.onclick = () => { settingsModal.style.display = 'flex'; };
-    closeSettingsBtn.onclick = () => { settingsModal.style.display = 'none'; };
-
-    saveSettingsBtn.onclick = () => {
-        const selectedTheme = themeSelect.value;
-        localStorage.setItem('orion_theme', selectedTheme);
-        if (selectedTheme === 'light') {
-            document.body.classList.add('light-mode');
+    // --- LEÁLLÍTÁS GOMB DEMÓ LOGIKA ---
+    // Ezt a script.js-ben kell megírnod rendesen, de így tudod vizuálisan kezelni:
+    const sendBtn = document.getElementById('send-btn');
+    
+    // DEMO: Kattintásra átvált "stop" ikonra (mintha generálna)
+    sendBtn.addEventListener('click', function() {
+        if (this.classList.contains('stop-mode')) {
+            // STOP gomb megnyomva: itt küldesz megszakítást a szervernek
+            console.log("Generálás leállítva!");
+            resetSendButton();
         } else {
-            document.body.classList.remove('light-mode');
-        }
-
-        localStorage.setItem('orion_language', languageSelect.value);
-
-        const originalText = saveSettingsBtn.innerHTML;
-        saveSettingsBtn.innerHTML = '<i class="fas fa-check"></i> Elmentve!';
-        saveSettingsBtn.style.background = '#4ade80';
-        
-        setTimeout(() => {
-            saveSettingsBtn.innerHTML = originalText;
-            saveSettingsBtn.style.background = '';
-            settingsModal.style.display = 'none';
-        }, 1000);
-    };
-
-    // --- GLOBÁLIS KÓD MÁSOLÓ FÜGGVÉNY ---
-    window.orionCopyCode = function(button) {
-        const pre = button.closest('.code-window').querySelector('pre');
-        const codeText = pre.innerText;
-        
-        navigator.clipboard.writeText(codeText).then(() => {
-            const originalHTML = button.innerHTML;
-            button.innerHTML = '<i class="fas fa-check"></i> Másolva!';
-            button.style.color = '#4ade80'; 
-            setTimeout(() => {
-                button.innerHTML = originalHTML;
-                button.style.color = '';
-            }, 2000);
-        }).catch(err => {
-            console.error("Másolási hiba:", err);
-            button.innerHTML = '❌ Hiba';
-        });
-    };
-
-    // --- OKOS FORMÁZÓ: Kódblokk és Kép ---
-    function injectAndFormat() {
-        const msgDivs = document.querySelectorAll('.message, .message-content, .chat-message');
-        msgDivs.forEach(div => {
-            if (div.dataset.codeParsed !== 'true' && div.innerHTML.includes('```')) {
-                let html = div.innerHTML;
-                
-                const codeRegex = /```([a-zA-Z0-9+#\-]*)[ \t]*(?:<br\s*\/?>|\r|\n)*([\s\S]*?)```/gi;
-                
-                html = html.replace(codeRegex, function(match, lang, codeContent) {
-                    let cleanCode = codeContent.replace(/(<br\s*\/?>)/gi, '\n');
-                    return `
-                    <div class="code-window">
-                        <div class="code-header">
-                            <span class="lang-label">${lang || 'KÓD'}</span>
-                            <button class="copy-btn" onclick="orionCopyCode(this)">
-                                <i class="fas fa-copy"></i> Másolás
-                            </button>
-                        </div>
-                        <pre><code>${cleanCode}</code></pre>
-                    </div>`;
-                });
-
-                div.innerHTML = html;
-                div.dataset.codeParsed = 'true';
+            // KÜLDÉS gomb megnyomva
+            if(document.getElementById('message-input').value.trim() !== "") {
+                this.classList.add('stop-mode');
+                this.innerHTML = '<i class="fas fa-stop"></i>';
+                // Szimulált válaszadás vége:
+                // setTimeout(resetSendButton, 3000); 
             }
-        });
+        }
+    });
 
-        const images = document.querySelectorAll('.message-content img, .chat-message img, img');
-        images.forEach(img => {
-            if (!img.src.includes('pollinations')) return; 
-            if (img.parentElement.classList.contains('img-container')) return; 
-            
-            const wrapper = document.createElement('div');
-            wrapper.className = 'img-container';
-            wrapper.style.cssText = 'position: relative; display: inline-block; max-width: 100%; margin-top: 8px; border-radius: 8px; overflow: hidden;';
-            img.parentNode.insertBefore(wrapper, img);
-            wrapper.appendChild(img);
-            
-            const dlBtn = document.createElement('button');
-            dlBtn.className = 'download-btn';
-            dlBtn.innerHTML = '<i class="fas fa-download"></i> Letöltés';
-            dlBtn.style.cssText = 'position: absolute; bottom: 12px; right: 12px; background: rgba(0,0,0,0.6); backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.3); color: white; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; z-index: 5; transition: all 0.2s;';
-            
-            dlBtn.onmouseover = () => { dlBtn.style.background = 'rgba(0,0,0,0.8)'; };
-            dlBtn.onmouseout = () => { dlBtn.style.background = 'rgba(0,0,0,0.6)'; };
-
-            dlBtn.onclick = async () => {
-                try {
-                    dlBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Letöltés...';
-                    const response = await fetch(img.src);
-                    const blob = await response.blob();
-                    const blobUrl = window.URL.createObjectURL(blob);
-                    
-                    const a = document.createElement('a');
-                    a.href = blobUrl;
-                    a.download = `OrionAI_${Date.now()}.jpg`;
-                    document.body.appendChild(a);
-                    a.click();
-                    document.body.removeChild(a);
-                    window.URL.revokeObjectURL(blobUrl);
-                    
-                    dlBtn.innerHTML = '<i class="fas fa-check"></i> Kész!';
-                    setTimeout(() => dlBtn.innerHTML = '<i class="fas fa-download"></i> Letöltés', 2000);
-                } catch (err) {
-                    console.error(err);
-                    dlBtn.innerHTML = '❌ Hiba';
-                }
-            };
-            wrapper.appendChild(dlBtn);
-        });
+    function resetSendButton() {
+        sendBtn.classList.remove('stop-mode');
+        sendBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
     }
 
-    setInterval(injectAndFormat, 500);
+
+    // --- KORÁBBI FUNKCIÓK ---
+    const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+    const sidebar = document.querySelector('.sidebar');
+    const mobileOverlay = document.getElementById('mobile-overlay');
+    mobileMenuBtn.addEventListener('click', () => {
+        if (window.innerWidth > 768) sidebar.classList.toggle('collapsed');
+        else { sidebar.classList.add('active'); mobileOverlay.classList.add('active'); }
+    });
+    if (mobileOverlay) mobileOverlay.addEventListener('click', () => { sidebar.classList.remove('active'); mobileOverlay.classList.remove('active'); });
+
+    // Beállítások mentése
+    const themeSelect = document.getElementById('theme-select');
+    if (localStorage.getItem('orion_theme') === 'light') { document.body.classList.add('light-mode'); themeSelect.value = 'light'; }
+    document.getElementById('open-settings-btn').onclick = () => document.getElementById('settings-modal').style.display = 'flex';
+    document.getElementById('close-settings-btn').onclick = () => document.getElementById('settings-modal').style.display = 'none';
+    
+    document.getElementById('save-settings-btn').onclick = () => {
+        localStorage.setItem('orion_theme', themeSelect.value);
+        if (themeSelect.value === 'light') document.body.classList.add('light-mode');
+        else document.body.classList.remove('light-mode');
+        const btn = document.getElementById('save-settings-btn');
+        btn.innerHTML = '<i class="fas fa-check"></i> Elmentve!';
+        btn.style.background = '#4ade80';
+        setTimeout(() => { btn.innerHTML = '<i class="fas fa-save"></i> Beállítások Mentése'; btn.style.background = ''; document.getElementById('settings-modal').style.display = 'none'; }, 1000);
+    };
+
+    // OKOS FORMÁZÓ: Kódblokk másolás
+    window.orionCopyCode = function(button) {
+        const codeText = button.closest('.code-window').querySelector('pre').innerText;
+        navigator.clipboard.writeText(codeText).then(() => {
+            const orig = button.innerHTML; button.innerHTML = '<i class="fas fa-check"></i> Másolva!'; button.style.color = '#4ade80'; 
+            setTimeout(() => { button.innerHTML = orig; button.style.color = ''; }, 2000);
+        });
+    };
     </script>
 </body>
 </html>

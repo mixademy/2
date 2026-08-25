@@ -5,8 +5,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const messageInput = document.getElementById('message-input');
     const sendBtn = document.getElementById('send-btn');
     const currentChatTitle = document.getElementById('current-chat-title');
+    const modelSelector = document.getElementById('model-selector');
 
     let currentChatId = null;
+    let abortController = null; // A generálás "megállításához" (fetch megszakítás)
 
     // --- MOBIL MENÜ LOGIKA ---
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
@@ -59,19 +61,75 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     newChatBtn.addEventListener('click', createNewChatFromBtn);
 
-    // --- CHATEK LISTÁZÁSA ---
+    // --- CHATEK LISTÁZÁSA (3 PÖTTY MENÜVEL) ---
     async function loadChats() {
         const res = await fetch('/api/chats'); 
         const chats = await res.json(); 
         chatList.innerHTML = '';
         chats.forEach(chat => {
             const div = document.createElement('div'); 
-            div.className = `chat-item ${chat.id === currentChatId ? 'active' : ''}`;
-            div.innerHTML = `<span>${chat.title}</span><button class="delete-btn" onclick="event.stopPropagation(); deleteChat('${chat.id}')"><i class="fas fa-trash"></i></button>`;
+            div.className = `chat-list-item ${chat.id === currentChatId ? 'active' : ''}`;
+            
+            // Ha kitűzött, teszünk elé egy ikont
+            const pinIcon = chat.pinned ? '<i class="fas fa-thumbtack" style="font-size:10px; margin-right:5px; color:var(--accent-color);"></i> ' : '';
+            
+            div.innerHTML = `
+                <span class="chat-title">${pinIcon}${chat.title}</span>
+                <div class="chat-actions">
+                    <button class="dots-btn" onclick="event.stopPropagation(); toggleDropdown(this)">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="chat-dropdown">
+                        <button class="rename-btn" onclick="event.stopPropagation(); renameChat('${chat.id}', '${chat.title}')">
+                            <i class="fas fa-pen"></i> Átnevezés
+                        </button>
+                        <button class="pin-btn" onclick="event.stopPropagation(); togglePin('${chat.id}', ${!chat.pinned})">
+                            <i class="fas fa-thumbtack"></i> ${chat.pinned ? 'Levétel' : 'Kitűzés'}
+                        </button>
+                        <button class="delete-action" onclick="event.stopPropagation(); deleteChat('${chat.id}')">
+                            <i class="fas fa-trash"></i> Törlés
+                        </button>
+                    </div>
+                </div>
+            `;
             div.onclick = () => loadChatMessages(chat.id, chat.title); 
             chatList.appendChild(div);
         });
     }
+
+    // --- CHAT MŰVELETEK (Átnevezés, Kitűzés, Törlés) ---
+    window.renameChat = async (id, oldTitle) => {
+        document.querySelectorAll('.chat-dropdown.show').forEach(m => m.classList.remove('show'));
+        const newTitle = prompt("Add meg a beszélgetés új nevét:", oldTitle);
+        if (newTitle && newTitle.trim() !== "" && newTitle !== oldTitle) {
+            await fetch(`/api/chats/${id}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ title: newTitle.trim() })
+            });
+            if (currentChatId === id) currentChatTitle.innerText = newTitle.trim();
+            loadChats();
+        }
+    };
+
+    window.togglePin = async (id, pinnedStatus) => {
+        document.querySelectorAll('.chat-dropdown.show').forEach(m => m.classList.remove('show'));
+        await fetch(`/api/chats/${id}`, {
+            method: 'PUT',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({ pinned: pinnedStatus })
+        });
+        loadChats();
+    };
+
+    window.deleteChat = async (id) => {
+        document.querySelectorAll('.chat-dropdown.show').forEach(m => m.classList.remove('show'));
+        if(confirm("Biztosan törlöd ezt a beszélgetést?")) {
+            await fetch(`/api/chats/${id}`, { method: 'DELETE' });
+            if (currentChatId === id) { showWelcomeScreen(); }
+            loadChats();
+        }
+    };
 
     // --- ELŐZMÉNYEK BETÖLTÉSE ---
     window.loadChatMessages = async (id, title) => {
@@ -84,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         if (msgs.length === 0) {
             messagesContainer.innerHTML = '<div class="welcome-screen" style="margin: auto; color: var(--text-muted);"><i class="fas fa-magic" style="margin-right: 8px;"></i> Kezdj el gépelni! Az Orion figyel.</div>';
         } else {
-            msgs.forEach(m => appendMessage(m.role, m.content));
+            msgs.forEach(m => appendMessage(m.role, m.content, m.id));
         }
         
         if (window.innerWidth <= 768) toggleMobileMenu(false);
@@ -92,8 +150,19 @@ document.addEventListener('DOMContentLoaded', () => {
         scrollToBottom();
     };
 
-    // --- KÜLDÉS ÉS AUTOMATA CHAT INDÍTÁS ---
+    // --- ÜZENET KÜLDÉS ÉS MEGÁLLÍTÁS LOGIKA ---
     sendBtn.addEventListener('click', async () => {
+        // Ha épp generál, a gomb kattintásra megszakítja a folyamatot (Soft-Stop)
+        if (sendBtn.classList.contains('stop-mode')) {
+            if (abortController) abortController.abort(); // Megszakítja a hálózati kérést
+            resetSendButton();
+            const typingMsg = document.querySelector('.message.assistant .fa-spin');
+            if(typingMsg) {
+                typingMsg.parentElement.innerHTML = '<em>A generálás megszakítva.</em>';
+            }
+            return;
+        }
+
         const text = messageInput.value.trim(); 
         if (!text) return;
 
@@ -105,34 +174,63 @@ document.addEventListener('DOMContentLoaded', () => {
             messagesContainer.innerHTML = ''; 
         }
 
-        appendMessage('user', text); 
+        appendMessage('user', text, 'temp-id'); 
         messageInput.value = '';
+        messageInput.style.height = 'auto'; // Visszaállítja a textarea méretét
         
         const typing = document.createElement('div'); 
-        typing.className = 'message assistant'; 
-        typing.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i> Orion gondolkodik...'; 
+        typing.className = 'message-wrapper assistant-wrapper'; 
+        typing.innerHTML = '<div class="message assistant"><i class="fas fa-circle-notch fa-spin"></i> Orion gondolkodik...</div>'; 
         messagesContainer.appendChild(typing);
         scrollToBottom();
+
+        // Gomb átállítása stop módba
+        sendBtn.classList.add('stop-mode');
+        sendBtn.innerHTML = '<i class="fas fa-stop"></i>';
+        
+        abortController = new AbortController();
 
         try {
             const res = await fetch(`/api/chats/${currentChatId}/message`, { 
                 method: 'POST', 
                 headers: {'Content-Type':'application/json'}, 
-                body: JSON.stringify({message: text}) 
+                body: JSON.stringify({
+                    message: text,
+                    model: modelSelector.value // Küldjük a kiválasztott modellt!
+                }),
+                signal: abortController.signal
             });
             const data = await res.json(); 
             typing.remove();
             
-            if (data.reply) appendMessage('assistant', data.reply);
+            if (data.reply) appendMessage('assistant', data.reply, 'temp-id2');
             if (data.title_updated) { 
                 currentChatTitle.innerText = data.new_title; 
             }
             loadChats(); 
         } catch (e) {
-            typing.remove();
-            appendMessage('assistant', 'Hálózati hiba történt a generáláskor.');
+            if (e.name === 'AbortError') {
+                console.log("Kérés megszakítva a felhasználó által.");
+            } else {
+                typing.remove();
+                appendMessage('assistant', 'Hálózati hiba történt a generáláskor.', 'error-id');
+            }
+        } finally {
+            resetSendButton();
+            scrollToBottom();
         }
-        scrollToBottom();
+    });
+
+    function resetSendButton() {
+        sendBtn.classList.remove('stop-mode');
+        sendBtn.innerHTML = '<i class="fas fa-arrow-up"></i>';
+        abortController = null;
+    }
+
+    // Textarea auto-resize
+    messageInput.addEventListener('input', function() {
+        this.style.height = 'auto';
+        this.style.height = (this.scrollHeight) + 'px';
     });
 
     messageInput.addEventListener('keypress', (e) => {
@@ -142,25 +240,14 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // --- TÖRLÉS LOGIKA ---
-    window.deleteChat = async (id) => {
-        if(confirm("Biztosan törlöd ezt a beszélgetést?")) {
-            await fetch(`/api/chats/${id}`, { method: 'DELETE' });
-            if (currentChatId === id) { 
-                showWelcomeScreen(); 
-            }
-            loadChats();
-        }
-    };
-
-    // --- CSERÉLŐ ÉS MEGJELENÍTŐ MOTOR ---
-    function appendMessage(role, content) { 
+    // --- CSERÉLŐ ÉS MEGJELENÍTŐ MOTOR (SZERKESZTÉS GOMBBAL) ---
+    function appendMessage(role, content, msgId) { 
         const welcome = messagesContainer.querySelector('.welcome-screen');
         if (welcome) welcome.remove();
         
         let safeHtml = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         
-        // ÚJ: Képgeneráló animáció és cserélő logika
+        // Képgeneráló animáció
         safeHtml = safeHtml.replace(
             /!\[([^\]]*)\]\s*\(?([^)\s<]+)\)?/g, 
             `<div class="img-wrapper">
@@ -171,9 +258,44 @@ document.addEventListener('DOMContentLoaded', () => {
             </div>`
         );
         
-        messagesContainer.innerHTML += `<div class="message ${role}" style="white-space:pre-wrap">${safeHtml}</div>`; 
+        const wrapper = document.createElement('div');
+        wrapper.className = `message-wrapper ${role}-wrapper`;
+        
+        // Ha felhasználó, adunk hozzá egy szerkesztés gombot
+        if (role === 'user' && msgId && msgId !== 'temp-id') {
+            const rawContent = content.replace(/'/g, "\\'").replace(/"/g, "&quot;");
+            wrapper.innerHTML = `
+                <button class="edit-message-btn" title="Üzenet szerkesztése" onclick="editUserMessage('${msgId}', '${rawContent}')">
+                    <i class="fas fa-pen"></i>
+                </button>
+                <div class="message ${role}" style="white-space:pre-wrap">${safeHtml}</div>
+            `;
+        } else {
+            wrapper.innerHTML = `<div class="message ${role}" style="white-space:pre-wrap">${safeHtml}</div>`;
+        }
+
+        messagesContainer.appendChild(wrapper);
         scrollToBottom(); 
     }
+
+    // --- ÜZENET SZERKESZTÉSE ---
+    window.editUserMessage = async (msgId, oldContent) => {
+        const newContent = prompt("Szerkeszd az üzenetet (a mentés után az AI újragenerálja a választ):", oldContent);
+        if (newContent && newContent.trim() !== "" && newContent !== oldContent) {
+            // Elküldjük a szerkesztett szöveget a backendnek
+            await fetch(`/api/chats/${currentChatId}/messages`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({ msg_id: msgId, content: newContent.trim() })
+            });
+            // Betöltjük újra a chatet (backend a módosítás utáni üzeneteket törölte)
+            // A módosított üzenetet viszont egyből el is küldjük mintha új lenne, hogy a Groq reagáljon
+            loadChatMessages(currentChatId, currentChatTitle.innerText).then(() => {
+                messageInput.value = newContent.trim();
+                // Opcionális: sendBtn.click(); ha azt akarod hogy azonnal el is küldje
+            });
+        }
+    };
 
     function scrollToBottom() { messagesContainer.scrollTop = messagesContainer.scrollHeight; }
 
