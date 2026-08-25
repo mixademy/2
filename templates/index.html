@@ -156,7 +156,7 @@
             color: #fca5a5;
         }
 
-        /* ÜZENETEK */
+        /* ÜZENETEK ÉS SZERKESZTÉS */
         .messages-container {
             display: flex !important;
             flex-direction: column !important;
@@ -368,6 +368,7 @@
             margin-top: 10px;
         }
 
+        /* VILÁGOS MÓD */
         body.light-mode .input-wrapper,
         body.light-mode #file-preview-container {
             background: rgba(255, 255, 255, 0.9);
@@ -399,6 +400,25 @@
 
         body.light-mode .chat-dropdown button:hover {
             background: rgba(0, 0, 0, 0.05);
+        }
+
+        /* SCROLLBAR ÉS EGYÉB */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(163, 112, 247, 0.3);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(163, 112, 247, 0.6);
         }
 
         @media (min-width: 769px) {
@@ -466,6 +486,12 @@
             <div class="chat-list" id="chat-list"></div>
 
             <div class="user-info-bottom">
+                {% if username == 'admin' %}
+                <a href="{{ url_for('admin_panel') }}" class="glass-btn compact-btn"
+                    style="text-decoration: none; text-align: center; margin-bottom: 15px;">
+                    <i class="fas fa-shield-alt"></i> Admin Panel
+                </a>
+                {% endif %}
                 <div class="user-info-content">
                     {% if username == 'Vendég' %}
                     <span><i class="fas fa-user-secret" style="color: var(--text-muted);"></i> <b>{{ username
@@ -492,12 +518,17 @@
                     <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500; margin: 0;"><i
                             class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
                 </div>
+                <!-- BEÁLLÍTÁSOK GOMB VISSZATÉVE -->
+                <button id="open-settings-btn"
+                    style="background: transparent; border: none; color: inherit; font-size: 22px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;"
+                    onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Beállítások">
+                    <i class="fas fa-cog"></i>
+                </button>
             </div>
 
             <div class="messages-container" id="messages-container"></div>
 
             <div class="input-area">
-                <!-- Fájl előnézet doboz -->
                 <div id="file-preview-container">
                     <div style="display: flex; align-items: center; gap: 10px; color: #e2e8f0; font-size: 13px;">
                         <i class="fas fa-file-alt" id="file-preview-icon" style="color: var(--accent-color);"></i>
@@ -511,7 +542,6 @@
                 </div>
 
                 <div class="input-wrapper">
-                    <!-- Fájlfeltöltés Gomb -->
                     <label for="file-upload" class="attach-btn" title="Kód, Szöveg, Kép vagy PDF feltöltése">
                         <i class="fas fa-plus"></i>
                     </label>
@@ -535,6 +565,61 @@
                 </div>
             </div>
         </main>
+    </div>
+
+    <!-- BEÁLLÍTÁSOK MODAL VISSZATÉVE -->
+    <div id="settings-modal" class="broadcast-modal" style="display: none;">
+        <div class="glass-panel broadcast-content" style="text-align: left; max-width: 400px; width: 90%;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                <h3 style="color: var(--accent-color); margin: 0; font-size: 20px;"><i class="fas fa-sliders-h"></i>
+                    Beállítások</h3>
+                <button id="close-settings-btn"
+                    style="background: transparent; border: none; color: inherit; cursor: pointer; font-size: 20px;"><i
+                        class="fas fa-times"></i></button>
+            </div>
+
+            <div style="margin-bottom: 15px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">Megjelenés</label>
+                <select id="theme-select"
+                    style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
+                    <option value="dark">🌙 Sötét mód</option>
+                    <option value="light">☀️ Világos mód</option>
+                </select>
+            </div>
+
+            <div style="margin-bottom: 25px;">
+                <label style="display: block; margin-bottom: 5px; font-size: 13px; opacity: 0.8;">AI Alapértelmezett
+                    Nyelve</label>
+                <select id="language-select"
+                    style="width: 100%; padding: 10px; border-radius: 8px; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.2); outline: none;">
+                    <option value="hu">🇭🇺 Magyar</option>
+                    <option value="en">🇬🇧 English</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="it">🇮🇹 Italiano</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="es">🇪🇸 Español</option>
+                </select>
+            </div>
+
+            <button id="save-settings-btn" class="glass-btn"
+                style="width: 100%; padding: 12px; font-size: 15px; border-radius: 8px; cursor: pointer;">
+                <i class="fas fa-save"></i> Beállítások Mentése
+            </button>
+        </div>
+    </div>
+
+    <!-- RENDSZERÜZENET MODAL -->
+    <div id="broadcast-modal" class="broadcast-modal">
+        <div class="glass-panel broadcast-content">
+            <div style="font-size: 40px; color: var(--accent-color); filter: drop-shadow(0 0 10px var(--accent-glow));">
+                <i class="fas fa-bullhorn"></i></div>
+            <h3 style="color: white; font-size: 18px; font-weight: 600;">Rendszerüzenet az Admintól</h3>
+            <p id="broadcast-text-content"
+                style="color: var(--text-main); font-size: 14px; line-height: 1.5; white-space: pre-wrap; background: rgba(0,0,0,0.2); padding: 15px; border-radius: 12px; border: 1px solid var(--glass-border); text-align: left;">
+            </p>
+            <button id="close-broadcast-btn" class="glass-btn"
+                style="padding: 10px; font-size: 14px; border-radius: 10px;">Bezárás</button>
+        </div>
     </div>
 
     <script src="{{ url_for('static', filename='script.js') }}"></script>
