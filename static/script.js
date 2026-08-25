@@ -7,7 +7,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const currentChatTitle = document.getElementById('current-chat-title');
     const modelSelector = document.getElementById('model-selector') || { value: 'smart' };
 
-    // Fájlfeltöltés elemek
     const fileUploadInput = document.getElementById('file-upload');
     const filePreviewContainer = document.getElementById('file-preview-container');
     const filePreviewName = document.getElementById('file-preview-name');
@@ -18,7 +17,6 @@ document.addEventListener('DOMContentLoaded', () => {
     let abortController = null;
     let attachedFileData = null;
 
-    // --- BEÁLLÍTÁSOK KEZELÉSE ---
     const settingsBtn = document.getElementById('open-settings-btn');
     const settingsModal = document.getElementById('settings-modal');
     const closeSettingsBtn = document.getElementById('close-settings-btn');
@@ -26,7 +24,6 @@ document.addEventListener('DOMContentLoaded', () => {
     const themeSelect = document.getElementById('theme-select');
     const languageSelect = document.getElementById('language-select');
 
-    // Betöltjük a mentett beállításokat
     if (localStorage.getItem('orion_theme') === 'light') {
         document.body.classList.add('light-mode');
         if (themeSelect) themeSelect.value = 'light';
@@ -62,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
         };
     }
 
-    // --- MOBIL MENÜ ---
     const mobileMenuBtn = document.getElementById('mobile-menu-btn');
     const closeMenuBtn = document.getElementById('close-menu-btn');
     const sidebar = document.querySelector('.sidebar');
@@ -77,7 +73,6 @@ document.addEventListener('DOMContentLoaded', () => {
     if (mobileOverlay) mobileOverlay.addEventListener('click', () => toggleMobileMenu(false));
     document.addEventListener('click', (e) => { if (sidebar.classList.contains('open') && !sidebar.contains(e.target)) toggleMobileMenu(false); });
 
-    // --- KEZDŐKÉPERNYŐ ÉS CHATEK ---
     function showWelcomeScreen() {
         currentChatTitle.innerHTML = '<i class="fas fa-sparkles"></i> Orion AI';
         messagesContainer.innerHTML = `<div class="welcome-screen" style="text-align: center; margin: auto; padding: 40px; display: flex; flex-direction: column; justify-content: center; height: 100%;">
@@ -105,14 +100,14 @@ document.addEventListener('DOMContentLoaded', () => {
             chats.forEach(chat => {
                 const div = document.createElement('div'); div.className = `chat-list-item ${chat.id === currentChatId ? 'active' : ''}`;
                 const pinIcon = chat.pinned ? '<i class="fas fa-thumbtack" style="font-size:10px; margin-right:5px; color:var(--accent-color);"></i> ' : '';
-                div.innerHTML = `<span class="chat-title">${pinIcon}${chat.title}</span>
+                
+                // JAVÍTVA: A gombok közvetlenül a span mellett vannak egy sorban, nincs dropdown burkoló ami letördelné!
+                div.innerHTML = `
+                    <span class="chat-title">${pinIcon}${chat.title}</span>
                     <div class="chat-actions">
-                        <button class="dots-btn" onclick="event.stopPropagation(); toggleDropdown(this)"><i class="fas fa-ellipsis-v"></i></button>
-                        <div class="chat-dropdown">
-                            <button class="rename-btn" onclick="event.stopPropagation(); renameChat('${chat.id}', '${chat.title.replace(/'/g, "\\'")}')"><i class="fas fa-pen"></i> Átnevezés</button>
-                            <button class="pin-btn" onclick="event.stopPropagation(); togglePin('${chat.id}', ${!chat.pinned})"><i class="fas fa-thumbtack"></i> ${chat.pinned ? 'Levétel' : 'Kitűzés'}</button>
-                            <button class="delete-action" onclick="event.stopPropagation(); deleteChat('${chat.id}')"><i class="fas fa-trash"></i> Törlés</button>
-                        </div>
+                        <button class="rename-btn" title="Átnevezés" onclick="event.stopPropagation(); renameChat('${chat.id}', '${chat.title.replace(/'/g, "\\'")}')"><i class="fas fa-pen"></i></button>
+                        <button class="pin-btn" title="${chat.pinned ? 'Levétel' : 'Kitűzés'}" onclick="event.stopPropagation(); togglePin('${chat.id}', ${!chat.pinned})"><i class="fas fa-thumbtack"></i></button>
+                        <button class="delete-action" title="Törlés" onclick="event.stopPropagation(); deleteChat('${chat.id}')"><i class="fas fa-trash"></i></button>
                     </div>`;
                 div.onclick = () => loadChatMessages(chat.id, chat.title);
                 chatList.appendChild(div);
@@ -120,12 +115,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error("Hiba a chatek betöltésekor:", e); }
     }
 
-    window.toggleDropdown = function (btn) {
-        document.querySelectorAll('.chat-dropdown.show').forEach(m => { if (m !== btn.nextElementSibling) m.classList.remove('show'); });
-        btn.nextElementSibling.classList.toggle('show');
-    };
     window.renameChat = async (id, oldTitle) => {
-        document.querySelectorAll('.chat-dropdown.show').forEach(m => m.classList.remove('show'));
         const newTitle = prompt("Új név:", oldTitle);
         if (newTitle && newTitle.trim() !== "" && newTitle !== oldTitle) {
             await fetch(`/api/chats/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ title: newTitle.trim() }) });
@@ -134,12 +124,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     };
     window.togglePin = async (id, pinnedStatus) => {
-        document.querySelectorAll('.chat-dropdown.show').forEach(m => m.classList.remove('show'));
         await fetch(`/api/chats/${id}`, { method: 'PUT', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ pinned: pinnedStatus }) });
         loadChats();
     };
     window.deleteChat = async (id) => {
-        document.querySelectorAll('.chat-dropdown.show').forEach(m => m.classList.remove('show'));
         if (confirm("Biztosan törlöd ezt a beszélgetést?")) {
             await fetch(`/api/chats/${id}`, { method: 'DELETE' });
             if (currentChatId === id) showWelcomeScreen();
@@ -159,7 +147,6 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error("Hiba:", e); }
     };
 
-    // --- FÁJL FELTÖLTÉS LOGIKA ---
     if (fileUploadInput) {
         fileUploadInput.addEventListener('change', async function () {
             if (!this.files || this.files.length === 0) return;
@@ -183,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
     function clearAttachment() { attachedFileData = null; filePreviewContainer.style.display = 'none'; }
     if (removeFileBtn) removeFileBtn.addEventListener('click', clearAttachment);
 
-    // --- KÜLDÉS / MEGÁLLÍTÁS ---
     if (sendBtn) {
         sendBtn.addEventListener('click', async () => {
             if (sendBtn.classList.contains('stop-mode')) {
