@@ -46,7 +46,7 @@
             margin: 0 auto !important;
         }
 
-        /* 3 pöttyös menü az eredeti designhoz igazítva */
+        /* 3 pöttyös menü */
         .chat-actions {
             position: relative;
         }
@@ -108,35 +108,59 @@
             color: #fca5a5;
         }
 
-        /* Üzenet szerkesztő gomb */
+        /* Üzenetek és szerkesztés gomb */
         .message-wrapper {
             position: relative;
-            width: fit-content;
-            max-width: 100%;
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
         }
 
         .message-wrapper.user-wrapper {
-            align-self: flex-end;
+            align-items: flex-end;
         }
 
         .message-wrapper.assistant-wrapper {
-            align-self: flex-start;
+            align-items: flex-start;
+        }
+
+        .message {
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-size: 14px;
+            line-height: 1.6;
+            word-break: break-word;
+            margin-bottom: 10px;
+        }
+
+        .message.user {
+            background: #9333ea;
+            color: white;
+            border-bottom-right-radius: 4px;
+            max-width: 75%;
+        }
+
+        .message.assistant {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
             width: 100%;
+            border-bottom-left-radius: 4px;
         }
 
         .edit-message-btn {
             position: absolute;
             left: -30px;
-            top: 50%;
-            transform: translateY(-50%);
+            top: 15px;
             background: transparent;
             border: none;
             color: var(--text-muted);
             cursor: pointer;
             opacity: 0;
             transition: opacity 0.2s;
-            font-size: 14px;
-            padding: 5px;
+            font-size: 13px;
         }
 
         .message-wrapper.user-wrapper:hover .edit-message-btn {
@@ -157,10 +181,29 @@
             border-radius: 12px;
             padding: 8px 15px;
             margin-bottom: 10px;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
             box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
 
-        /* Reszponzív sidebar és mobil kezelés */
+        /* PC-s összecsukhatóság javítva */
+        .sidebar {
+            transition: width 0.3s ease, transform 0.3s ease, padding 0.3s ease, opacity 0.3s ease;
+        }
+
+        @media (min-width: 769px) {
+            .sidebar.collapsed {
+                width: 0 !important;
+                min-width: 0 !important;
+                padding-left: 0 !important;
+                padding-right: 0 !important;
+                border: none !important;
+                overflow: hidden !important;
+                opacity: 0 !important;
+            }
+        }
+
         @media (max-width: 768px) {
             .sidebar {
                 position: fixed;
@@ -168,7 +211,6 @@
                 left: 0;
                 height: 100%;
                 transform: translateX(-100%);
-                transition: transform 0.3s ease;
                 z-index: 1000;
             }
 
@@ -178,17 +220,6 @@
 
             .mobile-overlay.active {
                 display: block;
-            }
-        }
-
-        @media (min-width: 769px) {
-            .sidebar.collapsed {
-                width: 0 !important;
-                padding-left: 0 !important;
-                padding-right: 0 !important;
-                border-color: transparent !important;
-                overflow: hidden !important;
-                opacity: 0 !important;
             }
         }
     </style>
@@ -270,7 +301,6 @@
                     <h2 id="current-chat-title" style="font-size: 18px; font-weight: 500; margin: 0;"><i
                             class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
                 </div>
-                <!-- BEÁLLÍTÁSOK GOMB -->
                 <button id="open-settings-btn"
                     style="background: transparent; border: none; color: inherit; font-size: 22px; cursor: pointer; opacity: 0.7; transition: opacity 0.2s;"
                     onmouseover="this.style.opacity='1'" onmouseout="this.style.opacity='0.7'" title="Beállítások">
@@ -281,7 +311,6 @@
             <div class="messages-container" id="messages-container"></div>
 
             <div class="input-area">
-                <!-- Fájl előnézet -->
                 <div id="file-preview-container">
                     <div style="display: flex; align-items: center; gap: 10px; color: #e2e8f0; font-size: 13px;">
                         <i class="fas fa-file-alt" style="color: var(--accent-color);"></i>
@@ -295,7 +324,6 @@
                 </div>
 
                 <div class="input-wrapper">
-                    <!-- Fájlfeltöltés gomb -->
                     <label for="file-upload" class="attach-btn" title="Fájl csatolása">
                         <i class="fas fa-plus"></i>
                     </label>
@@ -384,9 +412,9 @@
         if (mobileMenuBtn) {
             mobileMenuBtn.addEventListener('click', () => {
                 if (window.innerWidth > 768) {
-                    sidebar.classList.toggle('collapsed');
+                    sidebar.classList.toggle('collapsed'); // PC-n összehúzza / kinyitja
                 } else {
-                    sidebar.classList.add('mobile-open');
+                    sidebar.classList.add('mobile-open'); // Mobilon becsúsztatja
                     mobileOverlay.classList.add('active');
                 }
             });
