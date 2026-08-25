@@ -39,6 +39,45 @@
             opacity: 0.9 !important;
         }
 
+        /* FEJLÉC ÉS GOMBOK HELYREÁLLÍTÁSA (INLINE STÍLUSOK A BIZTOS MŰKÖDÉSHEZ) */
+        .chat-header {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 15px 20px !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+        }
+
+        .header-left {
+            display: flex !important;
+            align-items: center !important;
+            gap: 15px !important;
+        }
+
+        #mobile-menu-btn {
+            background: transparent !important;
+            border: none !important;
+            color: inherit !important;
+            font-size: 20px !important;
+            cursor: pointer !important;
+            padding: 5px !important;
+        }
+
+        #open-settings-btn {
+            background: transparent !important;
+            border: none !important;
+            color: inherit !important;
+            font-size: 20px !important;
+            cursor: pointer !important;
+            opacity: 0.8 !important;
+            padding: 5px !important;
+            transition: opacity 0.2s !important;
+        }
+
+        #open-settings-btn:hover {
+            opacity: 1 !important;
+        }
+
         /* Világos mód tökéletes kontraszt (sötét szövegekkel) */
         body.light-mode {
             background-color: #f8fafc !important;
@@ -178,12 +217,12 @@
         <!-- CHAT ABLAK -->
         <main class="chat-window">
             <div class="chat-header">
-                <div style="display: flex; align-items: center; gap: 12px;">
-                    <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                    <h2 id="current-chat-title"><i class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
+                <div class="header-left">
+                    <button id="mobile-menu-btn" title="Menü nyitása"><i class="fas fa-bars"></i></button>
+                    <h2 id="current-chat-title" style="margin: 0; font-size: 16px; font-weight: 500;"><i
+                            class="fas fa-sparkles"></i> Orion AI készenlétben</h2>
                 </div>
-                <button id="open-settings-btn" class="settings-btn" title="Beállítások"><i
-                        class="fas fa-cog"></i></button>
+                <button id="open-settings-btn" title="Beállítások"><i class="fas fa-cog"></i></button>
             </div>
 
             <div class="messages-container" id="messages-container"></div>
