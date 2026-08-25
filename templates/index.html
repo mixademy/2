@@ -85,31 +85,37 @@
             opacity: 0.9 !important;
         }
 
-        /* 4. CHAT LISTA MENÜ (3 PÖTTY FIXÁLÁSA A JOBB SZÉLRE - NEM CSÚSZIK LE!) */
+        /* 4. CHAT LISTA MENÜ (BOMBABIZTOS FIX - ABSZOLÚT POZÍCIÓ A JOBB SZÉLEN) */
         .chat-item {
+            position: relative !important;
+            /* Ez kell, hogy a pöttyök ehhez igazodjanak */
             display: flex !important;
-            flex-direction: row !important;
             align-items: center !important;
-            justify-content: space-between !important;
+            padding-right: 40px !important;
+            /* Helyet hagyunk a jobb oldalon a gombnak */
             flex-wrap: nowrap !important;
         }
 
+        .chat-item>span,
         .chat-title {
             flex: 1 1 auto !important;
             min-width: 0 !important;
-            /* <--- EZ AKADÁLYOZZA MEG, HOGY A SZÖVEG KITOLJA A GOMBOT */
             overflow: hidden !important;
             text-overflow: ellipsis !important;
             white-space: nowrap !important;
-            padding-right: 10px !important;
+            display: block !important;
         }
 
         .chat-actions {
-            flex: 0 0 auto !important;
-            /* Fix méret, nem zsugorodik, nem nő */
-            position: relative;
-            display: flex;
-            align-items: center;
+            position: absolute !important;
+            /* Odaszögezzük a doboz jobb szélére */
+            right: 10px !important;
+            top: 50% !important;
+            transform: translateY(-50%) !important;
+            /* Függőlegesen pontosan középre húzza */
+            display: flex !important;
+            align-items: center !important;
+            margin: 0 !important;
         }
 
         .dots-btn {
@@ -170,21 +176,17 @@
         /* 5. CHAT ÜZENETEK ÉS CERUZA (Visszaállítás normális méretre) */
         .message {
             width: fit-content !important;
-            /* Ne húzza ki a képernyő széléig! */
             max-width: 75% !important;
         }
 
         .message.user {
             margin-left: auto !important;
-            /* Jobbra igazítás */
         }
 
         .message.assistant {
             margin-right: auto !important;
-            /* Balra igazítás */
         }
 
-        /* Ha a JS plusz wrapperbe rakta a ceruzát, ezek is jobbra/balra igazítják: */
         .messages-container>div {
             display: flex;
             flex-direction: column;
@@ -351,17 +353,14 @@
         /* 8. OLDALSÁV ANIMÁCIÓ (Asztali gép - Gyönyörű kicsúszás) */
         @media (min-width: 769px) {
             .sidebar {
-                /* Sima eltűnés helyett lágy átmenet */
                 transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease !important;
             }
 
             .sidebar.desktop-collapsed {
                 margin-left: -320px !important;
-                /* Szépen kicsúszik balra */
                 opacity: 0 !important;
                 pointer-events: none !important;
                 display: flex !important;
-                /* Hogy az animáció le tudjon futni (ne display:none legyen) */
             }
         }
 
