@@ -12,10 +12,10 @@
 
     <style>
         /* ==============================================================
-           KIEGÉSZÍTŐ STÍLUSOK ÉS HIBÁK JAVÍTÁSA
+           KIEGÉSZÍTŐ STÍLUSOK (Csak a javítások, semmi roncsolás!)
            ============================================================== */
 
-        /* 1. Fejléc helyrerakása */
+        /* 1. Fejléc és menü gombok */
         .chat-header {
             display: flex !important;
             justify-content: space-between !important;
@@ -62,7 +62,7 @@
             opacity: 1;
         }
 
-        /* 2. Forgó logó */
+        /* 2. Forgó logó és lila gomb */
         .spinning-ring {
             transform-origin: 50px 50px;
             animation: spinLogo 10s linear infinite;
@@ -74,7 +74,6 @@
             }
         }
 
-        /* 3. Új beszélgetés gomb fixen lila */
         #new-chat-btn {
             background: #a370f7 !important;
             color: #ffffff !important;
@@ -85,37 +84,20 @@
             opacity: 0.9 !important;
         }
 
-        /* 4. CHAT LISTA MENÜ (BOMBABIZTOS FIX - ABSZOLÚT POZÍCIÓ A JOBB SZÉLEN) */
-        .chat-item {
-            position: relative !important;
-            /* Ez kell, hogy a pöttyök ehhez igazodjanak */
-            display: flex !important;
-            align-items: center !important;
-            padding-right: 40px !important;
-            /* Helyet hagyunk a jobb oldalon a gombnak */
-            flex-wrap: nowrap !important;
-        }
-
-        .chat-item>span,
-        .chat-title {
+        /* 3. CHAT LISTA MENÜ FIX (Nem írja felül a gombod kinézetét!) */
+        .chat-item>span {
             flex: 1 1 auto !important;
             min-width: 0 !important;
-            overflow: hidden !important;
-            text-overflow: ellipsis !important;
-            white-space: nowrap !important;
-            display: block !important;
+            /* Ez akadályozza meg, hogy a szöveg kitolja a 3 pöttyöt */
         }
 
         .chat-actions {
-            position: absolute !important;
-            /* Odaszögezzük a doboz jobb szélére */
-            right: 10px !important;
-            top: 50% !important;
-            transform: translateY(-50%) !important;
-            /* Függőlegesen pontosan középre húzza */
-            display: flex !important;
-            align-items: center !important;
-            margin: 0 !important;
+            flex: 0 0 auto !important;
+            /* Fix méret a pöttyöknek */
+            position: relative;
+            display: flex;
+            align-items: center;
+            margin-left: 8px !important;
         }
 
         .dots-btn {
@@ -173,35 +155,16 @@
             color: #fca5a5;
         }
 
-        /* 5. CHAT ÜZENETEK ÉS CERUZA (Visszaállítás normális méretre) */
-        .message {
-            width: fit-content !important;
-            max-width: 75% !important;
+        /* 4. ÜZENETEK IGAZÍTÁSA A BEVITELI MEZŐ 2 SZÉLÉHEZ */
+        .messages-container {
+            max-width: 948px !important;
+            /* 900px tartalom + 24px padding mindkét oldalon */
+            margin: 0 auto !important;
+            /* Középre igazítja a dobozt */
+            width: 100% !important;
         }
 
-        .message.user {
-            margin-left: auto !important;
-        }
-
-        .message.assistant {
-            margin-right: auto !important;
-        }
-
-        .messages-container>div {
-            display: flex;
-            flex-direction: column;
-            width: 100%;
-        }
-
-        .messages-container>div.user {
-            align-items: flex-end;
-        }
-
-        .messages-container>div.assistant {
-            align-items: flex-start;
-        }
-
-        /* 6. Töltés, fájl melléklet ÉS MODELLVÁLASZTÓ */
+        /* 5. Töltés, fájl melléklet, modellválasztó */
         .model-select {
             appearance: none;
             background: transparent;
@@ -251,7 +214,7 @@
             max-width: 900px;
         }
 
-        /* 7. Világos mód kontraszt fix */
+        /* 6. Világos mód (100% kontraszt) */
         body.light-mode {
             background: #f8fafc;
             color: #0f172a;
@@ -350,7 +313,7 @@
             color: #0f172a !important;
         }
 
-        /* 8. OLDALSÁV ANIMÁCIÓ (Asztali gép - Gyönyörű kicsúszás) */
+        /* 7. Oldalsáv animáció (Asztali gép) */
         @media (min-width: 769px) {
             .sidebar {
                 transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease !important;
@@ -364,7 +327,7 @@
             }
         }
 
-        /* 9. MOBIL OPTIMALIZÁLÁS ÉS BILLENTYŰZET JAVÍTÁS */
+        /* 8. Mobil optimalizálás és billentyűzet fix */
         @media (max-width: 768px) {
 
             html,
