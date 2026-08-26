@@ -5,17 +5,12 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Orion AI</title>
-    <!-- A TE EREDETI STYLE.CSS FÁJLOD -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
     <style>
-        /* ==============================================================
-           TÖKÉLETESÍTETT ELRENDEZÉS ÉS VILÁGOS MÓD FIXEK
-           ============================================================== */
-
-        /* Applikáció doboza - Ez garantálja a kerek sarkokat világos módban is! */
+        /* Applikáció doboza - Kerek sarkok világos módban is */
         .app-container {
             overflow: hidden !important;
         }
@@ -56,7 +51,7 @@
             }
         }
 
-        /* Fejléc alap mobilra is */
+        /* Fejléc és HAMBURGER MENÜ FIX (Mindenhol látszik!) */
         .chat-header {
             display: flex !important;
             justify-content: space-between !important;
@@ -67,6 +62,7 @@
             display: flex;
             align-items: center;
             gap: 15px;
+            width: 60%;
         }
 
         .header-right {
@@ -76,7 +72,7 @@
         }
 
         .mobile-menu-btn {
-            display: none;
+            display: block !important;
             background: transparent;
             border: none;
             color: inherit;
@@ -87,10 +83,8 @@
             transition: opacity 0.2s;
         }
 
-        @media (max-width: 768px) {
-            .mobile-menu-btn {
-                display: block !important;
-            }
+        .mobile-menu-btn:hover {
+            opacity: 1;
         }
 
         #open-settings-btn {
@@ -105,6 +99,16 @@
 
         #open-settings-btn:hover {
             opacity: 1;
+        }
+
+        /* Cím formázása és levágása */
+        #current-chat-title {
+            font-size: 18px !important;
+            margin: 0 !important;
+            white-space: nowrap !important;
+            overflow: hidden !important;
+            text-overflow: ellipsis !important;
+            max-width: 100%;
         }
 
         /* 2. Forgó logó és lila gomb */
@@ -218,11 +222,106 @@
             border-color: #ef4444 !important;
         }
 
-        /* 4. Felesleges elemek kiirtása */
-        .messages-container button,
+        /* Felesleges elemek kiirtása */
+        .messages-container button.edit-message-btn,
         .messages-container .edit-btn,
         .messages-container form {
             display: none !important;
+        }
+
+        /* ==========================================================
+           ÚJ: KÓDSZERKESZTŐ DOBOZOK ÉS KÉP LETÖLTÉS GOMB
+           ========================================================== */
+
+        /* Markdown kód doboz */
+        .code-block-wrapper {
+            background: #11111b;
+            border-radius: 8px;
+            overflow: hidden;
+            margin: 16px 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            width: 100%;
+        }
+
+        .code-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #1e1e2e;
+            padding: 8px 12px;
+            font-size: 12px;
+            color: #a6adc8;
+            font-family: monospace;
+            font-weight: bold;
+        }
+
+        .copy-btn {
+            background: rgba(255, 255, 255, 0.1) !important;
+            border: none !important;
+            color: #cdd6f4 !important;
+            padding: 4px 10px !important;
+            border-radius: 6px !important;
+            cursor: pointer !important;
+            display: flex !important;
+            align-items: center !important;
+            gap: 6px !important;
+            font-size: 12px !important;
+            transition: 0.2s !important;
+        }
+
+        .copy-btn:hover {
+            background: rgba(255, 255, 255, 0.2) !important;
+            color: white !important;
+        }
+
+        .code-content {
+            padding: 16px;
+            margin: 0;
+            overflow-x: auto;
+            color: #cdd6f4;
+            font-family: 'Courier New', Courier, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            white-space: pre !important;
+        }
+
+        .inline-code {
+            background: rgba(255, 255, 255, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-family: monospace;
+            font-size: 13.5px;
+        }
+
+        /* Kép letöltés gomb */
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            max-width: 100%;
+            margin: 10px 0;
+        }
+
+        .download-img-btn {
+            position: absolute;
+            bottom: 10px;
+            right: 10px;
+            background: rgba(0, 0, 0, 0.6);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 8px 12px;
+            text-decoration: none;
+            backdrop-filter: blur(4px);
+            transition: background 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+        }
+
+        .download-img-btn:hover {
+            background: var(--accent-color);
+            color: white;
         }
 
         /* 5. ÜZENETEK PONTOS IGAZÍTÁSA */
@@ -237,12 +336,13 @@
 
         .message {
             width: fit-content !important;
-            max-width: 80% !important;
-            padding: 14px 20px !important;
+            max-width: 85% !important;
+            padding: 16px 20px !important;
             border-radius: 18px !important;
             line-height: 1.6 !important;
             font-size: 15px !important;
             margin-bottom: 16px !important;
+            white-space: normal !important;
         }
 
         .message.user {
@@ -326,9 +426,7 @@
             --glass-bg: #ffffff;
             --glass-border: #e2e8f0;
             --text-main: #0f172a;
-            /* Ez átszínezi a JS generálta szövegeket is! */
             --text-muted: #64748b;
-            /* Ez is! */
             background: #f8fafc;
             color: var(--text-main);
         }
@@ -438,7 +536,6 @@
             color: #0f172a !important;
         }
 
-        /* Világos mód fixek a beállítások ablakhoz */
         body.light-mode .broadcast-content {
             background: #ffffff !important;
             border: 1px solid #cbd5e1 !important;
@@ -450,6 +547,38 @@
             background: #f1f5f9 !important;
             color: #0f172a !important;
             border: 1px solid #cbd5e1 !important;
+        }
+
+        /* Világos mód Kód blokk */
+        body.light-mode .code-block-wrapper {
+            background: #f8fafc;
+            border-color: #cbd5e1;
+        }
+
+        body.light-mode .code-header {
+            background: #e2e8f0;
+            color: #475569;
+            border-bottom: 1px solid #cbd5e1;
+        }
+
+        body.light-mode .code-content {
+            color: #0f172a;
+        }
+
+        body.light-mode .inline-code {
+            background: #e2e8f0;
+            color: #c81e1e;
+        }
+
+        body.light-mode .copy-btn {
+            background: #ffffff !important;
+            color: #475569 !important;
+            border: 1px solid #cbd5e1 !important;
+        }
+
+        body.light-mode .copy-btn:hover {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
         }
 
         /* 8. Oldalsáv animáció asztali és mobil gépekre */
@@ -499,6 +628,11 @@
 
             .messages-container {
                 padding: 15px 15px !important;
+            }
+
+            #current-chat-title {
+                max-width: 50vw;
+                font-size: 16px !important;
             }
         }
     </style>
@@ -574,7 +708,7 @@
             <div class="chat-header">
                 <div class="header-left">
                     <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                    <h2 id="current-chat-title" style="margin: 0;">Orion AI</h2>
+                    <h2 id="current-chat-title">Orion AI</h2>
                 </div>
                 <div class="header-right">
                     <!-- Mobilon ide kerül a Smart/Fast választó -->
