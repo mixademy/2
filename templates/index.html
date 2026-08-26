@@ -60,7 +60,7 @@
 
             .chat-header {
                 height: 88px !important;
-                padding: 0 24px !important;
+                padding: 0 !important;
                 box-sizing: border-box !important;
             }
 
@@ -81,15 +81,27 @@
         }
 
         /* ==========================================================
-           GOLYÓÁLLÓ FEJLÉC ÉS CÍM (Már nem tud szétesni!)
+           TÖKÉLETESEN KÖZÉPRE IGAZÍTOTT FEJLÉC (A beviteli mezőhöz)
            ========================================================== */
         .chat-header {
-            display: flex !important;
-            justify-content: space-between !important;
-            align-items: center !important;
+            display: block !important;
+            border-bottom: 1px solid var(--glass-border) !important;
+            background: transparent;
         }
 
-        /* A bal oldal (menü + cím) kap egy szigorú rejtést a túllógó elemekre */
+        /* Ez a láthatatlan sáv fogja pontosan a chat oszlopához igazítani a fejlécet! */
+        .header-content {
+            max-width: 900px;
+            margin: 0 auto;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 24px;
+            box-sizing: border-box;
+        }
+
         .header-left {
             display: flex;
             align-items: center;
@@ -663,9 +675,19 @@
                 padding: 15px 15px !important;
             }
 
-            /* Mobilon is érvényesüljön a vágás */
+            /* Mobilon is érvényesüljön az új fejléc elrendezés */
+            .chat-header {
+                padding: 0 !important;
+                height: auto !important;
+                border-bottom: 1px solid var(--glass-border) !important;
+            }
+
+            .header-content {
+                padding: calc(15px + env(safe-area-inset-top)) 15px 15px 15px !important;
+            }
+
             #current-chat-title {
-                max-width: 60vw;
+                max-width: 60vw !important;
                 font-size: 16px !important;
             }
         }
@@ -739,15 +761,19 @@
 
         <!-- CHAT ABLAK -->
         <main class="chat-window">
+
+            <!-- ÚJ: KÖZÉPRE ZÁRT FEJLÉC STRUKTÚRA -->
             <div class="chat-header">
-                <div class="header-left">
-                    <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                    <h2 id="current-chat-title">Orion AI</h2>
-                </div>
-                <div class="header-right">
-                    <!-- Mobilon ide kerül a Smart/Fast választó -->
-                    <div id="header-model-slot"></div>
-                    <button id="open-settings-btn" title="Beállítások"><i class="fas fa-cog"></i></button>
+                <div class="header-content">
+                    <div class="header-left">
+                        <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                        <h2 id="current-chat-title">Orion AI</h2>
+                    </div>
+                    <div class="header-right">
+                        <!-- Mobilon ide kerül a Smart/Fast választó -->
+                        <div id="header-model-slot"></div>
+                        <button id="open-settings-btn" title="Beállítások"><i class="fas fa-cog"></i></button>
+                    </div>
                 </div>
             </div>
 
