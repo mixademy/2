@@ -58,9 +58,10 @@
                 border-bottom: 1px solid var(--glass-border) !important;
             }
 
+            /* A FEJLÉC ÚJRA TELJES SZÉLESSÉGŰ */
             .chat-header {
                 height: 88px !important;
-                padding: 0 !important;
+                padding: 0 24px !important;
                 box-sizing: border-box !important;
             }
 
@@ -81,33 +82,25 @@
         }
 
         /* ==========================================================
-           TÖKÉLETESEN KÖZÉPRE IGAZÍTOTT FEJLÉC (A beviteli mezőhöz)
+           GOLYÓÁLLÓ FEJLÉC (Gombok a szélen, Cím okosan levágva)
            ========================================================== */
         .chat-header {
-            display: block !important;
+            display: flex !important;
+            justify-content: space-between !important;
+            align-items: center !important;
             border-bottom: 1px solid var(--glass-border) !important;
             background: transparent;
         }
 
-        /* Ez a láthatatlan sáv fogja pontosan a chat oszlopához igazítani a fejlécet! */
-        .header-content {
-            max-width: 900px;
-            margin: 0 auto;
-            width: 100%;
-            height: 100%;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 24px;
-            box-sizing: border-box;
-        }
-
+        /* A cím doboza: kapott egy max-width-et, hogy ott vágja el a szöveget, ahol kérted */
         .header-left {
             display: flex;
             align-items: center;
             gap: 15px;
             flex: 1 1 auto;
             min-width: 0;
+            max-width: 75%;
+            /* Itt áll meg a cím növekedése! */
             overflow: hidden !important;
         }
 
@@ -675,20 +668,14 @@
                 padding: 15px 15px !important;
             }
 
-            /* Mobilon is érvényesüljön az új fejléc elrendezés */
-            .chat-header {
-                padding: 0 !important;
-                height: auto !important;
-                border-bottom: 1px solid var(--glass-border) !important;
-            }
-
-            .header-content {
-                padding: calc(15px + env(safe-area-inset-top)) 15px 15px 15px !important;
-            }
-
+            /* Mobilon is érvényesüljön a vágás */
             #current-chat-title {
                 max-width: 60vw !important;
                 font-size: 16px !important;
+            }
+
+            .chat-header {
+                padding: calc(15px + env(safe-area-inset-top)) 15px 15px 15px !important;
             }
         }
     </style>
@@ -762,18 +749,16 @@
         <!-- CHAT ABLAK -->
         <main class="chat-window">
 
-            <!-- ÚJ: KÖZÉPRE ZÁRT FEJLÉC STRUKTÚRA -->
+            <!-- VISSZAÁLLÍTOTT FEJLÉC: Teljes szélességű, gombok a szélén -->
             <div class="chat-header">
-                <div class="header-content">
-                    <div class="header-left">
-                        <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
-                        <h2 id="current-chat-title">Orion AI</h2>
-                    </div>
-                    <div class="header-right">
-                        <!-- Mobilon ide kerül a Smart/Fast választó -->
-                        <div id="header-model-slot"></div>
-                        <button id="open-settings-btn" title="Beállítások"><i class="fas fa-cog"></i></button>
-                    </div>
+                <div class="header-left">
+                    <button id="mobile-menu-btn" class="mobile-menu-btn"><i class="fas fa-bars"></i></button>
+                    <h2 id="current-chat-title">Orion AI</h2>
+                </div>
+                <div class="header-right">
+                    <!-- Mobilon ide kerül a Smart/Fast választó -->
+                    <div id="header-model-slot"></div>
+                    <button id="open-settings-btn" title="Beállítások"><i class="fas fa-cog"></i></button>
                 </div>
             </div>
 
