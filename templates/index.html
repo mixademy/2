@@ -5,16 +5,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Orion AI</title>
+    <!-- A TE EREDETI STYLE.CSS FÁJLOD -->
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link rel="icon" type="image/png" href="{{ url_for('static', filename='logo.png') }}">
 
     <style>
         /* ==============================================================
-           VÉGLEGES, TISZTA ÉS MŰKÖDŐ ELRENDEZÉS
+           TÖKÉLETESÍTETT ELRENDEZÉS ÉS VILÁGOS MÓD FIXEK
            ============================================================== */
 
-        /* 1. Fejléc és HAMBURGER MENÜ (Asztalin is látszik!) */
+        /* Applikáció doboza - Ez garantálja a kerek sarkokat világos módban is! */
+        .app-container {
+            overflow: hidden !important;
+        }
+
+        /* 1. Fejléc Vonalak hajszálpontos igazítása (Asztali nézet) */
+        @media (min-width: 769px) {
+            .sidebar {
+                padding: 0 !important;
+            }
+
+            .orion-brand {
+                padding: 24px !important;
+                margin: 0 !important;
+                height: 88px !important;
+                box-sizing: border-box !important;
+                border-bottom: 1px solid var(--glass-border) !important;
+            }
+
+            .chat-header {
+                height: 88px !important;
+                padding: 0 24px !important;
+                box-sizing: border-box !important;
+            }
+
+            #new-chat-btn {
+                width: calc(100% - 48px) !important;
+                margin: 24px 24px 16px 24px !important;
+            }
+
+            .chat-list {
+                padding: 0 24px !important;
+            }
+
+            .user-info-bottom {
+                padding: 16px 24px 24px 24px !important;
+                margin-top: auto;
+                border-top: 1px solid var(--glass-border) !important;
+            }
+        }
+
+        /* Fejléc alap mobilra is */
         .chat-header {
             display: flex !important;
             justify-content: space-between !important;
@@ -33,9 +75,8 @@
             gap: 10px;
         }
 
-        /* A hamburger menü most már mindenhol látszik */
         .mobile-menu-btn {
-            display: block !important;
+            display: none;
             background: transparent;
             border: none;
             color: inherit;
@@ -46,8 +87,10 @@
             transition: opacity 0.2s;
         }
 
-        .mobile-menu-btn:hover {
-            opacity: 1;
+        @media (max-width: 768px) {
+            .mobile-menu-btn {
+                display: block !important;
+            }
         }
 
         #open-settings-btn {
@@ -124,7 +167,6 @@
             font-size: 14px !important;
         }
 
-        /* Gombok konténere közvetlenül a szöveg mellett */
         .chat-actions {
             display: flex !important;
             flex-direction: row !important;
@@ -164,7 +206,6 @@
             color: white !important;
         }
 
-        /* Törlés gomb (kuka) pirosas */
         .chat-actions button.delete-action {
             background: rgba(239, 68, 68, 0.15) !important;
             color: #ef4444 !important;
@@ -177,7 +218,7 @@
             border-color: #ef4444 !important;
         }
 
-        /* 4. Felesleges elemek kiirtása a chatből */
+        /* 4. Felesleges elemek kiirtása */
         .messages-container button,
         .messages-container .edit-btn,
         .messages-container form {
@@ -278,15 +319,24 @@
             max-width: 900px;
         }
 
-        /* 7. Világos mód */
+        /* ==========================================================
+           7. VILÁGOS MÓD (Dinamikus változókkal a szövegekhez is!)
+           ========================================================== */
         body.light-mode {
+            --glass-bg: #ffffff;
+            --glass-border: #e2e8f0;
+            --text-main: #0f172a;
+            /* Ez átszínezi a JS generálta szövegeket is! */
+            --text-muted: #64748b;
+            /* Ez is! */
             background: #f8fafc;
-            color: #0f172a;
+            color: var(--text-main);
         }
 
         body.light-mode .app-container {
             background: #ffffff;
             border-color: #e2e8f0;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.05) !important;
         }
 
         body.light-mode .sidebar {
@@ -386,6 +436,20 @@
 
         body.light-mode .attach-btn:hover {
             color: #0f172a !important;
+        }
+
+        /* Világos mód fixek a beállítások ablakhoz */
+        body.light-mode .broadcast-content {
+            background: #ffffff !important;
+            border: 1px solid #cbd5e1 !important;
+            color: #0f172a !important;
+        }
+
+        body.light-mode #theme-select,
+        body.light-mode #language-select {
+            background: #f1f5f9 !important;
+            color: #0f172a !important;
+            border: 1px solid #cbd5e1 !important;
         }
 
         /* 8. Oldalsáv animáció asztali és mobil gépekre */
@@ -590,6 +654,10 @@
                     style="width: 100%; padding: 10px; border-radius: 8px; outline: none; background: rgba(0,0,0,0.2); color: white; border: 1px solid rgba(255,255,255,0.1);">
                     <option value="hu">🇭🇺 Magyar</option>
                     <option value="en">🇬🇧 English</option>
+                    <option value="es">🇪🇸 Español</option>
+                    <option value="fr">🇫🇷 Français</option>
+                    <option value="de">🇩🇪 Deutsch</option>
+                    <option value="it">🇮🇹 Italiano</option>
                 </select>
             </div>
 
