@@ -11,7 +11,7 @@
 
     <style>
         /* ==========================================================
-           ÚJ: ELEGÁNS GÖRGETŐSÁV (SCROLLBAR) MINDENHOL
+           ELEGÁNS GÖRGETŐSÁV (SCROLLBAR) MINDENHOL
            ========================================================== */
         ::-webkit-scrollbar {
             width: 6px;
@@ -31,7 +31,6 @@
             background: rgba(255, 255, 255, 0.3);
         }
 
-        /* Világos mód görgetősávja */
         body.light-mode ::-webkit-scrollbar-thumb {
             background: rgba(0, 0, 0, 0.2);
         }
@@ -81,20 +80,23 @@
             }
         }
 
-        /* Fejléc és HAMBURGER MENÜ FIX */
+        /* ==========================================================
+           GOLYÓÁLLÓ FEJLÉC ÉS CÍM (Már nem tud szétesni!)
+           ========================================================== */
         .chat-header {
             display: flex !important;
             justify-content: space-between !important;
             align-items: center !important;
         }
 
-        /* JAVÍTÁS: flex: 1 és min-width: 0 garantálja, hogy a cím ne folyjon ki és vágódjon le! */
+        /* A bal oldal (menü + cím) kap egy szigorú rejtést a túllógó elemekre */
         .header-left {
             display: flex;
             align-items: center;
             gap: 15px;
-            flex: 1;
+            flex: 1 1 auto;
             min-width: 0;
+            overflow: hidden !important;
         }
 
         .header-right {
@@ -135,7 +137,7 @@
             opacity: 1;
         }
 
-        /* Cím szigorú formázása és levágása egy sorra */
+        /* KŐKEMÉNY CÍM FIX: Fix magasság, sortörés tiltva, csonkítás engedélyezve */
         #current-chat-title {
             font-size: 18px !important;
             margin: 0 !important;
@@ -143,7 +145,9 @@
             overflow: hidden !important;
             text-overflow: ellipsis !important;
             display: block !important;
-            width: 100%;
+            max-width: 100%;
+            height: 26px !important;
+            line-height: 26px !important;
         }
 
         /* 2. Forgó logó és lila gomb */
@@ -659,7 +663,9 @@
                 padding: 15px 15px !important;
             }
 
+            /* Mobilon is érvényesüljön a vágás */
             #current-chat-title {
+                max-width: 60vw;
                 font-size: 16px !important;
             }
         }
