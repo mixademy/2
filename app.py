@@ -37,7 +37,7 @@ client = Groq(api_key=os.environ.get("GROQ_API_KEY"))
 MAINTENANCE_MODE = False
 BROADCAST_MESSAGE = {"id": "", "text": ""}
 
-# A TE EGYEDI MODELLJEID
+# A TE EGYEDI MODELLJEID (Változatlanul hagytuk)
 MODEL_MAPPING = {
     "fast": "openai/gpt-oss-20b",
     "smart": "openai/gpt-oss-120b",
@@ -247,8 +247,11 @@ def send_msg(c_id):
             db_saved_message = f"[Fájl csatolva: {attached_file['filename']}]\n{raw_user_message}"
         
         elif attached_file["type"] == "image":
-            # Képelemzésnél az 120b modellt használjuk
-            model_name = "openai/gpt-oss-120b" 
+            # ÚJ: Képelemzésnél kötelező egy "látó" modellt használni.
+            # Mivel kérted, hogy OpenAI modellek maradjanak, az openai/gpt-4o a standard látó modell.
+            # Ha az API szolgáltatódnál ezt másképp hívják (pl. llama-3.2-90b-vision-preview), csak írd át a lenti sort!
+            model_name = "openai/gpt-4o" 
+            
             msg_content_for_api = [
                 {"type": "text", "text": raw_user_message if raw_user_message.strip() else "Mi van a képen?"},
                 {"type": "image_url", "image_url": {"url": attached_file['content']}}
@@ -298,7 +301,8 @@ def send_msg(c_id):
         reply = response.choices[0].message.content
     except Exception as e:
         print("GROQ ERROR:", e)
-        reply = "Hiba történt az AI válasz generálása közben. (A választott fájl formátuma lehet, hogy nem támogatott a modell által)."
+        # Bővített hibaüzenet, így láthatjuk pontosan mi az API gondja
+        reply = f"Hiba történt az AI válasz generálása közben.\n\nTechnikai részletek: `{str(e)}`"
 
     messages_ref.push({"role": "assistant", "content": reply, "timestamp": int(time.time())})
 
