@@ -250,7 +250,7 @@ def send_msg(c_id):
             # ÚJ: Képelemzésnél kötelező egy "látó" modellt használni.
             # Mivel kérted, hogy OpenAI modellek maradjanak, az openai/gpt-4o a standard látó modell.
             # Ha az API szolgáltatódnál ezt másképp hívják (pl. llama-3.2-90b-vision-preview), csak írd át a lenti sort!
-            model_name = "openai/gpt-4o" 
+            model_name = "llama-3.2-90b-vision-preview" 
             
             msg_content_for_api = [
                 {"type": "text", "text": raw_user_message if raw_user_message.strip() else "Mi van a képen?"},
