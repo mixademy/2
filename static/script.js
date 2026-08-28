@@ -71,14 +71,12 @@ document.addEventListener('DOMContentLoaded', () => {
         if (!icon) return;
         
         const isMobile = window.innerWidth <= 768;
-        // Asztalin nyitva van, ha NINCS rajta a 'desktop-collapsed' osztály
-        // Mobilon nyitva van, ha RAJTA VAN a 'open' osztály
         const isOpen = isMobile ? sidebar.classList.contains('open') : !sidebar.classList.contains('desktop-collapsed');
         
         if (isOpen) {
-            icon.className = 'fas fa-chevron-left'; // Ha nyitva van, mutasson balra (zárás)
+            icon.className = 'fas fa-chevron-left';
         } else {
-            icon.className = 'fas fa-chevron-right'; // Ha zárva van, mutasson jobbra (nyitás)
+            icon.className = 'fas fa-chevron-right';
         }
     }
 
@@ -118,7 +116,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     };
 
-    // --- MARKDOWN ÉRTELMEZŐ (Kód, Vastagítás, Képek) ---
+    // --- MARKDOWN ÉRTELMEZŐ ---
     function formatMessageContent(content) {
         let html = content.replace(/</g, "&lt;").replace(/>/g, "&gt;");
         html = html.replace(/\*\*(.*?)\*\*/g, "<strong>$1</strong>");
@@ -145,7 +143,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return html;
     }
 
-    // --- KEZDŐKÉPERNYŐ KÖZÉPRE IGAZÍTÁSA ---
     function showWelcomeScreen() {
         currentChatTitle.innerHTML = '<i class="fas fa-sparkles"></i> Orion AI';
         messagesContainer.innerHTML = `<div class="welcome-screen" style="flex: 1; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
@@ -222,28 +219,86 @@ document.addEventListener('DOMContentLoaded', () => {
         } catch (e) { console.error("Hiba:", e); }
     };
 
-    if (fileUploadInput) {
-        fileUploadInput.addEventListener('change', async function () {
-            if (!this.files || this.files.length === 0) return;
-            const file = this.files[0];
-            filePreviewContainer.style.display = 'flex';
-            filePreviewName.innerText = file.name;
-            filePreviewLoading.style.display = 'inline-block';
+    // --- KÖZÖS FÁJLFELTÖLTŐ FÜGGVÉNY (Gombhoz és Beillesztéshez) ---
+    async function handleFileUpload(file) {
+        filePreviewContainer.style.display = 'flex';
+        filePreviewName.innerText = file.name;
+        filePreviewLoading.style.display = 'inline-block';
 
-            const formData = new FormData(); formData.append('file', file);
-            try {
-                const res = await fetch('/api/upload', { method: 'POST', body: formData });
-                const data = await res.json();
-                if (data.success) {
-                    attachedFileData = data; filePreviewLoading.style.display = 'none';
-                    filePreviewName.innerText = `${file.name} (Csatolva)`;
-                } else { alert("Hiba: " + data.error); clearAttachment(); }
-            } catch (err) { console.error(err); alert("Hálózati hiba."); clearAttachment(); }
-            fileUploadInput.value = "";
+        const formData = new FormData(); 
+        formData.append('file', file);
+        try {
+            const res = await fetch('/api/upload', { method: 'POST', body: formData });
+            const data = await res.json();
+            if (data.success) {
+                attachedFileData = data; 
+                filePreviewLoading.style.display = 'none';
+                filePreviewName.innerText = `${file.name} (Csatolva)`;
+            } else { 
+                alert("Hiba: " + data.error); 
+                clearAttachment(); 
+            }
+        } catch (err) { 
+            console.error(err); 
+            alert("Hálózati hiba a fájl feltöltésekor."); 
+            clearAttachment(); 
+        }
+        if (fileUploadInput) fileUploadInput.value = "";
+    }
+
+    if (fileUploadInput) {
+        fileUploadInput.addEventListener('change', function () {
+            if (!this.files || this.files.length === 0) return;
+            handleFileUpload(this.files[0]);
         });
     }
-    function clearAttachment() { attachedFileData = null; filePreviewContainer.style.display = 'none'; }
+
+    function clearAttachment() { 
+        attachedFileData = null; 
+        filePreviewContainer.style.display = 'none'; 
+    }
+    
     if (removeFileBtn) removeFileBtn.addEventListener('click', clearAttachment);
+
+    // --- BEVITELI MEZŐ ESEMÉNYEK (CTRL+V BEILLESZTÉS) ---
+    if (messageInput) {
+        messageInput.addEventListener('input', function () { 
+            this.style.height = 'auto'; 
+            this.style.height = (this.scrollHeight) + 'px'; 
+        });
+        
+        messageInput.addEventListener('keypress', (e) => { 
+            if (e.key === 'Enter' && !e.shiftKey) { 
+                e.preventDefault(); 
+                sendBtn.click(); 
+            } 
+        });
+
+        // FÁJL BEILLESZTÉSE VÁGÓLAPRÓL
+        messageInput.addEventListener('paste', (e) => {
+            const clipboardData = e.clipboardData || window.clipboardData;
+            if (clipboardData && clipboardData.items) {
+                for (let i = 0; i < clipboardData.items.length; i++) {
+                    if (clipboardData.items[i].kind === 'file') {
+                        const file = clipboardData.items[i].getAsFile();
+                        if (file) {
+                            // Egyedi név, ha a vágólap csak "image.png"-ként adja át
+                            let fileName = file.name;
+                            if (fileName === 'image.png' || fileName === 'image.jpg') {
+                                const ext = fileName.split('.').pop();
+                                fileName = `beillesztett_kep_${new Date().getTime()}.${ext}`;
+                                // Újraalkotjuk a File objektumot az új névvel
+                                const renamedFile = new File([file], fileName, { type: file.type });
+                                handleFileUpload(renamedFile);
+                            } else {
+                                handleFileUpload(file);
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    }
 
     if (sendBtn) {
         sendBtn.addEventListener('click', async () => {
@@ -298,10 +353,6 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function resetSendButton() { sendBtn.classList.remove('stop-mode'); sendBtn.innerHTML = '<i class="fas fa-arrow-up"></i>'; abortController = null; }
-    if (messageInput) {
-        messageInput.addEventListener('input', function () { this.style.height = 'auto'; this.style.height = (this.scrollHeight) + 'px'; });
-        messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); sendBtn.click(); } });
-    }
 
     function appendMessage(role, content, msgId) {
         const welcome = messagesContainer.querySelector('.welcome-screen'); if (welcome) welcome.remove();
@@ -347,11 +398,10 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    // Ablak átméretezésénél mindent újraellenőrzünk, hogy az ikonok és gombok jó helyen legyenek
     window.addEventListener('resize', () => {
         adaptModelSelector();
         updateMenuIcon();
     });
     adaptModelSelector();
-    updateMenuIcon(); // Betöltéskor beállítja a megfelelő nyilat
+    updateMenuIcon();
 });
